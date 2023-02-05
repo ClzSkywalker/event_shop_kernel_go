@@ -3,11 +3,13 @@ package db
 import (
 	"fmt"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type sqliteDbStruct struct {
+	db          *gorm.DB
 	isInit      bool              // 是否已被初始化
 	curVersion  int               // current version
 	lastVersion int               // last version
@@ -22,7 +24,7 @@ type sqliteDbStruct struct {
  */
 func (s *sqliteDbStruct) getSqliteVersion() (err error) {
 	var version int
-	err = DbGorm.Raw("pragma user_version").Find(&version).Error
+	err = s.db.Raw("pragma user_version").Find(&version).Error
 	s.curVersion = version
 	if version >= 0 {
 		s.isInit = true
@@ -40,10 +42,10 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 	if s.curVersion > 0 {
 		return
 	}
-	utils.ZapLog.Info("init database oncreate start", zap.Int(
+	logger.ZapLog.Info("init database oncreate start", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
-	err = DbGorm.Exec(fmt.Sprintf(`
+	err = s.db.Exec(fmt.Sprintf(`
 	CREATE TABLE task(
 		id INTEGER NOT NULL PRIMARY KEY  AUTOINCREMENT , --
 		title TEXT   , --todo事件
@@ -106,7 +108,7 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 	PRAGMA user_version =%d;
 `, lastVersion)).Error
 	s.curVersion = lastVersion
-	utils.ZapLog.Info("init database oncreate end", zap.Int(
+	logger.ZapLog.Info("init database oncreate end", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	return
@@ -119,7 +121,7 @@ func (s *sqliteDbStruct) onCreate() (err error) {
  * @return          {*}
  */
 func (s *sqliteDbStruct) onUpgrade() (err error) {
-	utils.ZapLog.Info("upgrade database onupgrade start", zap.Int(
+	logger.ZapLog.Info("upgrade database onupgrade start", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	for i := s.curVersion; i < s.lastVersion; i++ {
@@ -130,7 +132,7 @@ func (s *sqliteDbStruct) onUpgrade() (err error) {
 		}
 	}
 	s.curVersion = s.lastVersion
-	utils.ZapLog.Info("upgrade database onupgrade end", zap.Int(
+	logger.ZapLog.Info("upgrade database onupgrade end", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	return

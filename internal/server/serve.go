@@ -2,44 +2,44 @@ package server
 
 import (
 	"flag"
+	"fmt"
 
-	"github.com/clz.skywalker/event.shop/kernal/internal/config"
+	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/middleware"
 	"github.com/clz.skywalker/event.shop/kernal/internal/router"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
 func Serve() {
-	utils.SetupZapLogger()
-	utils.ZapLog.Info(`start event shop kernel server`,
-		zap.String("version", config.AppConfig.KernelVersion))
+	logger.SetupZapLogger()
+	logger.ZapLog.Info(`start event shop kernel server`,
+		zap.String("version", container.KernelVersion))
 
-	flagInit()
-
-	err := db.InitDatabase(config.AppConfig.DbPath)
+	config := initFlag()
+	err := container.InitServiceContext(config)
 	if err != nil {
-		utils.ZapLog.Error(`init Database error`,
+		logger.ZapLog.Error(`init Database error`,
 			zap.Error(err),
-			zap.String("version", config.AppConfig.KernelVersion),
-			zap.String("path", config.AppConfig.DbPath))
+			zap.String("path", config.DbPath))
 		return
 	}
 
-	// gin.SetMode(gin.ReleaseMode)
+	if config.Mode != gin.DebugMode {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	ginServer := gin.New()
 	// 兼容插入较大的资源文件时内存占用较大
 	ginServer.MaxMultipartMemory = 1024 * 1024 * 32
 	ginServer.Use(gin.Recovery())
 	ginServer.Use(middleware.CorsMiddleware())
 	router.RouterManager(ginServer)
-	err = ginServer.Run(":4935")
+	err = ginServer.Run(fmt.Sprintf(":%d", config.Port))
 	if err != nil {
-		utils.ZapLog.Error(`server error`,
+		logger.ZapLog.Error(`server error`,
 			zap.Error(err),
-			zap.String("part", ":4935"))
+			zap.Int("part", config.Port))
 	}
 }
 
@@ -49,13 +49,20 @@ func Serve() {
  * @Description    : 解析参数
  * @return          {*}
  */
-func flagInit() {
+func initFlag() container.AppConfig {
+	port := flag.Int("port", 4935, "port")
+	mode := flag.String("mode", "debug", "gin mode")
 	dbPath := flag.String("dbPath", "", "database path")
 	local := flag.Int("local", 0, "language")
 	flag.Parse()
-	config.AppConfig.DbPath = *dbPath
-	config.AppConfig.Language = *local
-	utils.ZapLog.Info(`dbInit`,
-		zap.String("db path", config.AppConfig.DbPath),
-		zap.Int("local", config.AppConfig.Language))
+	config := container.AppConfig{
+		Port:     *port,
+		Mode:     *mode,
+		DbPath:   *dbPath,
+		Language: *local,
+	}
+	logger.ZapLog.Info(`dbInit`,
+		zap.String("db path", config.DbPath),
+		zap.Int("local", config.Language))
+	return config
 }

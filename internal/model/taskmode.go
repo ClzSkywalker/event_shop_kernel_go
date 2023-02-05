@@ -1,5 +1,7 @@
 package model
 
+import "gorm.io/gorm"
+
 type TaskModeType int
 
 const (
@@ -21,4 +23,40 @@ type TaskModeModel struct {
 
 type TaskModeConfigModel struct {
 	Day []int `json:"day" gorm:"day"`
+}
+
+type ITaskModeModel interface {
+	GetTableName() string
+	SelectByModel(TaskModeModel) ([]TaskModeModel, error)
+	Insert(TaskModeModel) (int64, error)
+	Update(TaskModeModel) error
+	Delete(int64) error
+}
+
+type defaultTaskModeModel struct {
+	conn  *gorm.DB
+	table string
+}
+
+func NewDefaultTaskModeModel(conn *gorm.DB) *defaultTaskModeModel {
+	return &defaultTaskModeModel{
+		conn:  conn,
+		table: "task_mode",
+	}
+}
+
+func (m *defaultTaskModeModel) GetTableName() string {
+	return m.table
+}
+func (m *defaultTaskModeModel) SelectByModel(TaskModeModel) (result []TaskModeModel, err error) {
+	return
+}
+func (m *defaultTaskModeModel) Insert(TaskModeModel) (id int64, err error) {
+	return
+}
+func (m *defaultTaskModeModel) Update(TaskModeModel) (err error) {
+	return
+}
+func (m *defaultTaskModeModel) Delete(int64) (err error) {
+	return
 }

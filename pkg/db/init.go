@@ -1,40 +1,39 @@
 package db
 
 import (
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
-
-var DbGorm *gorm.DB
 
 const (
 	lastVersion = 1
 )
 
-func InitDatabase(dbPath string) (err error) {
-	utils.ZapLog.Info("init database start")
-	DbGorm, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+func InitDatabase(dbPath string) (db *gorm.DB, err error) {
+	logger.ZapLog.Info("init database start")
+	db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		return
 	}
-	var db iinitDb = &sqliteDbStruct{
+	var s iinitDb = &sqliteDbStruct{
+		db:          db,
 		lastVersion: lastVersion,
 		migrateList: make([]autoMigrateFunc, 0),
 	}
-	err = db.getSqliteVersion()
+	err = s.getSqliteVersion()
 	if err != nil {
 		return
 	}
-	err = db.onCreate()
+	err = s.onCreate()
 	if err != nil {
 		return
 	}
-	err = db.onUpgrade()
+	err = s.onUpgrade()
 	if err != nil {
 		return
 	}
-	utils.ZapLog.Info("init database end")
+	logger.ZapLog.Info("init database end")
 	return
 }
 
