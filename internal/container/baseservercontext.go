@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var GlobalServerContext *BaseServiceContext
+var GlobalServerContext *BaseServiceContext = &BaseServiceContext{}
 
 type BaseServiceContext struct {
 	Config           AppConfig
@@ -22,27 +22,45 @@ type BaseServiceContext struct {
 	ClassifyModel    model.IClassifyModel
 }
 
-func InitServiceContext(c AppConfig) (err error) {
-	db, err := db.InitDatabase(c.DbPath)
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-06
+ * @Description    : 初始化 context
+ * @param           {chan<-db.DbInitStateType} ch
+ * @return          {*}
+ */
+func InitServiceContext(ch chan<- db.DbInitStateType) {
+	db, err := db.InitDatabase(GlobalServerContext.Config.DbPath, ch)
 	if err != nil {
 		logger.ZapLog.Error(`init Database error`,
 			zap.Error(err),
-			zap.String("version", c.KernelVersion),
-			zap.String("path", c.DbPath))
+			zap.String("version", GlobalServerContext.Config.KernelVersion),
+			zap.String("path", GlobalServerContext.Config.DbPath))
 		return
 	}
 	once := new(sync.Once)
 	once.Do(func() {
-		tmp := &BaseServiceContext{
-			Config:           c,
-			Db:               db,
-			TaskModel:        model.NewDefaultTaskModel(db),
-			TaskChildModel:   model.NewDefaultTaskChildModel(db),
-			TaskContentModel: model.NewDefaultTaskContentModel(db),
-			TaskModelModel:   model.NewDefaultTaskModeModel(db),
-			ClassifyModel:    model.NewDefaultClassifyModel(db),
-		}
-		GlobalServerContext = tmp
+		GlobalServerContext.Db = db
+		GlobalServerContext.TaskModel = model.NewDefaultTaskModel(db)
+		GlobalServerContext.TaskChildModel = model.NewDefaultTaskChildModel(db)
+		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(db)
+		GlobalServerContext.TaskModelModel = model.NewDefaultTaskModeModel(db)
+		GlobalServerContext.ClassifyModel = model.NewDefaultClassifyModel(db)
 	})
-	return
+}
+
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-06
+ * @Description    : 追踪 db 初始化状态
+ * @param           {<-chandb.DbInitStateType} ch
+ * @return          {*}
+ */
+func TailDbInitStatus(ch <-chan db.DbInitStateType) {
+	for state := range ch {
+		GlobalServerContext.Config.DbInitState = state
+		if state == db.DbInitSuccess {
+			return
+		}
+	}
 }

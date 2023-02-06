@@ -14,7 +14,7 @@
       "args": [
         "--port=4935",
         "--mode=debug",
-        "--dbPath=./assert/todo_shop.db",
+        "--dbPath=./assert/ectype/todo_shop.db",
         "--local=0"
       ]
     }

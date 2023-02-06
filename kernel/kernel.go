@@ -6,5 +6,5 @@ import (
 )
 
 func StartKernel() {
-	go server.Serve()
+	go server.ServerStart()
 }

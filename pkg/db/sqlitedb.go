@@ -45,6 +45,7 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 	logger.ZapLog.Info("init database oncreate start", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
+	// 初始化 table
 	err = s.db.Exec(fmt.Sprintf(`
 	CREATE TABLE task(
 		id INTEGER NOT NULL PRIMARY KEY  AUTOINCREMENT , --
@@ -107,7 +108,35 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 
 	PRAGMA user_version =%d;
 `, lastVersion)).Error
+	if err != nil {
+		return
+	}
+	logger.ZapLog.Info("create table success", zap.Int(
+		"oldVersion", s.curVersion,
+	), zap.Int("newVersion", s.lastVersion))
+	// 初始化数据
+	err = s.db.Exec(`
+	-- classify
+INSERT INTO classify(title,color,sort,created_time,updated_time)  VALUES('普通','#c7ecee',1,strftime('%s','now'),strftime('%s','now'));
+INSERT INTO classify(title,color,sort,created_time,updated_time)  VALUES('工作','#4ac8b2',2,strftime('%s','now'),strftime('%s','now'));
+
+-- task_mode
+INSERT INTO task_mode(mode_id)  VALUES(0);
+
+-- task
+INSERT INTO task(title,classify_id,task_mode_id,created_time,updated_time)  VALUES('欢迎加入',1,1,strftime('%s','now'),strftime('%s','now'));
+INSERT INTO task(title,classify_id,task_mode_id,created_time,updated_time)  VALUES('第一天',1,1,strftime('%s','now'),strftime('%s','now'));
+
+-- task_content
+INSERT INTO task_content(task_id,content)  VALUES(1,'(｡･∀･)ﾉﾞ嗨，小当家，欢迎回到您的小卖铺！');
+INSERT INTO task_content(task_id,content)  VALUES(2,'第一天，您打算做些什么呢？');`).Error
+	if err != nil {
+		return
+	}
 	s.curVersion = lastVersion
+	logger.ZapLog.Info("init data success", zap.Int(
+		"oldVersion", s.curVersion,
+	), zap.Int("newVersion", s.lastVersion))
 	logger.ZapLog.Info("init database oncreate end", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
@@ -128,6 +157,11 @@ func (s *sqliteDbStruct) onUpgrade() (err error) {
 		f := s.migrateList[i-1]
 		err = f()
 		if err != nil {
+			logger.ZapLog.Error("upgrade database err",
+				zap.Int("upgrate version", i),
+				zap.Int(
+					"oldVersion", s.curVersion),
+				zap.Int("newVersion", s.lastVersion))
 			return
 		}
 	}

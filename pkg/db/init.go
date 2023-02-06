@@ -6,11 +6,24 @@ import (
 	"gorm.io/gorm"
 )
 
+// 数据库初始化状态
+type DbInitStateType int
+
 const (
-	lastVersion = 1
+	lastVersion                   = 1
+	DbInitFailure DbInitStateType = iota - 1
+	DbCreating
+	DbUpgrading
+	DbInitSuccess
 )
 
-func InitDatabase(dbPath string) (db *gorm.DB, err error) {
+func InitDatabase(dbPath string, ch chan<- DbInitStateType) (db *gorm.DB, err error) {
+	defer func(ch chan<- DbInitStateType) {
+		if err != nil {
+			ch <- DbInitFailure
+		}
+		ch <- DbInitSuccess
+	}(ch)
 	logger.ZapLog.Info("init database start")
 	db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
@@ -25,10 +38,12 @@ func InitDatabase(dbPath string) (db *gorm.DB, err error) {
 	if err != nil {
 		return
 	}
+	ch <- DbCreating
 	err = s.onCreate()
 	if err != nil {
 		return
 	}
+	ch <- DbUpgrading
 	err = s.onUpgrade()
 	if err != nil {
 		return

@@ -13,7 +13,7 @@ var (
 	ZapLog *zap.Logger
 )
 
-func SetupZapLogger() {
+func init() {
 	//日志级别
 	highPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool { //error级别
 		return lev >= zap.ErrorLevel
