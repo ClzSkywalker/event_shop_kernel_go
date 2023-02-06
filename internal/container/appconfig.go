@@ -4,7 +4,7 @@ import (
 	"flag"
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -40,7 +40,7 @@ func InitConfig() {
 		Language:      *local,
 		KernelVersion: KernelVersion,
 	}
-	logger.ZapLog.Info(`dbInit`,
+	utils.ZapLog.Info(`dbInit`,
 		zap.String("db path", config.DbPath),
 		zap.Int("local", config.Language))
 	GlobalServerContext.Config = config

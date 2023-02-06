@@ -5,7 +5,7 @@ import (
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -30,9 +30,9 @@ type BaseServiceContext struct {
  * @return          {*}
  */
 func InitServiceContext(ch chan<- db.DbInitStateType) {
-	db, err := db.InitDatabase(GlobalServerContext.Config.DbPath, ch)
+	database, err := db.InitDatabase(GlobalServerContext.Config.DbPath, ch)
 	if err != nil {
-		logger.ZapLog.Error(`init Database error`,
+		utils.ZapLog.Error(`init Database error`,
 			zap.Error(err),
 			zap.String("version", GlobalServerContext.Config.KernelVersion),
 			zap.String("path", GlobalServerContext.Config.DbPath))
@@ -40,12 +40,13 @@ func InitServiceContext(ch chan<- db.DbInitStateType) {
 	}
 	once := new(sync.Once)
 	once.Do(func() {
-		GlobalServerContext.Db = db
-		GlobalServerContext.TaskModel = model.NewDefaultTaskModel(db)
-		GlobalServerContext.TaskChildModel = model.NewDefaultTaskChildModel(db)
-		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(db)
-		GlobalServerContext.TaskModelModel = model.NewDefaultTaskModeModel(db)
-		GlobalServerContext.ClassifyModel = model.NewDefaultClassifyModel(db)
+		GlobalServerContext.Db = database
+		GlobalServerContext.TaskModel = model.NewDefaultTaskModel(database)
+		GlobalServerContext.TaskChildModel = model.NewDefaultTaskChildModel(database)
+		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(database)
+		GlobalServerContext.TaskModelModel = model.NewDefaultTaskModeModel(database)
+		GlobalServerContext.ClassifyModel = model.NewDefaultClassifyModel(database)
+		ch <- db.DbInitSuccess
 	})
 }
 

@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -22,9 +22,8 @@ func InitDatabase(dbPath string, ch chan<- DbInitStateType) (db *gorm.DB, err er
 		if err != nil {
 			ch <- DbInitFailure
 		}
-		ch <- DbInitSuccess
 	}(ch)
-	logger.ZapLog.Info("init database start")
+	utils.ZapLog.Info("init database start")
 	db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		return
@@ -48,7 +47,7 @@ func InitDatabase(dbPath string, ch chan<- DbInitStateType) (db *gorm.DB, err er
 	if err != nil {
 		return
 	}
-	logger.ZapLog.Info("init database end")
+	utils.ZapLog.Info("init database end")
 	return
 }
 

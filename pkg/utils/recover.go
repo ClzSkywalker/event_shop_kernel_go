@@ -1,7 +1,12 @@
 package utils
 
+import (
+	"runtime/debug"
+
+	"go.uber.org/zap"
+)
+
 type recoverFunc func()
-type logErrFunc func(interface{})
 
 /**
  * @Author         : Angular
@@ -11,12 +16,12 @@ type logErrFunc func(interface{})
  * @param           {logErrFunc} logFunc
  * @return          {*}
  */
-func RecoverFunc(goFunc recoverFunc, logFunc logErrFunc) {
-	defer func(f recoverFunc) {
+func RecoverFunc(callBack recoverFunc) {
+	defer func() {
 		if err := recover(); err != nil {
-			go f()
-			go logFunc(err)
+			ZapLog.Panic("[server panic]", zap.Any("RecoverFunc", err))
+			debug.PrintStack()
 		}
-	}(goFunc)
-	goFunc()
+	}()
+	callBack()
 }

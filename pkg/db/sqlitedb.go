@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/logger"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -42,7 +42,7 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 	if s.curVersion > 0 {
 		return
 	}
-	logger.ZapLog.Info("init database oncreate start", zap.Int(
+	utils.ZapLog.Info("init database oncreate start", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	// 初始化 table
@@ -111,7 +111,7 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 	if err != nil {
 		return
 	}
-	logger.ZapLog.Info("create table success", zap.Int(
+	utils.ZapLog.Info("create table success", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	// 初始化数据
@@ -134,10 +134,10 @@ INSERT INTO task_content(task_id,content)  VALUES(2,'第一天，您打算做些
 		return
 	}
 	s.curVersion = lastVersion
-	logger.ZapLog.Info("init data success", zap.Int(
+	utils.ZapLog.Info("init data success", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
-	logger.ZapLog.Info("init database oncreate end", zap.Int(
+	utils.ZapLog.Info("init database oncreate end", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	return
@@ -150,14 +150,14 @@ INSERT INTO task_content(task_id,content)  VALUES(2,'第一天，您打算做些
  * @return          {*}
  */
 func (s *sqliteDbStruct) onUpgrade() (err error) {
-	logger.ZapLog.Info("upgrade database onupgrade start", zap.Int(
+	utils.ZapLog.Info("upgrade database onupgrade start", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	for i := s.curVersion; i < s.lastVersion; i++ {
 		f := s.migrateList[i-1]
 		err = f()
 		if err != nil {
-			logger.ZapLog.Error("upgrade database err",
+			utils.ZapLog.Error("upgrade database err",
 				zap.Int("upgrate version", i),
 				zap.Int(
 					"oldVersion", s.curVersion),
@@ -166,7 +166,7 @@ func (s *sqliteDbStruct) onUpgrade() (err error) {
 		}
 	}
 	s.curVersion = s.lastVersion
-	logger.ZapLog.Info("upgrade database onupgrade end", zap.Int(
+	utils.ZapLog.Info("upgrade database onupgrade end", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	return

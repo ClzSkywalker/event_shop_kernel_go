@@ -12,7 +12,7 @@
       "cwd": "./",
       "program": "${workspaceFolder}/cmd/main.go",
       "args": [
-        "--port=4935",
+        "--port=6807",
         "--mode=debug",
         "--dbPath=./assert/ectype/todo_shop.db",
         "--local=0"
