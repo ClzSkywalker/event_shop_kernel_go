@@ -27,17 +27,19 @@ type AppConfig struct {
  * @Description    : 解析参数,初始化config
  * @return          {*}
  */
-func InitConfig() {
-	port := flag.Int("port", 4935, "port")
-	mode := flag.String("mode", "debug", "gin mode")
-	dbPath := flag.String("dbPath", "", "database path")
-	local := flag.Int("local", 0, "language")
+func InitConfig(port, local int, mode, dbPath string) {
+	var port1, local1 int
+	var mode1, dbPath1 string
+	flag.IntVar(&port1, "port", port, "--port")
+	flag.StringVar(&mode1, "mode", mode, "--mode")
+	flag.StringVar(&dbPath1, "dbPath", dbPath, "database path")
+	flag.IntVar(&local1, "local", local, "language")
 	flag.Parse()
 	config := AppConfig{
-		Port:          *port,
-		Mode:          *mode,
-		DbPath:        *dbPath,
-		Language:      *local,
+		Port:          port1,
+		Mode:          mode1,
+		DbPath:        dbPath1,
+		Language:      local1,
 		KernelVersion: KernelVersion,
 	}
 	utils.ZapLog.Info(`dbInit`,

@@ -12,12 +12,39 @@ import (
 	"go.uber.org/zap"
 )
 
-func ServerStart() {
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-06
+ * @Description    : pc server
+ * @return          {*}
+ */
+func CmdServer() {
 	utils.ZapLog.Info(`start event shop kernel server`,
 		zap.String("version", container.KernelVersion))
 
-	container.InitConfig()
+	container.InitConfig(4319, 0, gin.ReleaseMode, "")
+	serveInit()
+}
 
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-06
+ * @Description    : mobile server
+ * @param           {*} port
+ * @param           {int} local
+ * @param           {*} mode
+ * @param           {string} dbPath
+ * @return          {*}
+ */
+func KernelServer(port, local int, mode, dbPath string) {
+	utils.ZapLog.Info(`start event shop kernel server`,
+		zap.String("version", container.KernelVersion))
+
+	container.InitConfig(port, local, mode, dbPath)
+	serveInit()
+}
+
+func serveInit() {
 	ch := make(chan db.DbInitStateType, 1)
 	go container.TailDbInitStatus(ch)
 	go container.InitServiceContext(ch)

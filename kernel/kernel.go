@@ -6,6 +6,6 @@ import (
 	_ "golang.org/x/mobile/bind"
 )
 
-func StartKernel() {
-	go utils.RecoverFunc(server.ServerStart)
+func StartKernel(port, local int, mode, dbPath string) {
+	go utils.RecoverFunc(func() { server.KernelServer(port, local, mode, dbPath) })
 }

@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	go utils.RecoverFunc(server.ServerStart)
+	go utils.RecoverFunc(server.CmdServer)
 	utils.HandleSignal()
 }
