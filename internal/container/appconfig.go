@@ -16,9 +16,10 @@ type AppConfig struct {
 	Port          int                // 端口
 	Mode          string             // gin mode
 	KernelVersion string             // 内核版本
-	DbPath        string             // sqlite path
-	DbInitState   db.DbInitStateType // 数据库是否初始化完毕
 	Language      int                // 0-zh 1-en
+	DbPath        string             // sqlite path
+	LogPath       string             // db path
+	DbInitState   db.DbInitStateType // 数据库是否初始化完毕
 }
 
 /**
@@ -27,23 +28,26 @@ type AppConfig struct {
  * @Description    : 解析参数,初始化config
  * @return          {*}
  */
-func InitConfig(port, local int, mode, dbPath string) {
-	var port1, local1 int
-	var mode1, dbPath1 string
-	flag.IntVar(&port1, "port", port, "--port")
-	flag.StringVar(&mode1, "mode", mode, "--mode")
-	flag.StringVar(&dbPath1, "dbPath", dbPath, "database path")
-	flag.IntVar(&local1, "local", local, "language")
+func InitConfig(c AppConfig) {
+	var port, local int
+	var mode, dbPath, logPath string
+	flag.IntVar(&port, "port", c.Port, "--port")
+	flag.StringVar(&mode, "mode", c.Mode, "--mode")
+	flag.IntVar(&local, "local", c.Language, "language")
+	flag.StringVar(&dbPath, "dbPath", c.DbPath, "database path")
+	flag.StringVar(&logPath, "logPath", c.LogPath, "log path")
 	flag.Parse()
 	config := AppConfig{
-		Port:          port1,
-		Mode:          mode1,
-		DbPath:        dbPath1,
-		Language:      local1,
+		Port:          port,
+		Mode:          mode,
+		Language:      local,
+		DbPath:        dbPath,
+		LogPath:       logPath,
 		KernelVersion: KernelVersion,
 	}
+	utils.InitLogger(c.LogPath)
 	utils.ZapLog.Info(`dbInit`,
-		zap.String("db path", config.DbPath),
-		zap.Int("local", config.Language))
+		zap.Any("config", config))
+
 	GlobalServerContext.Config = config
 }

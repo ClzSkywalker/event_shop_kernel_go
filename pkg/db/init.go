@@ -8,6 +8,9 @@ import (
 
 // 数据库初始化状态
 type DbInitStateType int
+type CreateTableFunc func() error
+type DropTableFunc func() error
+type autoMigrateFunc func() (err error)
 
 const (
 	lastVersion                   = 1
@@ -17,44 +20,33 @@ const (
 	DbInitSuccess
 )
 
-func InitDatabase(dbPath string, ch chan<- DbInitStateType) (db *gorm.DB, err error) {
-	defer func(ch chan<- DbInitStateType) {
-		if err != nil {
-			ch <- DbInitFailure
-		}
-	}(ch)
+func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
 	utils.ZapLog.Info("init database start")
 	db, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	if err != nil {
 		return
 	}
-	var s iinitDb = &sqliteDbStruct{
+	idb = &sqliteDbStruct{
 		db:          db,
 		lastVersion: lastVersion,
 		migrateList: make([]autoMigrateFunc, 0),
 	}
-	err = s.getSqliteVersion()
+
+	err = idb.GetVersion()
 	if err != nil {
 		return
 	}
-	ch <- DbCreating
-	err = s.onCreate()
-	if err != nil {
-		return
-	}
-	ch <- DbUpgrading
-	err = s.onUpgrade()
-	if err != nil {
-		return
-	}
-	utils.ZapLog.Info("init database end")
 	return
 }
 
-type autoMigrateFunc func() (err error)
-
 type iinitDb interface {
-	getSqliteVersion() (err error)
+	GetVersion() (err error)
+	SetVersion() (err error)
+	SetCreateFunc(...CreateTableFunc)
+	SetDropFunc(...DropTableFunc)
+	OnInitDb(mode string, ch chan<- DbInitStateType) (err error)
 	onCreate() (err error)
 	onUpgrade() (err error)
+	onInitData() (err error)
+	onDrop() (err error)
 }

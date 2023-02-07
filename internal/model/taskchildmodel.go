@@ -8,14 +8,14 @@ import (
 
 type TaskChildModel struct {
 	BaseModel
-	ParentId      int64     `json:"parent" gorm:"parent"`
-	Title         string    `json:"title" gorm:"title"`
-	CompletedTime time.Time `json:"completed_time" gorm:"completed_time"`
-	GiveUpTime    time.Time `json:"give_up" gorm:"give_up"`
+	ParentId      int64     `json:"parent" gorm:"type:INTEGER"`
+	Title         string    `json:"title" gorm:"type:TEXT"`
+	CompletedTime time.Time `json:"completed_time" gorm:"type:timestamp"`
+	GiveUpTime    time.Time `json:"give_up_time" gorm:"type:timestamp"`
 }
 
 type ITaskChildModel interface {
-	GetTableName() string
+	IBaseModel
 	SelectByModel(TaskChildModel) ([]TaskChildModel, error)
 	Insert(TaskChildModel) (int64, error)
 	Update(TaskChildModel) error
@@ -34,9 +34,20 @@ func NewDefaultTaskChildModel(conn *gorm.DB) *defaultTaskChildModel {
 	}
 }
 
-func (m *defaultTaskChildModel) GetTableName() string {
+func (m *defaultTaskChildModel) TableName() string {
 	return m.table
 }
+
+func (m *defaultTaskChildModel) CreateTable() (err error) {
+	err = m.conn.Table(m.table).AutoMigrate(&TaskChildModel{})
+	return
+}
+
+func (m *defaultTaskChildModel) DropTable() (err error) {
+	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	return
+}
+
 func (m *defaultTaskChildModel) SelectByModel(TaskChildModel) (result []TaskChildModel, err error) {
 	return
 }

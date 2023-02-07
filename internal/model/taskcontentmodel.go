@@ -11,10 +11,9 @@ const (
 
 type TaskContentModel struct {
 	BaseModel
-	TaskId       int    `json:"task_id" gorm:"task_id"`
-	Content      string `json:"content" gorm:"content"`
-	FileListByte []byte `json:"file_list" gorm:"file_list"`
-	FileList     []TaskFileModel
+	TaskId   int             `json:"task_id" gorm:"type:INTEGER"`
+	Content  string          `json:"content" gorm:"type:TEXT"`
+	FileList []TaskFileModel `json:"file_list" gorm:"type:BLOB"`
 }
 
 type TaskFileModel struct {
@@ -23,7 +22,7 @@ type TaskFileModel struct {
 }
 
 type ITaskContentModel interface {
-	GetTableName() string
+	IBaseModel
 	SelectByModel(TaskContentModel) ([]TaskContentModel, error)
 	Insert(TaskContentModel) (int64, error)
 	Update(TaskContentModel) error
@@ -42,8 +41,18 @@ func NewDefaultTaskContentModel(conn *gorm.DB) *defaultTaskContentModel {
 	}
 }
 
-func (m *defaultTaskContentModel) GetTableName() string {
+func (m *defaultTaskContentModel) TableName() string {
 	return m.table
+}
+
+func (m *defaultTaskContentModel) CreateTable() (err error) {
+	err = m.conn.Table(m.table).AutoMigrate(&TaskContentModel{})
+	return
+}
+
+func (m *defaultTaskContentModel) DropTable() (err error) {
+	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	return
 }
 func (m *defaultTaskContentModel) SelectByModel(TaskContentModel) (result []TaskContentModel, err error) {
 	return

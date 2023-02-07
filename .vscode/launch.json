@@ -5,17 +5,32 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "server",
+      "name": "server mode(debug)",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "cwd": "./",
-      "program": "${workspaceFolder}/cmd/main.go",
+      "program": "${workspaceFolder}/cmd/api/main.go",
       "args": [
         "--port=6807",
         "--mode=debug",
         "--dbPath=./assert/ectype/todo_shop.db",
-        "--local=0"
+        "--local=0",
+        "--logPath=./logs"
+      ]
+    },    {
+      "name": "server mode(test)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "cwd": "./",
+      "program": "${workspaceFolder}/cmd/api/main.go",
+      "args": [
+        "--port=6807",
+        "--mode=test",
+        "--dbPath=./assert/ectype/todo_shop.db",
+        "--local=0",
+        "--logPath=./logs"
       ]
     }
   ]

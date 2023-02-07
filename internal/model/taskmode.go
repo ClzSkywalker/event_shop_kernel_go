@@ -16,9 +16,8 @@ const (
 )
 
 type TaskModeModel struct {
-	ModeId      TaskModeType `json:"mode_id" gorm:"mode_id"` // 重复模式 TaskModeEnum
-	ConfigBytes []byte       `json:"config" gorm:"config"`
-	Config      TaskModeConfigModel
+	ModeId TaskModeType        `json:"mode_id" gorm:"type:INTEGER"` // 重复模式 TaskModeEnum
+	Config TaskModeConfigModel `json:"config" gorm:"type:BLOB"`
 }
 
 type TaskModeConfigModel struct {
@@ -26,7 +25,7 @@ type TaskModeConfigModel struct {
 }
 
 type ITaskModeModel interface {
-	GetTableName() string
+	IBaseModel
 	SelectByModel(TaskModeModel) ([]TaskModeModel, error)
 	Insert(TaskModeModel) (int64, error)
 	Update(TaskModeModel) error
@@ -45,8 +44,18 @@ func NewDefaultTaskModeModel(conn *gorm.DB) *defaultTaskModeModel {
 	}
 }
 
-func (m *defaultTaskModeModel) GetTableName() string {
+func (m *defaultTaskModeModel) TableName() string {
 	return m.table
+}
+
+func (m *defaultTaskModeModel) CreateTable() (err error) {
+	err = m.conn.Table(m.table).AutoMigrate(&TaskModeModel{})
+	return
+}
+
+func (m *defaultTaskModeModel) DropTable() (err error) {
+	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	return
 }
 func (m *defaultTaskModeModel) SelectByModel(TaskModeModel) (result []TaskModeModel, err error) {
 	return

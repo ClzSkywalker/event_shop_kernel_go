@@ -19,10 +19,17 @@ import (
  * @return          {*}
  */
 func CmdServer() {
+	container.InitConfig(container.AppConfig{
+		Port:     4319,
+		Mode:     gin.ReleaseMode,
+		DbPath:   "",
+		LogPath:  "./logs",
+		Language: 0,
+	})
+
 	utils.ZapLog.Info(`start event shop kernel server`,
 		zap.String("version", container.KernelVersion))
 
-	container.InitConfig(4319, 0, gin.ReleaseMode, "")
 	serveInit()
 }
 
@@ -36,11 +43,12 @@ func CmdServer() {
  * @param           {string} dbPath
  * @return          {*}
  */
-func KernelServer(port, local int, mode, dbPath string) {
+func KernelServer(c container.AppConfig) {
+	container.InitConfig(c)
+
 	utils.ZapLog.Info(`start event shop kernel server`,
 		zap.String("version", container.KernelVersion))
 
-	container.InitConfig(port, local, mode, dbPath)
 	serveInit()
 }
 

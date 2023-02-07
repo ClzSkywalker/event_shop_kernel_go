@@ -30,7 +30,7 @@ type BaseServiceContext struct {
  * @return          {*}
  */
 func InitServiceContext(ch chan<- db.DbInitStateType) {
-	database, err := db.InitDatabase(GlobalServerContext.Config.DbPath, ch)
+	database, idb, err := db.InitDatabase(GlobalServerContext.Config.DbPath, GlobalServerContext.Config.Mode)
 	if err != nil {
 		utils.ZapLog.Error(`init Database error`,
 			zap.Error(err),
@@ -46,6 +46,27 @@ func InitServiceContext(ch chan<- db.DbInitStateType) {
 		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(database)
 		GlobalServerContext.TaskModelModel = model.NewDefaultTaskModeModel(database)
 		GlobalServerContext.ClassifyModel = model.NewDefaultClassifyModel(database)
+		idb.SetDropFunc(GlobalServerContext.TaskModel.DropTable,
+			GlobalServerContext.TaskChildModel.DropTable,
+			GlobalServerContext.TaskContentModel.DropTable,
+			GlobalServerContext.TaskModelModel.DropTable,
+			GlobalServerContext.ClassifyModel.DropTable)
+		idb.SetCreateFunc(GlobalServerContext.TaskModel.CreateTable,
+			GlobalServerContext.TaskChildModel.CreateTable,
+			GlobalServerContext.TaskContentModel.CreateTable,
+			GlobalServerContext.TaskModelModel.CreateTable,
+			GlobalServerContext.ClassifyModel.CreateTable)
+		err = database.Transaction(func(tx *gorm.DB) error {
+			return idb.OnInitDb(GlobalServerContext.Config.Mode, ch)
+		})
+		if err != nil {
+			ch <- db.DbInitFailure
+			utils.ZapLog.Error(`init Database error`,
+				zap.Error(err),
+				zap.String("version", GlobalServerContext.Config.KernelVersion),
+				zap.String("path", GlobalServerContext.Config.DbPath))
+			return
+		}
 		ch <- db.DbInitSuccess
 	})
 }

@@ -13,7 +13,14 @@ var (
 	ZapLog *zap.Logger
 )
 
-func init() {
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-07
+ * @Description    : 初始化日志
+ * @param           {string} path 日志路径
+ * @return          {*}
+ */
+func InitLogger(path string) {
 	//日志级别
 	highPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool { //error级别
 		return lev >= zap.ErrorLevel
@@ -24,22 +31,22 @@ func init() {
 	infoCore := zapcore.NewCore(
 		getEncoder(),
 		// 双向输出 file,console
-		zapcore.NewMultiWriteSyncer(getWriterSyncer("info"),
+		zapcore.NewMultiWriteSyncer(getWriterSyncer(path, "info"),
 			zapcore.AddSync(os.Stdout)),
 		lowPriority)
 	errCore := zapcore.NewCore(
 		getEncoder(),
 		// 双向输出 file,console
-		zapcore.NewMultiWriteSyncer(getWriterSyncer("err"),
+		zapcore.NewMultiWriteSyncer(getWriterSyncer(path, "err"),
 			zapcore.AddSync(os.Stdout)),
 		highPriority)
 	//zap.AddCaller() 显示文件名 和 行号
 	ZapLog = zap.New(zapcore.NewTee(infoCore, errCore), zap.AddCaller())
 }
 
-func getWriterSyncer(level string) zapcore.WriteSyncer {
+func getWriterSyncer(path, level string) zapcore.WriteSyncer {
 	lsyncer := &lumberjack.Logger{
-		Filename:   fmt.Sprintf("./logs/%s.log", level),
+		Filename:   fmt.Sprintf("%s/%s.log", path, level),
 		MaxSize:    10,
 		MaxBackups: 3,
 		MaxAge:     30,
