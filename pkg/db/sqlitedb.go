@@ -39,6 +39,10 @@ func (s *sqliteDbStruct) SetVersion() (err error) {
 	return s.db.Exec(fmt.Sprintf("pragma user_version=%d", s.lastVersion)).Error
 }
 
+func (s *sqliteDbStruct) SetDb(db *gorm.DB) {
+	s.db = db
+}
+
 func (s *sqliteDbStruct) SetCreateFunc(p ...CreateTableFunc) {
 	s.CreateFunc = p
 }

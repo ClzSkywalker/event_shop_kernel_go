@@ -46,17 +46,20 @@ func InitServiceContext(ch chan<- db.DbInitStateType) {
 		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(database)
 		GlobalServerContext.TaskModelModel = model.NewDefaultTaskModeModel(database)
 		GlobalServerContext.ClassifyModel = model.NewDefaultClassifyModel(database)
-		idb.SetDropFunc(GlobalServerContext.TaskModel.DropTable,
-			GlobalServerContext.TaskChildModel.DropTable,
-			GlobalServerContext.TaskContentModel.DropTable,
-			GlobalServerContext.TaskModelModel.DropTable,
-			GlobalServerContext.ClassifyModel.DropTable)
-		idb.SetCreateFunc(GlobalServerContext.TaskModel.CreateTable,
-			GlobalServerContext.TaskChildModel.CreateTable,
-			GlobalServerContext.TaskContentModel.CreateTable,
-			GlobalServerContext.TaskModelModel.CreateTable,
-			GlobalServerContext.ClassifyModel.CreateTable)
 		err = database.Transaction(func(tx *gorm.DB) error {
+			idb.SetDb(tx)
+			idb.SetDropFunc(
+				model.NewDefaultTaskModel(tx).DropTable,
+				model.NewDefaultTaskChildModel(tx).DropTable,
+				model.NewDefaultTaskContentModel(tx).DropTable,
+				model.NewDefaultTaskModeModel(tx).DropTable,
+				model.NewDefaultClassifyModel(tx).DropTable)
+			idb.SetCreateFunc(
+				model.NewDefaultTaskModel(tx).CreateTable,
+				model.NewDefaultTaskChildModel(tx).CreateTable,
+				model.NewDefaultTaskContentModel(tx).CreateTable,
+				model.NewDefaultTaskModeModel(tx).CreateTable,
+				model.NewDefaultClassifyModel(tx).CreateTable)
 			return idb.OnInitDb(GlobalServerContext.Config.Mode, ch)
 		})
 		if err != nil {
