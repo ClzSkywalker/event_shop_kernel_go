@@ -3,7 +3,7 @@ package container
 import (
 	"flag"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 )
@@ -13,13 +13,13 @@ const (
 )
 
 type AppConfig struct {
-	Port          int                // 端口
-	Mode          string             // gin mode
-	KernelVersion string             // 内核版本
-	Language      int                // 0-zh 1-en
-	DbPath        string             // sqlite path
-	LogPath       string             // db path
-	DbInitState   db.DbInitStateType // 数据库是否初始化完毕
+	Port          int                    // 端口
+	Mode          string                 // gin mode
+	KernelVersion string                 // 内核版本
+	Language      int                    // 0-zh 1-en
+	DbPath        string                 // sqlite path
+	LogPath       string                 // db path
+	DbInitState   consts.DbInitStateType // 数据库是否初始化完毕
 }
 
 /**

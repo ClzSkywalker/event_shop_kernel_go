@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 
+	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -11,12 +12,12 @@ import (
 
 type sqliteDbStruct struct {
 	db          *gorm.DB
-	isInit      bool              // 是否已被初始化
-	curVersion  int               // current version
-	lastVersion int               // last version
-	migrateList []autoMigrateFunc // migrate func list
-	CreateFunc  []CreateTableFunc
-	DropFunc    []DropTableFunc
+	isInit      bool                     // 是否已被初始化
+	curVersion  int                      // current version
+	lastVersion int                      // last version
+	migrateList []consts.AutoMigrateFunc // migrate func list
+	CreateFunc  []consts.CreateTableFunc
+	DropFunc    []consts.DropTableFunc
 }
 
 /**
@@ -43,11 +44,11 @@ func (s *sqliteDbStruct) SetDb(db *gorm.DB) {
 	s.db = db
 }
 
-func (s *sqliteDbStruct) SetCreateFunc(p ...CreateTableFunc) {
+func (s *sqliteDbStruct) SetCreateFunc(p ...consts.CreateTableFunc) {
 	s.CreateFunc = p
 }
 
-func (s *sqliteDbStruct) SetDropFunc(p ...DropTableFunc) {
+func (s *sqliteDbStruct) SetDropFunc(p ...consts.DropTableFunc) {
 	s.DropFunc = p
 }
 
@@ -59,7 +60,7 @@ func (s *sqliteDbStruct) SetDropFunc(p ...DropTableFunc) {
  * @param           {chan<-DbInitStateType} ch
  * @return          {*}
  */
-func (s *sqliteDbStruct) OnInitDb(mode string, ch chan<- DbInitStateType) (err error) {
+func (s *sqliteDbStruct) OnInitDb(mode string, ch chan<- consts.DbInitStateType) (err error) {
 	if mode == gin.TestMode {
 		err = s.onDrop()
 		if err != nil {

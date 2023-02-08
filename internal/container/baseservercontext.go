@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
@@ -22,6 +23,8 @@ type BaseServiceContext struct {
 	ClassifyModel    model.IClassifyModel
 }
 
+var count = 0
+
 /**
  * @Author         : Angular
  * @Date           : 2023-02-06
@@ -29,7 +32,7 @@ type BaseServiceContext struct {
  * @param           {chan<-db.DbInitStateType} ch
  * @return          {*}
  */
-func InitServiceContext(ch chan<- db.DbInitStateType) {
+func InitServiceContext(ch chan<- consts.DbInitStateType) {
 	database, idb, err := db.InitDatabase(GlobalServerContext.Config.DbPath, GlobalServerContext.Config.Mode)
 	if err != nil {
 		utils.ZapLog.Error(`init Database error`,
@@ -72,6 +75,11 @@ func InitServiceContext(ch chan<- db.DbInitStateType) {
 		}
 		ch <- db.DbInitSuccess
 	})
+	count++
+	if count == 1 {
+		panic("panic test")
+	}
+	count++
 }
 
 /**
@@ -81,7 +89,7 @@ func InitServiceContext(ch chan<- db.DbInitStateType) {
  * @param           {<-chandb.DbInitStateType} ch
  * @return          {*}
  */
-func TailDbInitStatus(ch <-chan db.DbInitStateType) {
+func TailDbInitStatus(ch <-chan consts.DbInitStateType) {
 	for state := range ch {
 		GlobalServerContext.Config.DbInitState = state
 		if state == db.DbInitSuccess {

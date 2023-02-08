@@ -18,7 +18,8 @@
         "--local=0",
         "--logPath=./logs"
       ]
-    },    {
+    },
+    {
       "name": "server mode(test)",
       "type": "go",
       "request": "launch",
@@ -28,6 +29,21 @@
       "args": [
         "--port=6807",
         "--mode=test",
+        "--dbPath=./assert/ectype/todo_shop.db",
+        "--local=0",
+        "--logPath=./logs"
+      ]
+    },
+    {
+      "name": "server mode(release)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "cwd": "./",
+      "program": "${workspaceFolder}/cmd/api/main.go",
+      "args": [
+        "--port=6807",
+        "--mode=release",
         "--dbPath=./assert/ectype/todo_shop.db",
         "--local=0",
         "--logPath=./logs"

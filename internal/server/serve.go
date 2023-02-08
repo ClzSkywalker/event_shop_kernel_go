@@ -6,7 +6,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/middleware"
 	"github.com/clz.skywalker/event.shop/kernal/internal/router"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -45,7 +45,6 @@ func CmdServer() {
  */
 func KernelServer(c container.AppConfig) {
 	container.InitConfig(c)
-
 	utils.ZapLog.Info(`start event shop kernel server`,
 		zap.String("version", container.KernelVersion))
 
@@ -53,9 +52,9 @@ func KernelServer(c container.AppConfig) {
 }
 
 func serveInit() {
-	ch := make(chan db.DbInitStateType, 1)
-	go container.TailDbInitStatus(ch)
-	go container.InitServiceContext(ch)
+	ch := make(chan consts.DbInitStateType, 1)
+	go utils.RecoverReadChanFunc(container.GlobalServerContext.Config.LogPath, container.TailDbInitStatus, ch)
+	go utils.RecoverWriteChanFunc(container.GlobalServerContext.Config.LogPath, container.InitServiceContext, ch)
 	go serve()
 }
 
