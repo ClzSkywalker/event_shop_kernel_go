@@ -1,5 +1,7 @@
 package utils
 
+import "encoding/json"
+
 type Result struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
@@ -12,4 +14,9 @@ func NewResult() *Result {
 		Msg:  "",
 		Data: nil,
 	}
+}
+
+func NewResultByBytes(data []byte) (res *Result, err error) {
+	err = json.Unmarshal(data, res)
+	return
 }

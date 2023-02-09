@@ -97,3 +97,14 @@ func TailDbInitStatus(ch <-chan consts.DbInitStateType) {
 		}
 	}
 }
+
+func NewBaskServiceContext(database *gorm.DB) *BaseServiceContext {
+	base := *GlobalServerContext
+	base.Db = database
+	base.TaskModel = model.NewDefaultTaskModel(database)
+	base.TaskChildModel = model.NewDefaultTaskChildModel(database)
+	base.TaskContentModel = model.NewDefaultTaskContentModel(database)
+	base.TaskModelModel = model.NewDefaultTaskModeModel(database)
+	base.ClassifyModel = model.NewDefaultClassifyModel(database)
+	return &base
+}

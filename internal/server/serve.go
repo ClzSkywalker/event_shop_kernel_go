@@ -28,7 +28,7 @@ func CmdServer() {
 	})
 
 	utils.ZapLog.Info(`start event shop kernel server`,
-		zap.String("version", container.KernelVersion))
+		zap.String("version", consts.KernelVersion))
 
 	serveInit()
 }
@@ -46,7 +46,7 @@ func CmdServer() {
 func KernelServer(c container.AppConfig) {
 	container.InitConfig(c)
 	utils.ZapLog.Info(`start event shop kernel server`,
-		zap.String("version", container.KernelVersion))
+		zap.String("version", consts.KernelVersion))
 
 	serveInit()
 }

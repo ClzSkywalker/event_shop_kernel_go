@@ -60,7 +60,8 @@ func (m *defaultTaskModeModel) DropTable() (err error) {
 func (m *defaultTaskModeModel) SelectByModel(TaskModeModel) (result []TaskModeModel, err error) {
 	return
 }
-func (m *defaultTaskModeModel) Insert(TaskModeModel) (id int64, err error) {
+func (m *defaultTaskModeModel) Insert(task TaskModeModel) (id int64, err error) {
+	err = m.conn.Table(m.table).Create(task).Error
 	return
 }
 func (m *defaultTaskModeModel) Update(TaskModeModel) (err error) {

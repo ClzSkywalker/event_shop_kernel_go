@@ -8,10 +8,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const (
-	KernelVersion = "v0.0.1"
-)
-
 type AppConfig struct {
 	Port          int                    // 端口
 	Mode          string                 // gin mode
@@ -43,7 +39,7 @@ func InitConfig(c AppConfig) {
 		Language:      local,
 		DbPath:        dbPath,
 		LogPath:       logPath,
-		KernelVersion: KernelVersion,
+		KernelVersion: consts.KernelVersion,
 	}
 	utils.InitLogger(c.LogPath)
 	utils.ZapLog.Info(`dbInit`,
