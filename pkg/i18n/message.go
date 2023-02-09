@@ -1,9 +1,12 @@
-package errorx
+package i18n
 
 import (
 	"strconv"
 
+	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/entry"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
+	_ "github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"golang.org/x/text/message/catalog"
@@ -34,11 +37,17 @@ func init() {
  * @param           {error} err
  * @return          {*}
  */
-func Trans(lang string, key int64, err error) string {
-	tag := language.MustParse(lang)
-	var p = message.NewPrinter(tag)
-	if err != nil {
-		return p.Sprintf(key, err.Error())
+func Trans(lang string, err errorx.CodeError) string {
+	var tag language.Tag
+	switch lang {
+	case consts.LangChinese, consts.LangEnglish:
+		tag = language.MustParse(lang)
+	default:
+		tag = language.MustParse(consts.LangEnglish)
 	}
-	return p.Sprintf(key)
+	var p = message.NewPrinter(tag)
+	if len(err.Field) > 0 {
+		return p.Sprintf(strconv.FormatInt(err.Code, 10), err.Field...)
+	}
+	return p.Sprintf(strconv.FormatInt(err.Code, 10))
 }
