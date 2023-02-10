@@ -15,7 +15,6 @@
         "--port=6807",
         "--mode=debug",
         "--dbPath=./assert/ectype/todo_shop.db",
-        "--local=0",
         "--logPath=./logs"
       ]
     },
@@ -30,7 +29,6 @@
         "--port=6807",
         "--mode=test",
         "--dbPath=./assert/ectype/todo_shop.db",
-        "--local=0",
         "--logPath=./logs"
       ]
     },
@@ -45,7 +43,6 @@
         "--port=6807",
         "--mode=release",
         "--dbPath=./assert/ectype/todo_shop.db",
-        "--local=0",
         "--logPath=./logs"
       ]
     }

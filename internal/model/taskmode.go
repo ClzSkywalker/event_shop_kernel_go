@@ -16,7 +16,8 @@ const (
 )
 
 type TaskModeModel struct {
-	ModeId TaskModeType        `json:"mode_id" gorm:"type:INTEGER"` // 重复模式 TaskModeEnum
+	BaseModel
+	ModeId int                 `json:"mode_id" gorm:"type:INTEGER" validate:"required"` // 重复模式 TaskModeEnum
 	Config TaskModeConfigModel `json:"config" gorm:"type:JSON"`
 }
 

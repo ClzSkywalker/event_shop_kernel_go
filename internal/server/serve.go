@@ -7,6 +7,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/middleware"
 	"github.com/clz.skywalker/event.shop/kernal/internal/router"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -20,11 +21,10 @@ import (
  */
 func CmdServer() {
 	container.InitConfig(container.AppConfig{
-		Port:     4319,
-		Mode:     gin.ReleaseMode,
-		DbPath:   "",
-		LogPath:  "./logs",
-		Language: 0,
+		Port:    4319,
+		Mode:    gin.ReleaseMode,
+		DbPath:  "",
+		LogPath: "./logs",
 	})
 
 	utils.ZapLog.Info(`start event shop kernel server`,
@@ -52,6 +52,7 @@ func KernelServer(c container.AppConfig) {
 }
 
 func serveInit() {
+	container.GlobalServerContext.Validator = i18n.NewParaValidation()
 	ch := make(chan consts.DbInitStateType, 1)
 	go utils.RecoverReadChanFunc(container.GlobalServerContext.Config.LogPath, container.TailDbInitStatus, ch)
 	go utils.RecoverWriteChanFunc(container.GlobalServerContext.Config.LogPath, container.InitServiceContext, ch)

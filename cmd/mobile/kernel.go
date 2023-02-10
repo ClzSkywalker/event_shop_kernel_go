@@ -10,11 +10,10 @@ import (
 func StartKernel(port, local int, mode, dbPath, logPath string) {
 	go utils.RecoverFunc(func() {
 		server.KernelServer(container.AppConfig{
-			Port:     port,
-			Mode:     mode,
-			DbPath:   dbPath,
-			Language: local,
-			LogPath:  logPath,
+			Port:    port,
+			Mode:    mode,
+			DbPath:  dbPath,
+			LogPath: logPath,
 		})
 	})
 }

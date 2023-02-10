@@ -16,7 +16,10 @@ import (
  */
 func RouterManager(c *gin.Engine) {
 	globalRoute := c.Group("api/v1")
+	kernel := globalRoute.Group("/kernel")
+	kernel.Handle(http.MethodGet, "/config", ctrl.KernelState)
+
 	globalRoute.Handle(http.MethodGet, "/hello", ctrl.GetHello)
 	globalRoute.Handle(http.MethodGet, "/pwd", ctrl.GetPwd)
-	globalRoute.Handle(http.MethodGet, "/create", ctrl.Create)
+	globalRoute.Handle(http.MethodPost, "/task_mode", ctrl.CreateTaskMode)
 }

@@ -51,3 +51,17 @@ func Trans(lang string, err errorx.CodeError) string {
 	}
 	return p.Sprintf(strconv.FormatInt(err.Code, 10))
 }
+
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-10
+ * @Description    : 返回 error，并用中文封装好msg
+ * @param           {int64} code
+ * @param           {...interface{}} fields 变量参数
+ * @return          {*}
+ */
+func NewCodeError(code int64, fields ...interface{}) (err errorx.CodeError) {
+	err = errorx.CodeError{Code: code, Field: fields}
+	err.Msg = Trans(consts.LangChinese, err)
+	return
+}

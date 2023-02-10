@@ -11,8 +11,8 @@ const (
 
 func init() {
 	var entries = []entry.Entry{
-		{Tag: language.Chinese, Key: TaskModeErr, Msg: "任务%s,%d"},
-		{Tag: language.English, Key: TaskModeErr, Msg: "task mode%s,%d"},
+		{Tag: language.Chinese, Key: TaskModeErr, Msg: "zh%s"},
+		{Tag: language.English, Key: TaskModeErr, Msg: "cn%s"},
 	}
 	entry.SetEntries(entries...)
 }

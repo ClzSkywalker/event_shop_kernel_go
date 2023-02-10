@@ -9,13 +9,12 @@ import (
 )
 
 type AppConfig struct {
-	Port          int                    // 端口
-	Mode          string                 // gin mode
-	KernelVersion string                 // 内核版本
-	Language      int                    // 0-zh 1-en
-	DbPath        string                 // sqlite path
-	LogPath       string                 // db path
-	DbInitState   consts.DbInitStateType // 数据库是否初始化完毕
+	Port          int                    `json:"port"`           // 端口
+	Mode          string                 `json:"mode"`           // gin mode
+	KernelVersion string                 `json:"kernel_version"` // 内核版本
+	DbPath        string                 `json:"db_path"`        // sqlite path
+	LogPath       string                 `json:"log_path"`       // db path
+	DbInitState   consts.DbInitStateType `json:"db_state"`       // 数据库是否初始化完毕
 }
 
 /**
@@ -25,18 +24,16 @@ type AppConfig struct {
  * @return          {*}
  */
 func InitConfig(c AppConfig) {
-	var port, local int
+	var port int
 	var mode, dbPath, logPath string
 	flag.IntVar(&port, "port", c.Port, "--port")
 	flag.StringVar(&mode, "mode", c.Mode, "--mode")
-	flag.IntVar(&local, "local", c.Language, "language")
 	flag.StringVar(&dbPath, "dbPath", c.DbPath, "database path")
 	flag.StringVar(&logPath, "logPath", c.LogPath, "log path")
 	flag.Parse()
 	config := AppConfig{
 		Port:          port,
 		Mode:          mode,
-		Language:      local,
 		DbPath:        dbPath,
 		LogPath:       logPath,
 		KernelVersion: consts.KernelVersion,

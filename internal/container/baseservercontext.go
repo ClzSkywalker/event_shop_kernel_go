@@ -6,6 +6,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -16,10 +17,11 @@ var GlobalServerContext *BaseServiceContext = &BaseServiceContext{}
 type BaseServiceContext struct {
 	Config           AppConfig
 	Db               *gorm.DB
+	Validator        *i18n.ParaValidation
 	TaskModel        model.ITaskModel
 	TaskChildModel   model.ITaskChildModel
 	TaskContentModel model.ITaskContentModel
-	TaskModelModel   model.ITaskModeModel
+	TaskModeModel    model.ITaskModeModel
 	ClassifyModel    model.IClassifyModel
 }
 
@@ -47,7 +49,7 @@ func InitServiceContext(ch chan<- consts.DbInitStateType) {
 		GlobalServerContext.TaskModel = model.NewDefaultTaskModel(database)
 		GlobalServerContext.TaskChildModel = model.NewDefaultTaskChildModel(database)
 		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(database)
-		GlobalServerContext.TaskModelModel = model.NewDefaultTaskModeModel(database)
+		GlobalServerContext.TaskModeModel = model.NewDefaultTaskModeModel(database)
 		GlobalServerContext.ClassifyModel = model.NewDefaultClassifyModel(database)
 		err = database.Transaction(func(tx *gorm.DB) error {
 			idb.SetDb(tx)
@@ -92,9 +94,6 @@ func InitServiceContext(ch chan<- consts.DbInitStateType) {
 func TailDbInitStatus(ch <-chan consts.DbInitStateType) {
 	for state := range ch {
 		GlobalServerContext.Config.DbInitState = state
-		if state == db.DbInitSuccess {
-			return
-		}
 	}
 }
 
@@ -104,7 +103,7 @@ func NewBaskServiceContext(database *gorm.DB) *BaseServiceContext {
 	base.TaskModel = model.NewDefaultTaskModel(database)
 	base.TaskChildModel = model.NewDefaultTaskChildModel(database)
 	base.TaskContentModel = model.NewDefaultTaskContentModel(database)
-	base.TaskModelModel = model.NewDefaultTaskModeModel(database)
+	base.TaskModeModel = model.NewDefaultTaskModeModel(database)
 	base.ClassifyModel = model.NewDefaultClassifyModel(database)
 	return &base
 }
