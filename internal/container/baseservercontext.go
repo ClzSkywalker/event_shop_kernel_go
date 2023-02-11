@@ -25,8 +25,6 @@ type BaseServiceContext struct {
 	ClassifyModel    model.IClassifyModel
 }
 
-var count = 0
-
 /**
  * @Author         : Angular
  * @Date           : 2023-02-06
@@ -77,11 +75,6 @@ func InitServiceContext(ch chan<- consts.DbInitStateType) {
 		}
 		ch <- db.DbInitSuccess
 	})
-	count++
-	if count == 1 {
-		panic("panic test")
-	}
-	count++
 }
 
 /**

@@ -60,7 +60,7 @@ func RewriteStderrFile(path string, data []byte, msg interface{}) error {
 	defer func() {
 		_ = file.Close()
 	}()
-	_, err = file.WriteString(time.Now().Format(consts.DateTimeFormat) + "\n" +
+	_, err = file.WriteString(time.Now().Format(string(consts.DateTimeLayout)) + "\n" +
 		"[panic msg]" + "\n" + fmt.Sprintf("%s\n", msg) +
 		"[stack]" + "\n" + string(data) + "\n")
 	if err != nil {

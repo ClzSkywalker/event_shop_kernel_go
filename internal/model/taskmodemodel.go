@@ -1,6 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/datatypes"
+	"gorm.io/gorm"
+)
 
 type TaskModeType int
 
@@ -17,8 +20,8 @@ const (
 
 type TaskModeModel struct {
 	BaseModel
-	ModeId int                 `json:"mode_id" gorm:"type:INTEGER" validate:"required"` // 重复模式 TaskModeEnum
-	Config TaskModeConfigModel `json:"config" gorm:"type:JSON"`
+	ModeId int            `json:"mode_id" gorm:"type:INTEGER" validate:"required"` // 重复模式 TaskModeEnum
+	Config datatypes.JSON `json:"config" gorm:"type:JSON"`
 }
 
 type TaskModeConfigModel struct {
@@ -28,9 +31,9 @@ type TaskModeConfigModel struct {
 type ITaskModeModel interface {
 	IBaseModel
 	SelectByModel(TaskModeModel) ([]TaskModeModel, error)
-	Insert(TaskModeModel) (int64, error)
-	Update(TaskModeModel) error
-	Delete(int64) error
+	Insert(*TaskModeModel) (uint, error)
+	Update(*TaskModeModel) error
+	Delete(uint) error
 }
 
 type defaultTaskModeModel struct {
@@ -61,13 +64,15 @@ func (m *defaultTaskModeModel) DropTable() (err error) {
 func (m *defaultTaskModeModel) SelectByModel(TaskModeModel) (result []TaskModeModel, err error) {
 	return
 }
-func (m *defaultTaskModeModel) Insert(task TaskModeModel) (id int64, err error) {
-	err = m.conn.Table(m.table).Create(task).Error
+func (m *defaultTaskModeModel) Insert(tmm *TaskModeModel) (id uint, err error) {
+	err = m.conn.Table(m.table).Create(tmm).Error
+	id = tmm.Id
 	return
 }
-func (m *defaultTaskModeModel) Update(TaskModeModel) (err error) {
+func (m *defaultTaskModeModel) Update(tmm *TaskModeModel) (err error) {
 	return
 }
-func (m *defaultTaskModeModel) Delete(int64) (err error) {
+func (m *defaultTaskModeModel) Delete(id uint) (err error) {
+	err = m.conn.Table(m.table).Delete(&TaskModeModel{BaseModel: BaseModel{Id: id}}).Error
 	return
 }

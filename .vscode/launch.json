@@ -28,7 +28,7 @@
       "args": [
         "--port=6807",
         "--mode=test",
-        "--dbPath=./assert/ectype/todo_shop.db",
+        "--dbPath=./assert/ectype/todo_shop_test.db",
         "--logPath=./logs"
       ]
     },

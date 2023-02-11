@@ -2,9 +2,12 @@ package db
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -36,6 +39,23 @@ func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
 	if err != nil {
 		return
 	}
+
+	if mode == gin.DebugMode {
+		db.Debug()
+	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		utils.ZapLog.Error("connect db error %+v", zap.Error(err))
+		panic(err)
+	}
+	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
+	sqlDB.SetMaxIdleConns(10)
+	// SetMaxOpenConns 设置打开数据库连接的最大数量。
+	sqlDB.SetMaxOpenConns(50)
+	// SetConnMaxLifetime 设置了连接可复用的最大时间。
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+
 	idb = &sqliteDbStruct{
 		db:          db,
 		lastVersion: lastVersion,

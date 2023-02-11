@@ -164,15 +164,15 @@ func (s *sqliteDbStruct) onInitData() (err error) {
 	), zap.Int("newVersion", s.lastVersion))
 	err = s.db.Exec(`
 	-- classify
-INSERT INTO classify(title,color,sort,created_time,updated_time)  VALUES('普通','#c7ecee',1,strftime('%s','now'),strftime('%s','now'));
-INSERT INTO classify(title,color,sort,created_time,updated_time)  VALUES('工作','#4ac8b2',2,strftime('%s','now'),strftime('%s','now'));
+INSERT INTO classify(title,color,sort,created_at,updated_at)  VALUES('普通','#c7ecee',1,strftime('%s','now'),strftime('%s','now'));
+INSERT INTO classify(title,color,sort,created_at,updated_at)  VALUES('工作','#4ac8b2',2,strftime('%s','now'),strftime('%s','now'));
 
 -- task_mode
 INSERT INTO task_mode(mode_id)  VALUES(0);
 
 -- task
-INSERT INTO task(title,classify_id,task_mode_id,created_time,updated_time)  VALUES('欢迎加入',1,1,strftime('%s','now'),strftime('%s','now'));
-INSERT INTO task(title,classify_id,task_mode_id,created_time,updated_time)  VALUES('第一天',1,1,strftime('%s','now'),strftime('%s','now'));
+INSERT INTO task(title,classify_id,task_mode_id,created_at,updated_at)  VALUES('欢迎加入',1,1,strftime('%s','now'),strftime('%s','now'));
+INSERT INTO task(title,classify_id,task_mode_id,created_at,updated_at)  VALUES('第一天',1,1,strftime('%s','now'),strftime('%s','now'));
 
 -- task_content
 INSERT INTO task_content(task_id,content)  VALUES(1,'(｡･∀･)ﾉﾞ嗨，小当家，欢迎回到您的小卖铺！');

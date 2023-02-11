@@ -8,11 +8,11 @@ import (
 	"go.uber.org/zap"
 )
 
-func InsertTaskMode(m model.ITaskModeModel, tm model.TaskModeModel) (id int64, err error) {
+func InsertTaskMode(m model.ITaskModeModel, tm *model.TaskModeModel) (id uint, err error) {
 	id, err = m.Insert(tm)
 	if err != nil {
 		utils.ZapLog.Error(err.Error(), zap.Any("model", tm))
+		err = i18n.NewCodeError(module.TaskModeErr, err.Error())
 	}
-	err = i18n.NewCodeError(module.TaskModeErr, err)
 	return
 }
