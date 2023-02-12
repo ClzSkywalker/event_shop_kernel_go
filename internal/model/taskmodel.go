@@ -6,7 +6,7 @@ import (
 
 type TaskModel struct {
 	BaseModel
-	Title           string `json:"title" gorm:"type:TEXT"`
+	Title           string `json:"title" gorm:"type:TEXT" validate:"required"`
 	ClassifyId      int64  `json:"classify_id" gorm:"type:INTEGER" validate:"required"`
 	ContentId       int64  `json:"content_id" gorm:"type:INTEGER"`
 	TaskModeId      int64  `json:"task_mode_id" gorm:"type:INTEGER"`

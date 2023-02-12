@@ -21,11 +21,11 @@ const (
 type TaskModeModel struct {
 	BaseModel
 	ModeId int            `json:"mode_id" gorm:"type:INTEGER" validate:"required"` // 重复模式 TaskModeEnum
-	Config datatypes.JSON `json:"config" gorm:"type:JSON"`
+	Config datatypes.JSON `json:"config" gorm:"type:BLOB"`
 }
 
 type TaskModeConfigModel struct {
-	Day []int `json:"day" gorm:"day"`
+	Days []int `json:"days"`
 }
 
 type ITaskModeModel interface {
