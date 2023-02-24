@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -15,7 +15,7 @@ import (
 
 const (
 	lastVersion                          = 1
-	DbInitFailure consts.DbInitStateType = iota - 1
+	DbInitFailure constx.DbInitStateType = iota - 1
 	DbCreating
 	DbUpgrading
 	DbInitSuccess
@@ -60,7 +60,7 @@ func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
 		db:          db,
 		log:         loggerx.DbLog,
 		lastVersion: lastVersion,
-		migrateList: make([]consts.AutoMigrateFunc, 0),
+		migrateList: make([]constx.AutoMigrateFunc, 0),
 	}
 
 	err = idb.GetVersion()
@@ -74,9 +74,9 @@ type iinitDb interface {
 	GetVersion() (err error)
 	SetVersion() (err error)
 	SetDb(*gorm.DB)
-	SetCreateFunc(...consts.CreateTableFunc)
-	SetDropFunc(...consts.DropTableFunc)
-	OnInitDb(mode string, ch chan<- consts.DbInitStateType) (err error)
+	SetCreateFunc(...constx.CreateTableFunc)
+	SetDropFunc(...constx.DropTableFunc)
+	OnInitDb(mode string, ch chan<- constx.DbInitStateType) (err error)
 	onCreate() (err error)
 	onUpgrade() (err error)
 	onInitData() (err error)

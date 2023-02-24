@@ -3,7 +3,7 @@ package container
 import (
 	"flag"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
@@ -15,7 +15,7 @@ type AppConfig struct {
 	KernelVersion string                 `json:"kernel_version"` // 内核版本
 	DbPath        string                 `json:"db_path"`        // sqlite path
 	LogPath       string                 `json:"log_path"`       // db path
-	DbInitState   consts.DbInitStateType `json:"db_state"`       // 数据库是否初始化完毕
+	DbInitState   constx.DbInitStateType `json:"db_state"`       // 数据库是否初始化完毕
 }
 
 /**
@@ -37,7 +37,7 @@ func InitConfig(c AppConfig) error {
 		Mode:          mode,
 		DbPath:        dbPath,
 		LogPath:       logPath,
-		KernelVersion: consts.KernelVersion,
+		KernelVersion: constx.KernelVersion,
 	}
 	err := utils.CreateDir(logPath)
 	if err != nil {

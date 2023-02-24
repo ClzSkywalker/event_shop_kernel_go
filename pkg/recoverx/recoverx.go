@@ -7,7 +7,7 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"go.uber.org/zap"
 )
@@ -20,7 +20,7 @@ import (
  * @param           {logErrFunc} logFunc
  * @return          {*}
  */
-func RecoverFunc(callBack consts.RecoverFunc) {
+func RecoverFunc(callBack constx.RecoverFunc) {
 	defer func() {
 		if err := recover(); err != nil {
 			loggerx.ZapLog.Panic("[server panic]", zap.Any("RecoverFunc", err))
@@ -30,7 +30,7 @@ func RecoverFunc(callBack consts.RecoverFunc) {
 	callBack()
 }
 
-func RecoverReadChanFunc(logPath string, callBack consts.RecoverReadChanFunc, ch <-chan consts.DbInitStateType) {
+func RecoverReadChanFunc(logPath string, callBack constx.RecoverReadChanFunc, ch <-chan constx.DbInitStateType) {
 	defer func() {
 		if err := recover(); err != nil {
 			buff := make([]byte, 1<<10)
@@ -41,7 +41,7 @@ func RecoverReadChanFunc(logPath string, callBack consts.RecoverReadChanFunc, ch
 	callBack(ch)
 }
 
-func RecoverWriteChanFunc(logPath string, callBack consts.RecoverWriteChanFunc, ch chan<- consts.DbInitStateType) {
+func RecoverWriteChanFunc(logPath string, callBack constx.RecoverWriteChanFunc, ch chan<- constx.DbInitStateType) {
 	defer func() {
 		if err := recover(); err != nil {
 			buff := make([]byte, 1<<10)
@@ -61,7 +61,7 @@ func RewriteStderrFile(path string, data []byte, msg interface{}) error {
 	defer func() {
 		_ = file.Close()
 	}()
-	_, err = file.WriteString(time.Now().Format(string(consts.DateTimeLayout)) + "\n" +
+	_, err = file.WriteString(time.Now().Format(string(constx.DateTimeLayout)) + "\n" +
 		"[panic msg]" + "\n" + fmt.Sprintf("%s\n", msg) +
 		"[stack]" + "\n" + string(data) + "\n")
 	if err != nil {

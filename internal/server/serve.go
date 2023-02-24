@@ -6,7 +6,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/middleware"
 	"github.com/clz.skywalker/event.shop/kernal/internal/router"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/recoverx"
@@ -21,19 +21,8 @@ import (
  * @return          {*}
  */
 func CmdServer() {
-	err := container.InitConfig(container.AppConfig{
-		Port:    4319,
-		Mode:    gin.ReleaseMode,
-		DbPath:  "",
-		LogPath: "./logs",
-	})
-	if err != nil {
-		panic(err)
-	}
-
 	loggerx.ZapLog.Info(`start event shop kernel server`,
-		zap.String("version", consts.KernelVersion))
-
+		zap.String("version", constx.KernelVersion))
 	serveInit()
 }
 
@@ -53,14 +42,14 @@ func KernelServer(c container.AppConfig) {
 		panic(err)
 	}
 	loggerx.ZapLog.Info(`start event shop kernel server`,
-		zap.String("version", consts.KernelVersion))
+		zap.String("version", constx.KernelVersion))
 
 	serveInit()
 }
 
 func serveInit() {
 	container.GlobalServerContext.Validator = i18n.NewParaValidation()
-	ch := make(chan consts.DbInitStateType, 1)
+	ch := make(chan constx.DbInitStateType, 1)
 	go recoverx.RecoverReadChanFunc(container.GlobalServerContext.Config.LogPath, container.TailDbInitStatus, ch)
 	go recoverx.RecoverWriteChanFunc(container.GlobalServerContext.Config.LogPath, container.InitServiceContext, ch)
 	go serve()

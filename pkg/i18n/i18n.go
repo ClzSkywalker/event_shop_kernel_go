@@ -3,7 +3,7 @@ package i18n
 import (
 	"strconv"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/entry"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	_ "github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
@@ -40,10 +40,10 @@ func init() {
 func Trans(lang string, err errorx.CodeError) string {
 	var tag language.Tag
 	switch lang {
-	case consts.LangChinese, consts.LangEnglish:
+	case constx.LangChinese, constx.LangEnglish:
 		tag = language.MustParse(lang)
 	default:
-		tag = language.MustParse(consts.LangEnglish)
+		tag = language.MustParse(constx.LangEnglish)
 	}
 	var p = message.NewPrinter(tag)
 	if len(err.Field) > 0 {
@@ -62,6 +62,6 @@ func Trans(lang string, err errorx.CodeError) string {
  */
 func NewCodeError(code int64, fields ...interface{}) (err errorx.CodeError) {
 	err = errorx.CodeError{Code: code, Field: fields}
-	err.Msg = Trans(consts.LangChinese, err)
+	err.Msg = Trans(constx.LangChinese, err)
 	return
 }

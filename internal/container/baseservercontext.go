@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
@@ -32,7 +32,7 @@ type BaseServiceContext struct {
  * @param           {chan<-db.DbInitStateType} ch
  * @return          {*}
  */
-func InitServiceContext(ch chan<- consts.DbInitStateType) {
+func InitServiceContext(ch chan<- constx.DbInitStateType) {
 	database, idb, err := db.InitDatabase(GlobalServerContext.Config.DbPath, GlobalServerContext.Config.Mode)
 	if err != nil {
 		loggerx.ZapLog.Error(`init Database error`,
@@ -84,7 +84,7 @@ func InitServiceContext(ch chan<- consts.DbInitStateType) {
  * @param           {<-chandb.DbInitStateType} ch
  * @return          {*}
  */
-func TailDbInitStatus(ch <-chan consts.DbInitStateType) {
+func TailDbInitStatus(ch <-chan constx.DbInitStateType) {
 	for state := range ch {
 		GlobalServerContext.Config.DbInitState = state
 	}

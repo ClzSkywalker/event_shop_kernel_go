@@ -4,7 +4,7 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/datatypesx"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -32,8 +32,8 @@ type ParaValidation struct {
  */
 func NewParaValidation() *ParaValidation {
 	uni := ut.New(zh.New(), en.New())
-	zhTrans, _ := uni.GetTranslator(consts.LangChinese)
-	enTrans, _ := uni.GetTranslator(consts.LangEnglish)
+	zhTrans, _ := uni.GetTranslator(constx.LangChinese)
+	enTrans, _ := uni.GetTranslator(constx.LangEnglish)
 	enValidator := validator.New()
 	zhValidator := validator.New()
 	enValidator.RegisterCustomTypeFunc(validateJSONDateTypeLocalTime, datatypesx.LocalTime{})
@@ -54,17 +54,17 @@ func NewParaValidation() *ParaValidation {
 	})
 	// 验证器注册翻译器
 	var enValidation = &validation{
-		lang:       consts.LangEnglish,
+		lang:       constx.LangEnglish,
 		validation: enValidator,
 		trans:      enTrans,
 	}
 
 	var zhValidation = &validation{
-		lang:       consts.LangChinese,
+		lang:       constx.LangChinese,
 		validation: zhValidator,
 		trans:      zhTrans,
 	}
-	return &ParaValidation{validate: map[string]*validation{consts.LangChinese: zhValidation, consts.LangEnglish: enValidation}}
+	return &ParaValidation{validate: map[string]*validation{constx.LangChinese: zhValidation, constx.LangEnglish: enValidation}}
 }
 
 /**
@@ -97,7 +97,7 @@ func (p ParaValidation) ValidateParam(locale string, models interface{}) error {
 	var validate *validation
 	var ok bool
 	if validate, ok = p.validate[locale]; !ok {
-		validate = p.validate[consts.LangEnglish]
+		validate = p.validate[constx.LangEnglish]
 	}
 	err := validate.validation.Struct(models)
 	if err != nil {

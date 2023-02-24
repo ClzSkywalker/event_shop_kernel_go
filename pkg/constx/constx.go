@@ -1,10 +1,15 @@
-package consts
+package constx
 
 const (
 	KernelVersion = "v0.0.1"
 
 	LangEnglish = "en"
 	LangChinese = "zh"
+
+	CmdPort    = "port"
+	CmdMode    = "mode"
+	CmdDbPath  = "dbPath"
+	CmdLogPath = "logPath"
 )
 
 type DateCompType string
