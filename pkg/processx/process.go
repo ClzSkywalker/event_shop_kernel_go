@@ -1,10 +1,11 @@
-package utils
+package processx
 
 import (
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -13,5 +14,5 @@ func HandleSignal() {
 	signal.Notify(c, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
 	s := <-c
 
-	ZapLog.Info("received os signal, exit kernel process now", zapcore.Field{Key: "signal", Interface: s})
+	loggerx.ZapLog.Info("received os signal, exit kernel process now", zapcore.Field{Key: "signal", Interface: s})
 }

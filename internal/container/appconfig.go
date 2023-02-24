@@ -4,6 +4,7 @@ import (
 	"flag"
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 )
@@ -23,7 +24,7 @@ type AppConfig struct {
  * @Description    : 解析参数,初始化config
  * @return          {*}
  */
-func InitConfig(c AppConfig) {
+func InitConfig(c AppConfig) error {
 	var port int
 	var mode, dbPath, logPath string
 	flag.IntVar(&port, "port", c.Port, "--port")
@@ -38,9 +39,15 @@ func InitConfig(c AppConfig) {
 		LogPath:       logPath,
 		KernelVersion: consts.KernelVersion,
 	}
-	utils.InitLogger(c.LogPath)
-	utils.ZapLog.Info(`dbInit`,
+	err := utils.CreateDir(logPath)
+	if err != nil {
+		return err
+	}
+	loggerx.ZapLog = loggerx.InitLogger(c.LogPath, "kernel", true)
+	loggerx.DbLog = loggerx.InitLogger(c.LogPath, "db", false)
+	loggerx.ReqLog = loggerx.InitLogger(c.LogPath, "req", true)
+	loggerx.ZapLog.Info(`dbInit`,
 		zap.Any("config", config))
-
 	GlobalServerContext.Config = config
+	return nil
 }

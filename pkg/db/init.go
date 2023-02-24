@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
@@ -22,8 +22,8 @@ const (
 )
 
 func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
-	utils.ZapLog.Info("init database start")
-	dbLog := utils.NewDbLog(utils.ZapLog, logger.Config{
+	loggerx.DbLog.Info("init database start")
+	dbLog := loggerx.NewDbLog(loggerx.DbLog, logger.Config{
 		SlowThreshold:             100,         // 慢 SQL 阈值
 		Colorful:                  true,        // 禁用彩色打印
 		IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound（记录未找到）错误
@@ -46,7 +46,7 @@ func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		utils.ZapLog.Error("connect db error %+v", zap.Error(err))
+		loggerx.DbLog.Error("connect db error %+v", zap.Error(err))
 		panic(err)
 	}
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
@@ -58,6 +58,7 @@ func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
 
 	idb = &sqliteDbStruct{
 		db:          db,
+		log:         loggerx.DbLog,
 		lastVersion: lastVersion,
 		migrateList: make([]consts.AutoMigrateFunc, 0),
 	}

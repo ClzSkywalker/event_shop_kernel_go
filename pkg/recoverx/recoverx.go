@@ -1,4 +1,4 @@
-package utils
+package recoverx
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"go.uber.org/zap"
 )
 
@@ -22,7 +23,7 @@ import (
 func RecoverFunc(callBack consts.RecoverFunc) {
 	defer func() {
 		if err := recover(); err != nil {
-			ZapLog.Panic("[server panic]", zap.Any("RecoverFunc", err))
+			loggerx.ZapLog.Panic("[server panic]", zap.Any("RecoverFunc", err))
 			debug.PrintStack()
 		}
 	}()

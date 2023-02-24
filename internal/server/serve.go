@@ -8,7 +8,8 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/router"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/recoverx"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -20,14 +21,17 @@ import (
  * @return          {*}
  */
 func CmdServer() {
-	container.InitConfig(container.AppConfig{
+	err := container.InitConfig(container.AppConfig{
 		Port:    4319,
 		Mode:    gin.ReleaseMode,
 		DbPath:  "",
 		LogPath: "./logs",
 	})
+	if err != nil {
+		panic(err)
+	}
 
-	utils.ZapLog.Info(`start event shop kernel server`,
+	loggerx.ZapLog.Info(`start event shop kernel server`,
 		zap.String("version", consts.KernelVersion))
 
 	serveInit()
@@ -44,8 +48,11 @@ func CmdServer() {
  * @return          {*}
  */
 func KernelServer(c container.AppConfig) {
-	container.InitConfig(c)
-	utils.ZapLog.Info(`start event shop kernel server`,
+	err := container.InitConfig(c)
+	if err != nil {
+		panic(err)
+	}
+	loggerx.ZapLog.Info(`start event shop kernel server`,
 		zap.String("version", consts.KernelVersion))
 
 	serveInit()
@@ -54,8 +61,8 @@ func KernelServer(c container.AppConfig) {
 func serveInit() {
 	container.GlobalServerContext.Validator = i18n.NewParaValidation()
 	ch := make(chan consts.DbInitStateType, 1)
-	go utils.RecoverReadChanFunc(container.GlobalServerContext.Config.LogPath, container.TailDbInitStatus, ch)
-	go utils.RecoverWriteChanFunc(container.GlobalServerContext.Config.LogPath, container.InitServiceContext, ch)
+	go recoverx.RecoverReadChanFunc(container.GlobalServerContext.Config.LogPath, container.TailDbInitStatus, ch)
+	go recoverx.RecoverWriteChanFunc(container.GlobalServerContext.Config.LogPath, container.InitServiceContext, ch)
 	go serve()
 }
 
@@ -72,12 +79,13 @@ func serve() {
 	ginServer := gin.New()
 	// 兼容插入较大的资源文件时内存占用较大
 	ginServer.MaxMultipartMemory = 1024 * 1024 * 32
-	ginServer.Use(gin.Recovery())
+	ginServer.Use(gin.CustomRecovery(middleware.RecoveryMiddleware))
 	ginServer.Use(middleware.CorsMiddleware())
+	ginServer.Use(middleware.LoggerMiddleware())
 	router.RouterManager(ginServer)
 	err := ginServer.Run(fmt.Sprintf(":%d", container.GlobalServerContext.Config.Port))
 	if err != nil {
-		utils.ZapLog.Error(`server error`,
+		loggerx.ZapLog.Error(`server error`,
 			zap.Error(err),
 			zap.Int("part", container.GlobalServerContext.Config.Port))
 	}

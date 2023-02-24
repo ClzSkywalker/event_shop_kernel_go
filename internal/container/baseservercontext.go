@@ -7,7 +7,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -35,7 +35,7 @@ type BaseServiceContext struct {
 func InitServiceContext(ch chan<- consts.DbInitStateType) {
 	database, idb, err := db.InitDatabase(GlobalServerContext.Config.DbPath, GlobalServerContext.Config.Mode)
 	if err != nil {
-		utils.ZapLog.Error(`init Database error`,
+		loggerx.ZapLog.Error(`init Database error`,
 			zap.Error(err),
 			zap.String("version", GlobalServerContext.Config.KernelVersion),
 			zap.String("path", GlobalServerContext.Config.DbPath))
@@ -67,7 +67,7 @@ func InitServiceContext(ch chan<- consts.DbInitStateType) {
 		})
 		if err != nil {
 			ch <- db.DbInitFailure
-			utils.ZapLog.Error(`init Database error`,
+			loggerx.ZapLog.Error(`init Database error`,
 				zap.Error(err),
 				zap.String("version", GlobalServerContext.Config.KernelVersion),
 				zap.String("path", GlobalServerContext.Config.DbPath))

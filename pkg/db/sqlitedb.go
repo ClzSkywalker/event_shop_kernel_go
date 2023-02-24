@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/consts"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -12,6 +11,7 @@ import (
 
 type sqliteDbStruct struct {
 	db          *gorm.DB
+	log         *zap.Logger
 	isInit      bool                     // 是否已被初始化
 	curVersion  int                      // current version
 	lastVersion int                      // last version
@@ -88,7 +88,7 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 	if s.curVersion > 0 {
 		return
 	}
-	utils.ZapLog.Info("init database oncreate start", zap.Int(
+	s.log.Info("init database oncreate start", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	for i := 0; i < len(s.CreateFunc); i++ {
@@ -102,14 +102,14 @@ func (s *sqliteDbStruct) onCreate() (err error) {
 		return
 	}
 	s.curVersion = s.lastVersion
-	utils.ZapLog.Info("init database oncreate end", zap.Int(
+	s.log.Info("init database oncreate end", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	return
 }
 
 func (s *sqliteDbStruct) onUpgrade() (err error) {
-	utils.ZapLog.Info("upgrade database onupgrade start", zap.Int(
+	s.log.Info("upgrade database onupgrade start", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 
@@ -117,7 +117,7 @@ func (s *sqliteDbStruct) onUpgrade() (err error) {
 		f := s.migrateList[i-1]
 		err = f()
 		if err != nil {
-			utils.ZapLog.Error("upgrade database err",
+			s.log.Error("upgrade database err",
 				zap.Int("upgrate version", i),
 				zap.Int(
 					"oldVersion", s.curVersion),
@@ -127,14 +127,14 @@ func (s *sqliteDbStruct) onUpgrade() (err error) {
 	}
 
 	s.curVersion = s.lastVersion
-	utils.ZapLog.Info("upgrade database onupgrade end", zap.Int(
+	s.log.Info("upgrade database onupgrade end", zap.Int(
 		"oldVersion", s.curVersion),
 		zap.Int("newVersion", s.lastVersion))
 	return
 }
 
 func (s *sqliteDbStruct) onDrop() (err error) {
-	utils.ZapLog.Info("init database ondrop start", zap.Int(
+	s.log.Info("init database ondrop start", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	for i := 0; i < len(s.DropFunc); i++ {
@@ -149,7 +149,7 @@ func (s *sqliteDbStruct) onDrop() (err error) {
 	}
 	s.isInit = false
 	s.curVersion = 0
-	utils.ZapLog.Info("init database ondrop end", zap.Int(
+	s.log.Info("init database ondrop end", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	return
@@ -159,7 +159,7 @@ func (s *sqliteDbStruct) onInitData() (err error) {
 	if s.isInit {
 		return
 	}
-	utils.ZapLog.Info("init data start", zap.Int(
+	s.log.Info("init data start", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	err = s.db.Exec(`
@@ -180,7 +180,7 @@ INSERT INTO task_content(task_id,content)  VALUES(2,'第一天，您打算做些
 	if err != nil {
 		return
 	}
-	utils.ZapLog.Info("init data end", zap.Int(
+	s.log.Info("init data end", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
 	return

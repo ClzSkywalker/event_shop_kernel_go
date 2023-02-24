@@ -111,7 +111,6 @@ func (p ParaValidation) ValidateParam(locale string, models interface{}) error {
 		default:
 			return errors.New(err1.Error())
 		}
-
 	}
 	return nil
 }
