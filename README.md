@@ -5,6 +5,7 @@ go 1.18
 java openjdk 17.0.6 2023-01-17 LTS
 ndk version:21.4.7075529
 gcc version:8.1.0
+pprof https://graphviz.org/download/
 ```
 
 ```cmd
@@ -23,27 +24,4 @@ flutter pub get
 把当前的项目目录 放到 C盘上去执行
 ```
 
-# 文件目录
-```
-├─.githooks
-├─.vscode
-├─assert
-├─cmd --后端调试启动入口
-├─internal 
-│  ├─container -- 全局对象容器
-│  ├─ctrl -- curd 接口
-│  ├─middleware -- 中间器
-│  ├─model 
-│  ├─router -- 路由管理
-│  ├─server -- 启动服务相关入口
-│  └─service 
-├─kernel -- 第三方平台编译入口
-├─logs -- 日志输出
-├─output -- 打包结果入口
-├─pkg
-│  ├─db -- db 初始化模块
-│  ├─jwt
-│  ├─logger -- 日志管理
-│  └─utils -- 工具类
-└─script -- 脚本
-```
+

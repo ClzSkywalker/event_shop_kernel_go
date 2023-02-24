@@ -10,6 +10,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/recoverx"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -66,6 +67,7 @@ func serve() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	ginServer := gin.New()
+	pprof.Register(ginServer)
 	// 兼容插入较大的资源文件时内存占用较大
 	ginServer.MaxMultipartMemory = 1024 * 1024 * 32
 	ginServer.Use(gin.CustomRecovery(middleware.RecoveryMiddleware))

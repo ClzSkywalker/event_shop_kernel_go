@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/gin-contrib/pprof v1.4.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f // indirect
