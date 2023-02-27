@@ -11,7 +11,7 @@ const (
 
 type TaskContentModel struct {
 	BaseModel
-	TaskId   int             `json:"task_id" gorm:"type:INTEGER"`
+	TaskId   int             `json:"task_id" gorm:"type:INTEGER;index:idx_tid"`
 	Content  string          `json:"content" gorm:"type:TEXT"`
 	FileList []TaskFileModel `json:"file_list" gorm:"type:BLOB"`
 }

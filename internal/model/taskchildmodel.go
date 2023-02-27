@@ -8,7 +8,7 @@ import (
 
 type TaskChildModel struct {
 	BaseModel
-	ParentId      int64     `json:"parent" gorm:"type:INTEGER"`
+	ParentId      int64     `json:"parent" gorm:"type:INTEGER;index:idx_pid"`
 	Title         string    `json:"title" gorm:"type:TEXT"`
 	CompletedTime time.Time `json:"completed_time" gorm:"type:timestamp"`
 	GiveUpTime    time.Time `json:"give_up_time" gorm:"type:timestamp"`

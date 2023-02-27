@@ -6,6 +6,7 @@ import (
 
 type TaskModel struct {
 	BaseModel
+	Uid             string `json:"uid,omitempty" gorm:"type:TEXT;index:idx_uid,unique"`
 	Title           string `json:"title" gorm:"type:TEXT" validate:"required"`
 	ClassifyId      int64  `json:"classify_id" gorm:"type:INTEGER" validate:"required"`
 	ContentId       int64  `json:"content_id" gorm:"type:INTEGER"`

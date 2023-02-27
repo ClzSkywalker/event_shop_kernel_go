@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 // 分类
 type ClassifyModel struct {
 	BaseModel
+	Uid   string `json:"uid,omitempty" gorm:"type:TEXT;index:idx_uid,unique"`
 	Title string `json:"title" gorm:"type:TEXT"`
 	Color string `json:"color" gorm:"type:TEXT"`
 	Sort  int    `json:"sort" gorm:"type:INTEGER"`
@@ -13,8 +14,8 @@ type ClassifyModel struct {
 type IClassifyModel interface {
 	IBaseModel
 	QueryAll() ([]ClassifyModel, error)
-	QueryByTitle(title string) (cm ClassifyModel, err error)
-	QueryByModel(ClassifyModel) ([]ClassifyModel, error)
+	QueryByUid(uid string) ([]ClassifyModel, error)
+	QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error)
 	Insert(*ClassifyModel) (uint, error)
 	Update(ClassifyModel) error
 	Delete(id uint) error
@@ -51,12 +52,13 @@ func (m *defaultClassifyModel) QueryAll() (cms []ClassifyModel, err error) {
 	return
 }
 
-func (m *defaultClassifyModel) QueryByTitle(title string) (cm ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{Title: title}).First(&cm).Error
+func (m *defaultClassifyModel) QueryByUid(uid string) (result []ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid}).Find(&result).Error
 	return
 }
 
-func (m *defaultClassifyModel) QueryByModel(ClassifyModel) (result []ClassifyModel, err error) {
+func (m *defaultClassifyModel) QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid, Title: title}).First(&cm).Error
 	return
 }
 
