@@ -12,10 +12,12 @@ type ClassifyModel struct {
 
 type IClassifyModel interface {
 	IBaseModel
-	SelectByModel(ClassifyModel) ([]ClassifyModel, error)
-	Insert(ClassifyModel) (int64, error)
+	QueryAll() ([]ClassifyModel, error)
+	QueryByTitle(title string) (cm ClassifyModel, err error)
+	QueryByModel(ClassifyModel) ([]ClassifyModel, error)
+	Insert(*ClassifyModel) (uint, error)
 	Update(ClassifyModel) error
-	Delete(int64) error
+	Delete(id uint) error
 }
 
 type defaultClassifyModel struct {
@@ -23,10 +25,10 @@ type defaultClassifyModel struct {
 	table string
 }
 
-func NewDefaultClassifyModel(conn *gorm.DB) *defaultClassifyModel {
+func NewDefaultClassifyModel(conn *gorm.DB) IClassifyModel {
 	return &defaultClassifyModel{
 		conn:  conn,
-		table: "classify",
+		table: ClassifyTableName,
 	}
 }
 
@@ -44,15 +46,32 @@ func (m *defaultClassifyModel) DropTable() (err error) {
 	return
 }
 
-func (m *defaultClassifyModel) SelectByModel(ClassifyModel) (result []ClassifyModel, err error) {
+func (m *defaultClassifyModel) QueryAll() (cms []ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Find(&cms).Error
 	return
 }
-func (m *defaultClassifyModel) Insert(ClassifyModel) (id int64, err error) {
+
+func (m *defaultClassifyModel) QueryByTitle(title string) (cm ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Where(ClassifyModel{Title: title}).First(&cm).Error
 	return
 }
-func (m *defaultClassifyModel) Update(ClassifyModel) (err error) {
+
+func (m *defaultClassifyModel) QueryByModel(ClassifyModel) (result []ClassifyModel, err error) {
 	return
 }
-func (m *defaultClassifyModel) Delete(int64) (err error) {
+
+func (m *defaultClassifyModel) Insert(cm *ClassifyModel) (id uint, err error) {
+	err = m.conn.Table(m.table).Create(cm).Error
+	id = cm.Id
+	return
+}
+
+func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
+	err = m.conn.Table(m.table).Updates(cm).Error
+	return
+}
+
+func (m *defaultClassifyModel) Delete(id uint) (err error) {
+	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}}).Error
 	return
 }

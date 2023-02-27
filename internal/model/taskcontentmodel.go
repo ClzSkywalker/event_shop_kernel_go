@@ -34,10 +34,10 @@ type defaultTaskContentModel struct {
 	table string
 }
 
-func NewDefaultTaskContentModel(conn *gorm.DB) *defaultTaskContentModel {
+func NewDefaultTaskContentModel(conn *gorm.DB) ITaskContentModel {
 	return &defaultTaskContentModel{
 		conn:  conn,
-		table: "task_content",
+		table: TaskContentTableName,
 	}
 }
 

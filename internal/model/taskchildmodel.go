@@ -27,10 +27,10 @@ type defaultTaskChildModel struct {
 	table string
 }
 
-func NewDefaultTaskChildModel(conn *gorm.DB) *defaultTaskChildModel {
+func NewDefaultTaskChildModel(conn *gorm.DB) ITaskChildModel {
 	return &defaultTaskChildModel{
 		conn:  conn,
-		table: "task_child",
+		table: TaskChildTableName,
 	}
 }
 

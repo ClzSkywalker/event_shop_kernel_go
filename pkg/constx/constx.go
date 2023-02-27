@@ -12,6 +12,7 @@ const (
 	CmdLogPath = "logPath"
 )
 
+// 时间格式
 type DateCompType string
 
 const (
@@ -25,4 +26,25 @@ const (
 	DateQ                  DateCompType = "quarter"          // 季度
 	DateM                  DateCompType = "01"               // 月
 	DateD                  DateCompType = "02"               // 天
+)
+
+// 用户类型
+type UserType int
+
+const (
+	NormalUT    UserType = 0 // 普通成员
+	MemberUT    UserType = 1 // 有时限的会员
+	PermanentUT UserType = 2 // 永久会员
+)
+
+// 用户注册方式
+type RegisterTypt int
+
+const (
+	EmailRT    RegisterTypt = 0
+	PhoneRT    RegisterTypt = 1
+	WechatRT   RegisterTypt = 2
+	QQRT       RegisterTypt = 3
+	GoogleRT   RegisterTypt = 4
+	FacebookRT RegisterTypt = 5
 )

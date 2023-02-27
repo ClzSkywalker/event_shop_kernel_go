@@ -15,6 +15,7 @@ const (
 	// task mode
 	taskModeModuleCode = 100001
 	taskModuleCode     = 110001
+	classifyModuleCode = 120001
 )
 
 func init() {

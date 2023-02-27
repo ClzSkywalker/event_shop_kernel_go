@@ -41,10 +41,10 @@ type defaultTaskModeModel struct {
 	table string
 }
 
-func NewDefaultTaskModeModel(conn *gorm.DB) *defaultTaskModeModel {
+func NewDefaultTaskModeModel(conn *gorm.DB) ITaskModeModel {
 	return &defaultTaskModeModel{
 		conn:  conn,
-		table: "task_mode",
+		table: TaskModeTableName,
 	}
 }
 

@@ -18,6 +18,7 @@ type BaseServiceContext struct {
 	Config           AppConfig
 	Db               *gorm.DB
 	Validator        *i18n.ParaValidation
+	UserModel        model.IUserModel
 	TaskModel        model.ITaskModel
 	TaskChildModel   model.ITaskChildModel
 	TaskContentModel model.ITaskContentModel
@@ -44,6 +45,7 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 	once := new(sync.Once)
 	once.Do(func() {
 		GlobalServerContext.Db = database
+		GlobalServerContext.UserModel = model.NewDefaultUserModel(database)
 		GlobalServerContext.TaskModel = model.NewDefaultTaskModel(database)
 		GlobalServerContext.TaskChildModel = model.NewDefaultTaskChildModel(database)
 		GlobalServerContext.TaskContentModel = model.NewDefaultTaskContentModel(database)
@@ -52,12 +54,14 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 		err = database.Transaction(func(tx *gorm.DB) error {
 			idb.SetDb(tx)
 			idb.SetDropFunc(
+				model.NewDefaultUserModel(tx).DropTable,
 				model.NewDefaultTaskModel(tx).DropTable,
 				model.NewDefaultTaskChildModel(tx).DropTable,
 				model.NewDefaultTaskContentModel(tx).DropTable,
 				model.NewDefaultTaskModeModel(tx).DropTable,
 				model.NewDefaultClassifyModel(tx).DropTable)
 			idb.SetCreateFunc(
+				model.NewDefaultUserModel(tx).CreateTable,
 				model.NewDefaultTaskModel(tx).CreateTable,
 				model.NewDefaultTaskChildModel(tx).CreateTable,
 				model.NewDefaultTaskContentModel(tx).CreateTable,

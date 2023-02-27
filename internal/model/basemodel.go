@@ -4,6 +4,15 @@ import (
 	"gorm.io/plugin/soft_delete"
 )
 
+const (
+	UserTableName        = "user"
+	ClassifyTableName    = "classify"
+	TaskTableName        = "task"
+	TaskModeTableName    = "task_mode"
+	TaskChildTableName   = "task_child"
+	TaskContentTableName = "task_content"
+)
+
 type BaseModel struct {
 	Id        uint                  `gorm:"primarykey"`
 	CreatedAt int64                 `json:"created_at" gorm:"autoUpdateTime"`

@@ -11,8 +11,8 @@ const (
 
 func init() {
 	var entries = []entry.Entry{
-		{Tag: language.Chinese, Key: TaskModeErr, Msg: "zh%s"},
-		{Tag: language.English, Key: TaskModeErr, Msg: "cn%s"},
+		{Tag: language.Chinese, Key: TaskModeErr, Msg: "插入自定义任务类型失败: %s"},
+		{Tag: language.English, Key: TaskModeErr, Msg: "Description Failed to insert a custom task type: %s"},
 	}
 	entry.SetEntries(entries...)
 }
