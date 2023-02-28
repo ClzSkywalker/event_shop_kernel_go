@@ -11,11 +11,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func QueryAll(c *gin.Context) {
+
+}
+
 func InsertClassify(c *gin.Context) {
 	ret := httpx.NewResult()
-	defer c.JSON(http.StatusOK, ret)
+	var err error
+	defer func() {
+		c.JSON(http.StatusOK, ret)
+	}()
 	cm := entity.ClassifyInsertReq{}
-	err := validateBind(c, &cm)
+	err = validateBind(c, &cm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

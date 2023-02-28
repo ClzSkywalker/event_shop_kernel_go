@@ -5,9 +5,9 @@ import "gorm.io/gorm"
 // 分类
 type ClassifyModel struct {
 	BaseModel
-	Uid   string `json:"uid,omitempty" gorm:"type:TEXT;index:idx_uid,unique"`
-	Title string `json:"title" gorm:"type:TEXT"`
-	Color string `json:"color" gorm:"type:TEXT"`
+	Uid   string `json:"uid,omitempty" gorm:"type:VARCHAR(36);index:idx_classify_uid"`
+	Title string `json:"title" gorm:"type:varchar"`
+	Color string `json:"color" gorm:"type:varchar"`
 	Sort  int    `json:"sort" gorm:"type:INTEGER"`
 }
 
@@ -43,7 +43,7 @@ func (m *defaultClassifyModel) CreateTable() (err error) {
 }
 
 func (m *defaultClassifyModel) DropTable() (err error) {
-	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
 }
 

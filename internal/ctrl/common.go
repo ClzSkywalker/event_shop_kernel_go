@@ -11,14 +11,14 @@ import (
 func validateBind(c *gin.Context, m interface{}) (err error) {
 	err = c.ShouldBind(&m)
 	if err != nil {
-		errx := i18n.NewCodeError(module.RequestParamBindCode, err.Error())
+		errx := i18n.NewCodeError(module.RequestParamBindErr, err.Error())
 		loggerx.ZapLog.Error(errx.Msg)
 		return errx
 	}
 	locale := c.GetHeader("Accept-Language")
 	err = container.GlobalServerContext.Validator.ValidateParam(locale, m)
 	if err != nil {
-		errx := i18n.NewCodeError(module.TranslatorNotFoundCode, err.Error())
+		errx := i18n.NewCodeError(module.TranslatorNotFoundErr, err.Error())
 		loggerx.ZapLog.Error(errx.Msg)
 		return errx
 	}

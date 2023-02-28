@@ -8,8 +8,8 @@ import (
 
 type TaskChildModel struct {
 	BaseModel
-	ParentId      int64     `json:"parent" gorm:"type:INTEGER;index:idx_pid"`
-	Title         string    `json:"title" gorm:"type:TEXT"`
+	ParentId      int64     `json:"parent_id" gorm:"type:INTEGER;index:idx_task_pid"`
+	Title         string    `json:"title" gorm:"type:varchar"`
 	CompletedTime time.Time `json:"completed_time" gorm:"type:timestamp"`
 	GiveUpTime    time.Time `json:"give_up_time" gorm:"type:timestamp"`
 }
@@ -44,7 +44,7 @@ func (m *defaultTaskChildModel) CreateTable() (err error) {
 }
 
 func (m *defaultTaskChildModel) DropTable() (err error) {
-	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
 }
 

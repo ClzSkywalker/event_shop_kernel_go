@@ -6,10 +6,18 @@ const (
 	LangEnglish = "en"
 	LangChinese = "zh"
 
+	PwdSalt = "LeagueOfLegends"
+
 	CmdPort    = "port"
 	CmdMode    = "mode"
 	CmdDbPath  = "dbPath"
 	CmdLogPath = "logPath"
+
+	TokenIssuer    = "ClzSkywalker"
+	TokenExpiresAt = 86400 * 3
+	TokenSub       = "event shop"
+	TokenUid       = "uid"
+	TokenSecret    = "Token=5RNEYJXWQA"
 )
 
 // 时间格式

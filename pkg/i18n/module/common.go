@@ -6,16 +6,20 @@ import (
 )
 
 const (
-	SuccessCode     = 0
-	SystemErrorCode = 10001 + iota
-	TranslatorNotFoundCode
-	RequestParamBindCode
-	DbErrorCode
+	SuccessCode = 0
 
 	// task mode
-	taskModeModuleCode = 100001
-	taskModuleCode     = 110001
-	classifyModuleCode = 120001
+	userModeuleColde   = 100001
+	taskModeModuleCode = 110001
+	taskModuleCode     = 120001
+	classifyModuleCode = 130001
+
+	SystemErrorCode = 10001 + iota
+	TranslatorNotFoundErr
+	RequestParamBindErr
+	DbErrorErr
+	EncryptPwdErr
+	GenerateUlidErr
 )
 
 func init() {
@@ -26,11 +30,14 @@ func init() {
 		{Tag: language.Chinese, Key: SystemErrorCode, Msg: "系统内部错误:%s"},
 		{Tag: language.English, Key: SystemErrorCode, Msg: "Internal system error:%s"},
 
-		{Tag: language.Chinese, Key: TranslatorNotFoundCode, Msg: "翻译器%s未找到"},
-		{Tag: language.English, Key: TranslatorNotFoundCode, Msg: "translator %s not found"},
+		{Tag: language.Chinese, Key: TranslatorNotFoundErr, Msg: "翻译器%s未找到"},
+		{Tag: language.English, Key: TranslatorNotFoundErr, Msg: "translator %s not found"},
 
-		{Tag: language.Chinese, Key: RequestParamBindCode, Msg: "参数传递错误:%s"},
-		{Tag: language.English, Key: RequestParamBindCode, Msg: "Parameter passing error:%s"},
+		{Tag: language.Chinese, Key: RequestParamBindErr, Msg: "参数传递错误:%s"},
+		{Tag: language.English, Key: RequestParamBindErr, Msg: "Parameter passing error:%s"},
+
+		{Tag: language.Chinese, Key: EncryptPwdErr, Msg: "创建密码错误，请换一个密码"},
+		{Tag: language.English, Key: EncryptPwdErr, Msg: "Incorrect password creation, please change the password"},
 	}
 	entry.SetEntries(entries...)
 }

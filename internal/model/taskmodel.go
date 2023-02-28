@@ -6,8 +6,8 @@ import (
 
 type TaskModel struct {
 	BaseModel
-	Uid             string `json:"uid,omitempty" gorm:"type:TEXT;index:idx_uid,unique"`
-	Title           string `json:"title" gorm:"type:TEXT" validate:"required"`
+	Uid             string `json:"uid,omitempty" gorm:"type:VARCHAR(36);index:idx_task_uid"`
+	Title           string `json:"title" gorm:"type:VARCHAR(255)" validate:"required"`
 	ClassifyId      int64  `json:"classify_id" gorm:"type:INTEGER" validate:"required"`
 	ContentId       int64  `json:"content_id" gorm:"type:INTEGER"`
 	TaskModeId      int64  `json:"task_mode_id" gorm:"type:INTEGER"`
@@ -47,7 +47,7 @@ func (m *defaultTaskModel) CreateTable() (err error) {
 }
 
 func (m *defaultTaskModel) DropTable() (err error) {
-	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
 }
 

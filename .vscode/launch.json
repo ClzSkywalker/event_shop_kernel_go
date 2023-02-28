@@ -42,7 +42,7 @@
       "cwd": "./",
       "program": "${workspaceFolder}/main.go",
       "args": [
-        "api"
+        "api",
         "--port=6905",
         "--mode=release",
         "--dbPath=./assert/ectype/todo_shop.db",

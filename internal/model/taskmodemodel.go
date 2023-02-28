@@ -21,7 +21,7 @@ const (
 type TaskModeModel struct {
 	BaseModel
 	ModeId int            `json:"mode_id" gorm:"type:INTEGER" validate:"required"` // 重复模式 TaskModeEnum
-	Config datatypes.JSON `json:"config" gorm:"type:BLOB"`
+	Config datatypes.JSON `json:"config" gorm:"type:varchar"`
 }
 
 type TaskModeConfigModel struct {
@@ -58,7 +58,7 @@ func (m *defaultTaskModeModel) CreateTable() (err error) {
 }
 
 func (m *defaultTaskModeModel) DropTable() (err error) {
-	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
 }
 func (m *defaultTaskModeModel) SelectByModel(TaskModeModel) (result []TaskModeModel, err error) {

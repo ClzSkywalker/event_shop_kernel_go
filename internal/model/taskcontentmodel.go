@@ -11,9 +11,9 @@ const (
 
 type TaskContentModel struct {
 	BaseModel
-	TaskId   int             `json:"task_id" gorm:"type:INTEGER;index:idx_tid"`
-	Content  string          `json:"content" gorm:"type:TEXT"`
-	FileList []TaskFileModel `json:"file_list" gorm:"type:BLOB"`
+	TaskId   int             `json:"task_id" gorm:"type:INTEGER;index:idx_task_content_tid"`
+	Content  string          `json:"content" gorm:"type:varchar"`
+	FileList []TaskFileModel `json:"file_list" gorm:"type:varchar"`
 }
 
 type TaskFileModel struct {
@@ -51,7 +51,7 @@ func (m *defaultTaskContentModel) CreateTable() (err error) {
 }
 
 func (m *defaultTaskContentModel) DropTable() (err error) {
-	err = m.conn.Table(m.table).Migrator().DropTable(m)
+	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
 }
 func (m *defaultTaskContentModel) SelectByModel(TaskContentModel) (result []TaskContentModel, err error) {
