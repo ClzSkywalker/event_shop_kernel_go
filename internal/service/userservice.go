@@ -12,6 +12,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 /**
@@ -95,7 +96,7 @@ func LoginByEmail(tx model.IUserModel, leq entity.LoginByEmailReq) (uid string, 
 		return
 	}
 	um, err := tx.QueryUser(model.UserModel{Email: leq.Email})
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", leq))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
 		return

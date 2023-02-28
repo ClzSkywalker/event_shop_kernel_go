@@ -30,8 +30,8 @@ func init() {
 		{Tag: language.Chinese, Key: SystemErrorCode, Msg: "系统内部错误:%s"},
 		{Tag: language.English, Key: SystemErrorCode, Msg: "Internal system error:%s"},
 
-		{Tag: language.Chinese, Key: TranslatorNotFoundErr, Msg: "翻译器%s未找到"},
-		{Tag: language.English, Key: TranslatorNotFoundErr, Msg: "translator %s not found"},
+		{Tag: language.Chinese, Key: TranslatorNotFoundErr, Msg: "校验器: %s 未找到"},
+		{Tag: language.English, Key: TranslatorNotFoundErr, Msg: "validator: %s not found"},
 
 		{Tag: language.Chinese, Key: RequestParamBindErr, Msg: "参数传递错误:%s"},
 		{Tag: language.English, Key: RequestParamBindErr, Msg: "Parameter passing error:%s"},
