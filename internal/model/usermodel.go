@@ -22,6 +22,7 @@ type IUserModel interface {
 	IBaseModel
 	Insert(um *UserModel) (id uint, err error)
 	QueryUser(um UserModel) (ru UserModel, err error)
+	CheckRegisterRepeat(um UserModel) (ru UserModel, err error)
 	Update(um UserModel) (err error)
 	Delete(id uint) (err error)
 }
@@ -60,6 +61,12 @@ func (m *defaultUserModel) Insert(um *UserModel) (id uint, err error) {
 
 func (m *defaultUserModel) QueryUser(um UserModel) (ru UserModel, err error) {
 	err = m.conn.Table(m.table).Where(um).First(&ru).Error
+	return
+}
+
+func (m *defaultUserModel) CheckRegisterRepeat(um UserModel) (ru UserModel, err error) {
+	err = m.conn.Table(m.table).Or(UserModel{Email: um.Email}).
+		Or(UserModel{Phone: um.Phone}).First(&ru).Error
 	return
 }
 

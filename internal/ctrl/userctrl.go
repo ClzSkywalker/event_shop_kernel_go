@@ -15,7 +15,7 @@ import (
 func RegisterByEmail(c *gin.Context) {
 	ret := httpx.NewResult()
 	defer c.JSON(http.StatusOK, ret)
-	req := entity.RegisterEmailReq{}
+	req := entity.RegisterByEmailReq{}
 	err := validateBind(c, &req)
 	if err != nil {
 		ret.SetCodeErr(err)
