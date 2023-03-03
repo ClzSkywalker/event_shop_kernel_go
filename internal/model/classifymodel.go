@@ -14,11 +14,13 @@ type ClassifyModel struct {
 type IClassifyModel interface {
 	IBaseModel
 	QueryAll() ([]ClassifyModel, error)
+	QueryById(id uint) (result ClassifyModel, err error)
 	QueryByUid(uid string) ([]ClassifyModel, error)
+	QueryByTitle(uid, title string) (ClassifyModel, error)
 	QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error)
 	Insert(*ClassifyModel) (uint, error)
 	Update(ClassifyModel) error
-	Delete(id uint) error
+	Delete(id uint, uid string) error
 }
 
 type defaultClassifyModel struct {
@@ -52,8 +54,18 @@ func (m *defaultClassifyModel) QueryAll() (cms []ClassifyModel, err error) {
 	return
 }
 
+func (m *defaultClassifyModel) QueryById(id uint) (result ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Where(ClassifyModel{BaseModel: BaseModel{Id: id}}).First(&result).Error
+	return
+}
+
 func (m *defaultClassifyModel) QueryByUid(uid string) (result []ClassifyModel, err error) {
 	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid}).Find(&result).Error
+	return
+}
+
+func (m *defaultClassifyModel) QueryByTitle(uid, title string) (result ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid, Title: title}).Find(&result).Error
 	return
 }
 
@@ -73,7 +85,7 @@ func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
 	return
 }
 
-func (m *defaultClassifyModel) Delete(id uint) (err error) {
-	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}}).Error
+func (m *defaultClassifyModel) Delete(id uint, uid string) (err error) {
+	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}, Uid: uid}).Error
 	return
 }

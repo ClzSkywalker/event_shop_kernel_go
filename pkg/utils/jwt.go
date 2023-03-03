@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+
 	jwt "github.com/golang-jwt/jwt/v5"
 )
 
@@ -37,6 +39,29 @@ func GenerateClaims(claims jwt.RegisteredClaims, data map[string]interface{}) (m
 	mc["jti"] = claims.ID
 	for k, v := range data {
 		mc[k] = v
+	}
+	return
+}
+
+/**
+ * @Author         : ClzSkywalker
+ * @Date           : 2023-03-03
+ * @Description    : parse token
+ * @param           {string} token
+ * @param           {string} secretKey
+ * @return          {*}
+ */
+func ParseToken(token string, secretKey string) (jtoken *jwt.Token, err error) {
+	jtoken, err = jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		// Don't forget to validate the alg is what you expect:
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("token: %s", token.Raw)
+		}
+		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
+		return []byte(secretKey), nil
+	})
+	if err != nil {
+		return
 	}
 	return
 }

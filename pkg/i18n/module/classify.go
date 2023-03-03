@@ -8,6 +8,10 @@ import (
 const (
 	ClassifyQueryErr = classifyModuleCode + iota
 	ClassifyInsertErr
+	ClassifyExistedErr
+	ClassifyUpdateErr
+	ClassifyNotfoundErr
+	ClassifyDeleteErr
 )
 
 func init() {
@@ -16,6 +20,14 @@ func init() {
 		{Tag: language.English, Key: ClassifyQueryErr, Msg: "Class query failure"},
 		{Tag: language.Chinese, Key: ClassifyInsertErr, Msg: "分类创建失败"},
 		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Class creation failure"},
+		{Tag: language.Chinese, Key: ClassifyInsertErr, Msg: "分类已存在"},
+		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Classification already exists"},
+		{Tag: language.Chinese, Key: ClassifyInsertErr, Msg: "分类更新失败"},
+		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Class update failure"},
+		{Tag: language.Chinese, Key: ClassifyInsertErr, Msg: "分类不存在"},
+		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Classification does not exist"},
+		{Tag: language.Chinese, Key: ClassifyInsertErr, Msg: "分类删除失败"},
+		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Class deletion failure"},
 	}
 	entry.SetEntries(entries...)
 }

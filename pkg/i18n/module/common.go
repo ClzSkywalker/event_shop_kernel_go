@@ -20,6 +20,8 @@ const (
 	DbErrorErr
 	EncryptPwdErr
 	GenerateUlidErr
+	TokenInvalid
+	TokenExpired
 )
 
 func init() {
@@ -38,6 +40,12 @@ func init() {
 
 		{Tag: language.Chinese, Key: EncryptPwdErr, Msg: "创建密码错误，请换一个密码"},
 		{Tag: language.English, Key: EncryptPwdErr, Msg: "Incorrect password creation, please change the password"},
+
+		{Tag: language.Chinese, Key: TokenInvalid, Msg: "密钥无效"},
+		{Tag: language.English, Key: TokenInvalid, Msg: "Invalid key"},
+
+		{Tag: language.Chinese, Key: TokenExpired, Msg: "密钥过期"},
+		{Tag: language.English, Key: TokenExpired, Msg: "Key expiration"},
 	}
 	entry.SetEntries(entries...)
 }

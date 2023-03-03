@@ -44,6 +44,10 @@ func GenerateToken(uid string) (token string, err error) {
 	return
 }
 
+func ParseToken(token string) (jtoken *jwt.Token, err error) {
+	return utils.ParseToken(token, constx.TokenSecret)
+}
+
 /**
  * @Author         : ClzSkywalker
  * @Date           : 2023-02-28
