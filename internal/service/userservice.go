@@ -83,6 +83,11 @@ func RegisterByEmail(tx model.IUserModel, rmr entity.RegisterByEmailReq) (uid st
  * @return          {*}
  */
 func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid string, err error) {
+	isPhone := utils.CheckMobile(rmr.Phone)
+	if !isPhone {
+		err = i18n.NewCodeError(module.UserPhoneErr)
+		return
+	}
 	pwd, err := utils.EncryptPwd(rmr.Pwd, constx.PwdSalt)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("pwd", pwd))

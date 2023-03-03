@@ -10,6 +10,7 @@ const (
 	UserRegisterRepeatErr
 	UserNotFoundErr
 	UserPwdErr
+	UserPhoneErr
 )
 
 func init() {
@@ -25,6 +26,9 @@ func init() {
 
 		{Tag: language.Chinese, Key: UserPwdErr, Msg: "密码错误"},
 		{Tag: language.English, Key: UserPwdErr, Msg: "Password error"},
+
+		{Tag: language.Chinese, Key: UserPwdErr, Msg: "号码异常"},
+		{Tag: language.English, Key: UserPwdErr, Msg: "Abnormal number"},
 	}
 	entry.SetEntries(entries...)
 }
