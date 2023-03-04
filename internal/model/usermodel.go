@@ -12,8 +12,8 @@ type UserModel struct {
 	MemberType   constx.UserType     `json:"member_type,omitempty" gorm:"type:INTEGER"`   // 用户类型
 	RegisterType constx.RegisterTypt `json:"register_type,omitempty" gorm:"type:INTEGER"` // 注册方式
 	Avatar       string              `json:"avatar,omitempty" gorm:"type:VARCHAR(255)"`
-	Email        string              `json:"email,omitempty" gorm:"type:VARCHAR(30);index:udx_user_email,unique"`
-	Phone        string              `json:"phone,omitempty" gorm:"type:VARCHAR(30);index:udx_user_phone,unique"`
+	Email        string              `json:"email,omitempty" gorm:"type:VARCHAR(30);index:idx_user_email"`
+	Phone        string              `json:"phone,omitempty" gorm:"type:VARCHAR(30);index:idx_user_phone"`
 	Pwd          string              `json:"pwd,omitempty" gorm:"type:VARCHAR"`
 	Version      string              `json:"version,omitempty" gorm:"type:VARCHAR(30)"` // 最后一次登录的版本
 }

@@ -87,11 +87,6 @@ func RegisterByEmail(tx model.IUserModel, rmr entity.RegisterByEmailReq) (uid st
  * @return          {*}
  */
 func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid string, err error) {
-	isPhone := utils.CheckMobile(rmr.Phone)
-	if !isPhone {
-		err = i18n.NewCodeError(module.UserPhoneErr)
-		return
-	}
 	pwd, err := utils.EncryptPwd(rmr.Pwd, constx.PwdSalt)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("pwd", pwd))
@@ -138,6 +133,7 @@ func register(tx model.IUserModel, um *model.UserModel) (uid string, err error) 
 		err = i18n.NewCodeError(module.UserRegisterErr)
 		return
 	}
+	uid = um.Uid
 	return
 }
 
@@ -171,5 +167,29 @@ func LoginByEmail(tx model.IUserModel, leq entity.LoginByEmailReq) (uid string, 
 		return
 	}
 	uid = um.Uid
+	return
+}
+
+/**
+ * @Author         : ClzSkywalker
+ * @Date           : 2023-03-04
+ * @Description    : 通过uid登录
+ * @param           {model.IUserModel} tx
+ * @param           {entity.LoginByUidReq} luq
+ * @return          {*}
+ */
+func LoginByUid(tx model.IUserModel, luq entity.LoginByUidReq) (uid string, err error) {
+	_, err = tx.QueryUser(model.UserModel{Uid: luq.Uid})
+	if err != nil && err != gorm.ErrRecordNotFound {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if err == gorm.ErrRecordNotFound {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	uid = luq.Uid
 	return
 }

@@ -80,3 +80,26 @@ func LoginByEmail(c *gin.Context) {
 	}
 	ret.Data = entity.LoginRep{Token: token}
 }
+
+func LoginByUid(c *gin.Context) {
+	ret := httpx.NewResult()
+	defer c.JSON(http.StatusOK, ret)
+	req := entity.LoginByUidReq{}
+	err := validateBind(c, &req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	uid, err := service.LoginByUid(container.GlobalServerContext.UserModel, req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	token, err := service.GenerateToken(uid)
+	if err != nil {
+		err = i18n.NewCodeError(module.UserRegisterErr)
+		ret.SetCodeErr(err)
+		return
+	}
+	ret.Data = entity.LoginRep{Token: token}
+}

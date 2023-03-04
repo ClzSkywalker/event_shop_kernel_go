@@ -20,6 +20,10 @@ type LoginByEmailReq struct {
 	Pwd   string `json:"pwd" validate:"required,min=6,max=20"`
 }
 
+type LoginByUidReq struct {
+	Uid string `json:"uid" validate:"re"`
+}
+
 type LoginRep struct {
 	Token string `json:"token"`
 }

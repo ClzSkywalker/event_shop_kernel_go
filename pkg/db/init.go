@@ -21,7 +21,7 @@ const (
 	DbInitSuccess
 )
 
-func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
+func InitDatabase(dbPath, mode string) (db *gorm.DB, idb IOriginDb, err error) {
 	loggerx.DbLog.Info("init database start")
 	dbLog := loggerx.NewDbLog(loggerx.DbLog, logger.Config{
 		SlowThreshold:             100,         // 慢 SQL 阈值
@@ -70,15 +70,33 @@ func InitDatabase(dbPath, mode string) (db *gorm.DB, idb iinitDb, err error) {
 	return
 }
 
-type iinitDb interface {
-	GetVersion() (err error)
-	SetVersion() (err error)
-	SetDb(*gorm.DB)
-	SetCreateFunc(...constx.CreateTableFunc)
-	SetDropFunc(...constx.DropTableFunc)
-	OnInitDb(mode string, ch chan<- constx.DbInitStateType) (err error)
-	onCreate() (err error)
-	onUpgrade() (err error)
-	onInitData() (err error)
-	onDrop() (err error)
+func InitTestDatabase() (db *gorm.DB, idb IOriginDb, err error) {
+	db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		return
+	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
+	sqlDB.SetMaxIdleConns(10)
+	// SetMaxOpenConns 设置打开数据库连接的最大数量。
+	sqlDB.SetMaxOpenConns(50)
+	// SetConnMaxLifetime 设置了连接可复用的最大时间。
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+
+	idb = &sqliteDbStruct{
+		db:          db,
+		log:         loggerx.DbLog,
+		lastVersion: lastVersion,
+		migrateList: make([]constx.AutoMigrateFunc, 0),
+	}
+
+	err = idb.GetVersion()
+	if err != nil {
+		return
+	}
+	return
 }
