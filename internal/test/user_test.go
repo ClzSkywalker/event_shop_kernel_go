@@ -14,10 +14,10 @@ func TestRegister(t *testing.T) {
 	Convey("user register", t, func() {
 		Convey("register by emial", func() {
 			remailreq := entity.RegisterByEmailReq{
-				Email: "123@qq.com",
+				Email: email1,
 			}
-			remailreq.NickName = "test"
-			remailreq.Pwd = "123456"
+			remailreq.NickName = nikeName1
+			remailreq.Pwd = pwd1
 			uid, err := service.RegisterByEmail(container.GlobalServerContext.UserModel, remailreq)
 			So(err, ShouldBeNil)
 			So(uid, ShouldNotBeBlank)
@@ -26,9 +26,9 @@ func TestRegister(t *testing.T) {
 		})
 
 		Convey("register by phone", func() {
-			req := entity.RegisterByPhoneReq{Phone: "123456"}
-			req.NickName = "test"
-			req.Pwd = "18874838161"
+			req := entity.RegisterByPhoneReq{Phone: phone1}
+			req.NickName = nikeName1
+			req.Pwd = pwd1
 			uid, err := service.RegisterByPhone(container.GlobalServerContext.UserModel, req)
 			So(err, ShouldBeNil)
 			So(uid, ShouldNotBeBlank)

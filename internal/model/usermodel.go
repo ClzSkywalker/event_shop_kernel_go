@@ -66,7 +66,7 @@ func (m *defaultUserModel) QueryUser(um UserModel) (ru UserModel, err error) {
 
 func (m *defaultUserModel) CheckRegisterRepeat(um UserModel) (ru UserModel, err error) {
 	err = m.conn.Table(m.table).Or(UserModel{Email: um.Email}).
-		Or(UserModel{Phone: um.Phone}).First(&ru).Error
+		Or(UserModel{Phone: um.Phone}).Or(UserModel{Uid: um.Uid}).First(&ru).Error
 	return
 }
 

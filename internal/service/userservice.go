@@ -100,7 +100,7 @@ func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid st
 		return
 	}
 	um := &model.UserModel{
-		Email:    rmr.Phone,
+		Phone:    rmr.Phone,
 		NickName: rmr.NickName,
 		Pwd:      pwd,
 		Uid:      uid,
