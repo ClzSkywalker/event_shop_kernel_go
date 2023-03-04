@@ -110,6 +110,26 @@ func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid st
 
 /**
  * @Author         : ClzSkywalker
+ * @Date           : 2023-03-04
+ * @Description    : 通过uid注册
+ * @param           {model.IUserModel} tx
+ * @return          {*}
+ */
+func RegisterByUid(tx model.IUserModel) (uid string, err error) {
+	uid, err = utils.NewUlid()
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
+		err = i18n.NewCodeError(module.UserRegisterErr)
+		return
+	}
+	um := &model.UserModel{
+		Uid: uid,
+	}
+	return register(tx, um)
+}
+
+/**
+ * @Author         : ClzSkywalker
  * @Date           : 2023-03-01
  * @Description    : 注册通用校验逻辑
  * @param           {model.IUserModel} tx

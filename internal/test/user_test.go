@@ -35,5 +35,11 @@ func TestRegister(t *testing.T) {
 			_, err = service.RegisterByPhone(container.GlobalServerContext.UserModel, req)
 			So(err, ShouldNotBeNil)
 		})
+
+		Convey("register by uid", func() {
+			uid, err := service.RegisterByUid(container.GlobalServerContext.UserModel)
+			So(err, ShouldBeNil)
+			So(uid, ShouldNotBeBlank)
+		})
 	})
 }
