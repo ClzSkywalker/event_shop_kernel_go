@@ -88,15 +88,21 @@ func TestUserRegister(t *testing.T) {
 			uid, err := service.RegisterByUid(container.GlobalServerContext.UserModel)
 			So(err, ShouldBeNil)
 			So(uid, ShouldNotBeBlank)
+			Convey("login by uid", func() {
+				luq := entity.LoginByUidReq{Uid: uid}
+				Convey("success", func() {
+					uid, err := service.LoginByUid(container.GlobalServerContext.UserModel, luq)
+					So(err, ShouldBeNil)
+					So(uid, ShouldNotBeEmpty)
+				})
+				Convey("notfound", func() {
+					luq.Uid = "notfound"
+					uid, err := service.LoginByUid(container.GlobalServerContext.UserModel, luq)
+					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
+					So(uid, ShouldBeEmpty)
+				})
+			})
 		})
-	})
-}
 
-func TestUserLogin(t *testing.T) {
-	initGormAndVar()
-	Convey("user login", t, func() {
-		Convey("login by emial", func() {
-
-		})
 	})
 }
