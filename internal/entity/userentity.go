@@ -37,3 +37,11 @@ type LoginByUidReq struct {
 type LoginRep struct {
 	Token string `json:"token"`
 }
+
+type BindEmailReq struct {
+	Email string `json:"email" validate:"required,email,min=6"`
+}
+
+type BindPhoneReq struct {
+	Phone string `json:"phone" validate:"required,min=6"`
+}

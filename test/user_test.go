@@ -103,6 +103,5 @@ func TestUserRegister(t *testing.T) {
 				})
 			})
 		})
-
 	})
 }

@@ -23,6 +23,7 @@ type IUserModel interface {
 	Insert(um *UserModel) (id uint, err error)
 	QueryUser(um UserModel) (ru UserModel, err error)
 	CheckRegisterRepeat(um UserModel) (ru UserModel, err error)
+	CheckBind(um UserModel) (ru UserModel, err error)
 	Update(um UserModel) (err error)
 	Delete(id uint) (err error)
 }
@@ -70,8 +71,14 @@ func (m *defaultUserModel) CheckRegisterRepeat(um UserModel) (ru UserModel, err 
 	return
 }
 
+func (m *defaultUserModel) CheckBind(um UserModel) (ru UserModel, err error) {
+	err = m.conn.Table(m.table).Or(UserModel{Email: um.Email}).
+		Or(UserModel{Phone: um.Phone}).First(&ru).Error
+	return
+}
+
 func (m *defaultUserModel) Update(um UserModel) (err error) {
-	err = m.conn.Table(m.table).Updates(um).Error
+	err = m.conn.Table(m.table).Where(UserModel{Uid: um.Uid}).Updates(um).Error
 	return
 }
 

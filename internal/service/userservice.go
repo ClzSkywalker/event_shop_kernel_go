@@ -71,10 +71,11 @@ func RegisterByEmail(tx model.IUserModel, rmr entity.RegisterByEmailReq) (uid st
 		return
 	}
 	um := &model.UserModel{
-		Email:    rmr.Email,
-		NickName: rmr.NickName,
-		Pwd:      pwd,
-		Uid:      uid,
+		Email:        rmr.Email,
+		NickName:     rmr.NickName,
+		Pwd:          pwd,
+		Uid:          uid,
+		RegisterType: constx.EmailRT,
 	}
 	return register(tx, um)
 }
@@ -101,10 +102,11 @@ func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid st
 		return
 	}
 	um := &model.UserModel{
-		Phone:    rmr.Phone,
-		NickName: rmr.NickName,
-		Pwd:      pwd,
-		Uid:      uid,
+		Phone:        rmr.Phone,
+		NickName:     rmr.NickName,
+		Pwd:          pwd,
+		Uid:          uid,
+		RegisterType: constx.PhoneRT,
 	}
 	return register(tx, um)
 }
@@ -252,5 +254,81 @@ func LoginByUid(tx model.IUserModel, luq entity.LoginByUidReq) (uid string, err 
 		return
 	}
 	uid = luq.Uid
+	return
+}
+
+/**
+ * @Author         : ClzSkywalker
+ * @Date           : 2023-03-06
+ * @Description    : 给用户绑定邮箱
+ * @param           {model.IUserModel} tx
+ * @param           {string} uid
+ * @param           {entity.BindEmailReq} req
+ * @return          {*}
+ */
+func BindEmailByUid(tx model.IUserModel, uid string, req entity.BindEmailReq) (err error) {
+	um1, err := tx.QueryUser(model.UserModel{Uid: uid})
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid), zap.Any("model", req))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if um1.Email != "" {
+		err = i18n.NewCodeError(module.UserBindedEmailErr)
+		return
+	}
+	_, err = tx.QueryUser(model.UserModel{Email: req.Email})
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", req))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		err = i18n.NewCodeError(module.UserEmailBindByOtherErr)
+		return
+	}
+	err = tx.Update(model.UserModel{Uid: uid, Email: req.Email})
+	if err != nil {
+		err = i18n.NewCodeError(module.UserUpdateErr)
+		return
+	}
+	return
+}
+
+/**
+ * @Author         : ClzSkywalker
+ * @Date           : 2023-03-06
+ * @Description    : 给用户绑定电话
+ * @param           {model.IUserModel} tx
+ * @param           {string} uid
+ * @param           {entity.BindPhoneReq} req
+ * @return          {*}
+ */
+func BindPhoneByUid(tx model.IUserModel, uid string, req entity.BindPhoneReq) (err error) {
+	um1, err := tx.QueryUser(model.UserModel{Uid: uid})
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid), zap.Any("model", req))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if um1.Email != "" {
+		err = i18n.NewCodeError(module.UserBindedPhoneErr)
+		return
+	}
+	_, err = tx.QueryUser(model.UserModel{Phone: req.Phone})
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", req))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		err = i18n.NewCodeError(module.UserEmailBindByOtherErr)
+		return
+	}
+	err = tx.Update(model.UserModel{Uid: uid, Phone: req.Phone})
+	if err != nil {
+		err = i18n.NewCodeError(module.UserUpdateErr)
+		return
+	}
 	return
 }

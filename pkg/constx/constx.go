@@ -6,18 +6,20 @@ const (
 	LangEnglish = "en"
 	LangChinese = "zh"
 
-	PwdSalt = "LeagueOfLegends"
-
 	CmdPort    = "port"
 	CmdMode    = "mode"
 	CmdDbPath  = "dbPath"
 	CmdLogPath = "logPath"
+
+	PwdSalt = "LeagueOfLegends"
 
 	TokenIssuer    = "ClzSkywalker"
 	TokenExpiresAt = 86400 * 3
 	TokenSub       = "event shop"
 	TokenUid       = "uid"
 	TokenSecret    = "Token=5RNEYJXWQA"
+
+	HeaderAuthorization = "Authorization"
 )
 
 // 时间格式
@@ -49,9 +51,8 @@ const (
 type RegisterTypt int
 
 const (
-	Anonymity RegisterTypt = 0
-	EmailRT   RegisterTypt = 1
-	PhoneRT   RegisterTypt = 2
+	EmailRT RegisterTypt = 1
+	PhoneRT RegisterTypt = 2
 	// WechatRT   RegisterTypt = 2
 	// QQRT       RegisterTypt = 3
 	// GoogleRT   RegisterTypt = 4

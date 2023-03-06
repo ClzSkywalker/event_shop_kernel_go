@@ -12,6 +12,11 @@ const (
 	UserPwdErr
 	UserPhoneErr
 	UserBindNoUidLoginErr
+	UserBindedEmailErr
+	UserBindedPhoneErr
+	UserEmailBindByOtherErr
+	UserPhoneBindByOtherErr
+	UserUpdateErr
 )
 
 func init() {
@@ -33,6 +38,21 @@ func init() {
 
 		{Tag: language.Chinese, Key: UserBindNoUidLoginErr, Msg: "用户已绑定其他登录方式，不支持uid登录"},
 		{Tag: language.English, Key: UserBindNoUidLoginErr, Msg: "The user has been bound to another login method and does not support uid login"},
+
+		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "用户已绑定邮箱"},
+		{Tag: language.English, Key: UserBindedEmailErr, Msg: "The user has bound a email"},
+
+		{Tag: language.Chinese, Key: UserBindedPhoneErr, Msg: "用户已绑定电话"},
+		{Tag: language.English, Key: UserBindedPhoneErr, Msg: "The user has a bound phone"},
+
+		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "邮箱已被其他用户绑定"},
+		{Tag: language.English, Key: UserBindedEmailErr, Msg: "The mailbox has been bound to another user"},
+
+		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "电话已被其他用户绑定"},
+		{Tag: language.English, Key: UserBindedEmailErr, Msg: "The phone has been bound to another user"},
+
+		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "用户更新失败"},
+		{Tag: language.English, Key: UserBindedEmailErr, Msg: "User update failure"},
 	}
 	entry.SetEntries(entries...)
 }

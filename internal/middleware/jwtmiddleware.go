@@ -8,8 +8,11 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"go.uber.org/zap"
 )
 
 /**
@@ -36,6 +39,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		}
 		epTime, err := t.Claims.GetExpirationTime()
 		if err != nil {
+			loggerx.ReqLog.Error(err.Error(), zap.Any("claims", t.Claims.(jwt.MapClaims)))
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -46,6 +50,15 @@ func JwtMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
 		}
+		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUid]
+		if !ok || uid.(string) == "" {
+			loggerx.ReqLog.Error(err.Error(), zap.Any("claims", t.Claims.(jwt.MapClaims)))
+			err := i18n.NewCodeError(module.TokenInvalid)
+			ret.SetCodeErr(err)
+			c.JSON(http.StatusOK, ret)
+			c.Abort()
+		}
+		c.Set(constx.TokenUid, uid)
 		c.Next()
 	}
 }
