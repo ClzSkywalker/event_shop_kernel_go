@@ -19,6 +19,8 @@ type BaseServiceContext struct {
 	Db               *gorm.DB
 	Validator        *i18n.ParaValidation
 	UserModel        model.IUserModel
+	TeamModel        model.ITeamModel
+	UserToTeamModel  model.IUserToTeamModel
 	TaskModel        model.ITaskModel
 	TaskChildModel   model.ITaskChildModel
 	TaskContentModel model.ITaskContentModel
@@ -77,6 +79,8 @@ func TailDbInitStatus(ch <-chan constx.DbInitStateType) {
 func NewBaskServiceContext(base *BaseServiceContext, database *gorm.DB) *BaseServiceContext {
 	base.Db = database
 	base.UserModel = model.NewDefaultUserModel(database)
+	base.TeamModel = model.NewDefaultTeamModel(database)
+	base.UserToTeamModel = model.NewDefaultUserToTeamModel(database)
 	base.TaskModel = model.NewDefaultTaskModel(database)
 	base.TaskChildModel = model.NewDefaultTaskChildModel(database)
 	base.TaskContentModel = model.NewDefaultTaskContentModel(database)
@@ -89,6 +93,8 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 	idb.SetDb(tx)
 	idb.SetDropFunc(
 		model.NewDefaultUserModel(tx).DropTable,
+		model.NewDefaultTeamModel(tx).DropTable,
+		model.NewDefaultUserToTeamModel(tx).DropTable,
 		model.NewDefaultTaskModel(tx).DropTable,
 		model.NewDefaultTaskChildModel(tx).DropTable,
 		model.NewDefaultTaskContentModel(tx).DropTable,
@@ -96,10 +102,16 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 		model.NewDefaultClassifyModel(tx).DropTable)
 	idb.SetCreateFunc(
 		model.NewDefaultUserModel(tx).CreateTable,
+		model.NewDefaultTeamModel(tx).CreateTable,
+		model.NewDefaultUserToTeamModel(tx).CreateTable,
 		model.NewDefaultTaskModel(tx).CreateTable,
 		model.NewDefaultTaskChildModel(tx).CreateTable,
 		model.NewDefaultTaskContentModel(tx).CreateTable,
 		model.NewDefaultTaskModeModel(tx).CreateTable,
 		model.NewDefaultClassifyModel(tx).CreateTable)
 	return idb
+}
+
+func InitData(idb db.IOriginDb, tx *gorm.DB) {
+	model.NewDefaultUserModel(tx)
 }

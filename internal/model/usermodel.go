@@ -7,7 +7,7 @@ import (
 
 type UserModel struct {
 	BaseModel
-	Uid          string              `json:"uid,omitempty" gorm:"type:VARCHAR(36);index:udx_user_uid,unique"`
+	CreatedBy    string              `json:"uid,omitempty" gorm:"type:VARCHAR(26);index:udx_user_uid,unique"`
 	NickName     string              `json:"nick_name,omitempty" gorm:"type:VARCHAR(255)"`
 	MemberType   constx.UserType     `json:"member_type,omitempty" gorm:"type:INTEGER"`   // 用户类型
 	RegisterType constx.RegisterTypt `json:"register_type,omitempty" gorm:"type:INTEGER"` // 注册方式
@@ -54,6 +54,12 @@ func (m *defaultUserModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultUserModel) InitData(uid string) (err error) {
+	um := &UserModel{CreatedBy: uid, Version: constx.KernelVersion}
+	_, err = m.Insert(um)
+	return
+}
+
 func (m *defaultUserModel) Insert(um *UserModel) (id uint, err error) {
 	err = m.conn.Table(m.table).Create(um).Error
 	id = um.Id
@@ -67,7 +73,7 @@ func (m *defaultUserModel) QueryUser(um UserModel) (ru UserModel, err error) {
 
 func (m *defaultUserModel) CheckRegisterRepeat(um UserModel) (ru UserModel, err error) {
 	err = m.conn.Table(m.table).Or(UserModel{Email: um.Email}).
-		Or(UserModel{Phone: um.Phone}).Or(UserModel{Uid: um.Uid}).First(&ru).Error
+		Or(UserModel{Phone: um.Phone}).Or(UserModel{CreatedBy: um.CreatedBy}).First(&ru).Error
 	return
 }
 
@@ -78,7 +84,7 @@ func (m *defaultUserModel) CheckBind(um UserModel) (ru UserModel, err error) {
 }
 
 func (m *defaultUserModel) Update(um UserModel) (err error) {
-	err = m.conn.Table(m.table).Where(UserModel{Uid: um.Uid}).Updates(um).Error
+	err = m.conn.Table(m.table).Where(UserModel{CreatedBy: um.CreatedBy}).Updates(um).Error
 	return
 }
 

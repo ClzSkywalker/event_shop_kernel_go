@@ -37,7 +37,7 @@ func RouterManager(c *gin.Engine) {
 		userAuth.Handle(http.MethodPost, "/bind/phone", ctrl.BindPhoneByUid)
 	}
 
-	classify := globalRoute.Group("/classify")
+	classify := globalRoute.Group("/classify").Use(middleware.JwtMiddleware())
 	{
 		classify.Handle(http.MethodPost, "/classify", ctrl.InsertClassify)
 	}

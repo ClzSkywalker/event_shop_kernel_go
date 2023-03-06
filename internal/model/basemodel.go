@@ -6,6 +6,8 @@ import (
 
 const (
 	UserTableName        = "user"
+	TeamTableName        = "team"
+	UserToTeamTableName  = "user_to_team"
 	ClassifyTableName    = "classify"
 	TaskTableName        = "task"
 	TaskModeTableName    = "task_mode"

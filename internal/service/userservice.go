@@ -74,7 +74,7 @@ func RegisterByEmail(tx model.IUserModel, rmr entity.RegisterByEmailReq) (uid st
 		Email:        rmr.Email,
 		NickName:     rmr.NickName,
 		Pwd:          pwd,
-		Uid:          uid,
+		CreatedBy:    uid,
 		RegisterType: constx.EmailRT,
 	}
 	return register(tx, um)
@@ -105,7 +105,7 @@ func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid st
 		Phone:        rmr.Phone,
 		NickName:     rmr.NickName,
 		Pwd:          pwd,
-		Uid:          uid,
+		CreatedBy:    uid,
 		RegisterType: constx.PhoneRT,
 	}
 	return register(tx, um)
@@ -126,7 +126,7 @@ func RegisterByUid(tx model.IUserModel) (uid string, err error) {
 		return
 	}
 	um := &model.UserModel{
-		Uid: uid,
+		CreatedBy: uid,
 	}
 	return register(tx, um)
 }
@@ -156,7 +156,7 @@ func register(tx model.IUserModel, um *model.UserModel) (uid string, err error) 
 		err = i18n.NewCodeError(module.UserRegisterErr)
 		return
 	}
-	uid = um.Uid
+	uid = um.CreatedBy
 	return
 }
 
@@ -181,7 +181,7 @@ func LoginByEmail(tx model.IUserModel, leq entity.LoginByEmailReq) (uid string, 
 		err = i18n.NewCodeError(module.UserNotFoundErr)
 		return
 	}
-	if um.Uid == "" {
+	if um.CreatedBy == "" {
 		err = i18n.NewCodeError(module.UserNotFoundErr)
 		return
 	}
@@ -189,7 +189,7 @@ func LoginByEmail(tx model.IUserModel, leq entity.LoginByEmailReq) (uid string, 
 		err = i18n.NewCodeError(module.UserPwdErr)
 		return
 	}
-	uid = um.Uid
+	uid = um.CreatedBy
 	return
 }
 
@@ -224,7 +224,7 @@ func LoginByPhone(tx model.IUserModel, lpq entity.LoginByPhoneReq) (uid string, 
 		err = i18n.NewCodeError(module.UserPwdErr)
 		return
 	}
-	uid = um.Uid
+	uid = um.CreatedBy
 	return
 }
 
@@ -237,7 +237,7 @@ func LoginByPhone(tx model.IUserModel, lpq entity.LoginByPhoneReq) (uid string, 
  * @return          {*}
  */
 func LoginByUid(tx model.IUserModel, luq entity.LoginByUidReq) (uid string, err error) {
-	um, err := tx.QueryUser(model.UserModel{Uid: luq.Uid})
+	um, err := tx.QueryUser(model.UserModel{CreatedBy: luq.Uid})
 	if err != nil && err != gorm.ErrRecordNotFound {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
@@ -267,7 +267,7 @@ func LoginByUid(tx model.IUserModel, luq entity.LoginByUidReq) (uid string, err 
  * @return          {*}
  */
 func BindEmailByUid(tx model.IUserModel, uid string, req entity.BindEmailReq) (err error) {
-	um1, err := tx.QueryUser(model.UserModel{Uid: uid})
+	um1, err := tx.QueryUser(model.UserModel{CreatedBy: uid})
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid), zap.Any("model", req))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
@@ -287,7 +287,7 @@ func BindEmailByUid(tx model.IUserModel, uid string, req entity.BindEmailReq) (e
 		err = i18n.NewCodeError(module.UserEmailBindByOtherErr)
 		return
 	}
-	err = tx.Update(model.UserModel{Uid: uid, Email: req.Email})
+	err = tx.Update(model.UserModel{CreatedBy: uid, Email: req.Email})
 	if err != nil {
 		err = i18n.NewCodeError(module.UserUpdateErr)
 		return
@@ -305,7 +305,7 @@ func BindEmailByUid(tx model.IUserModel, uid string, req entity.BindEmailReq) (e
  * @return          {*}
  */
 func BindPhoneByUid(tx model.IUserModel, uid string, req entity.BindPhoneReq) (err error) {
-	um1, err := tx.QueryUser(model.UserModel{Uid: uid})
+	um1, err := tx.QueryUser(model.UserModel{CreatedBy: uid})
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid), zap.Any("model", req))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
@@ -325,7 +325,7 @@ func BindPhoneByUid(tx model.IUserModel, uid string, req entity.BindPhoneReq) (e
 		err = i18n.NewCodeError(module.UserEmailBindByOtherErr)
 		return
 	}
-	err = tx.Update(model.UserModel{Uid: uid, Phone: req.Phone})
+	err = tx.Update(model.UserModel{CreatedBy: uid, Phone: req.Phone})
 	if err != nil {
 		err = i18n.NewCodeError(module.UserUpdateErr)
 		return

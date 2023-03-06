@@ -6,7 +6,7 @@ import (
 
 type TaskModel struct {
 	BaseModel
-	Uid             string `json:"uid,omitempty" gorm:"type:VARCHAR(36);index:idx_task_uid"`
+	CreatedBy       string `json:"created_by" gorm:"type:VARCHAR(36);index:idx_task_uid"`
 	Title           string `json:"title" gorm:"type:VARCHAR(255)" validate:"required"`
 	ClassifyId      int64  `json:"classify_id" gorm:"type:INTEGER" validate:"required"`
 	ContentId       int64  `json:"content_id" gorm:"type:INTEGER"`
@@ -54,15 +54,18 @@ func (m *defaultTaskModel) DropTable() (err error) {
 func (m *defaultTaskModel) SelectByModel(TaskModel) (result []TaskModel, err error) {
 	return
 }
+
 func (m *defaultTaskModel) Insert(tm *TaskModel) (id uint, err error) {
 	err = m.conn.Table(m.table).Create(tm).Error
 	id = tm.Id
 	return
 }
+
 func (m *defaultTaskModel) Update(tm *TaskModel) (err error) {
 	err = m.conn.Table(m.table).Updates(tm).Error
 	return
 }
+
 func (m *defaultTaskModel) Delete(id uint) (err error) {
 	err = m.conn.Table(m.table).Delete(&TaskModel{BaseModel: BaseModel{Id: id}}).Error
 	return

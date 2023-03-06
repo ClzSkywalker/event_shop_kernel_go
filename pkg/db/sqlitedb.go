@@ -159,29 +159,29 @@ func (s *sqliteDbStruct) onInitData() (err error) {
 	if s.isInit {
 		return
 	}
-	s.log.Info("init data start", zap.Int(
-		"oldVersion", s.curVersion,
-	), zap.Int("newVersion", s.lastVersion))
-	err = s.db.Exec(`
-	-- classify
-INSERT INTO classify(title,color,sort,created_at,updated_at)  VALUES('普通','#c7ecee',1,strftime('%s','now'),strftime('%s','now'));
-INSERT INTO classify(title,color,sort,created_at,updated_at)  VALUES('工作','#4ac8b2',2,strftime('%s','now'),strftime('%s','now'));
+	// 	s.log.Info("init data start", zap.Int(
+	// 		"oldVersion", s.curVersion,
+	// 	), zap.Int("newVersion", s.lastVersion))
+	// 	err = s.db.Exec(`
+	// 	-- classify
+	// INSERT INTO classify(title,color,sort,created_at,updated_at)  VALUES('普通','#c7ecee',1,strftime('%s','now'),strftime('%s','now'));
+	// INSERT INTO classify(title,color,sort,created_at,updated_at)  VALUES('工作','#4ac8b2',2,strftime('%s','now'),strftime('%s','now'));
 
--- task_mode
-INSERT INTO task_mode(mode_id)  VALUES(0);
+	// -- task_mode
+	// INSERT INTO task_mode(mode_id)  VALUES(0);
 
--- task
-INSERT INTO task(title,classify_id,task_mode_id,created_at,updated_at)  VALUES('欢迎加入',1,1,strftime('%s','now'),strftime('%s','now'));
-INSERT INTO task(title,classify_id,task_mode_id,created_at,updated_at)  VALUES('第一天',1,1,strftime('%s','now'),strftime('%s','now'));
+	// -- task
+	// INSERT INTO task(title,classify_id,task_mode_id,created_at,updated_at)  VALUES('欢迎加入',1,1,strftime('%s','now'),strftime('%s','now'));
+	// INSERT INTO task(title,classify_id,task_mode_id,created_at,updated_at)  VALUES('第一天',1,1,strftime('%s','now'),strftime('%s','now'));
 
--- task_content
-INSERT INTO task_content(task_id,content)  VALUES(1,'(｡･∀･)ﾉﾞ嗨，小当家，欢迎回到您的小卖铺！');
-INSERT INTO task_content(task_id,content)  VALUES(2,'第一天，您打算做些什么呢？');`).Error
-	if err != nil {
-		return
-	}
-	s.log.Info("init data end", zap.Int(
-		"oldVersion", s.curVersion,
-	), zap.Int("newVersion", s.lastVersion))
+	// -- task_content
+	// INSERT INTO task_content(task_id,content)  VALUES(1,'(｡･∀･)ﾉﾞ嗨，小当家，欢迎回到您的小卖铺！');
+	// INSERT INTO task_content(task_id,content)  VALUES(2,'第一天，您打算做些什么呢？');`).Error
+	// 	if err != nil {
+	// 		return
+	// 	}
+	// 	s.log.Info("init data end", zap.Int(
+	// 		"oldVersion", s.curVersion,
+	// 	), zap.Int("newVersion", s.lastVersion))
 	return
 }

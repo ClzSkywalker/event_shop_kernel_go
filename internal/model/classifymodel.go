@@ -5,10 +5,11 @@ import "gorm.io/gorm"
 // 分类
 type ClassifyModel struct {
 	BaseModel
-	Uid   string `json:"uid,omitempty" gorm:"type:VARCHAR(36);index:idx_classify_uid"`
-	Title string `json:"title" gorm:"type:varchar"`
-	Color string `json:"color" gorm:"type:varchar"`
-	Sort  int    `json:"sort" gorm:"type:INTEGER"`
+	OnlyCode string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_classify_oc"`
+	CreateBy string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_classify_uid"`
+	Title    string `json:"title" gorm:"type:varchar"`
+	Color    string `json:"color" gorm:"type:varchar"`
+	Sort     int    `json:"sort" gorm:"type:INTEGER"`
 }
 
 type IClassifyModel interface {
@@ -60,17 +61,17 @@ func (m *defaultClassifyModel) QueryById(id uint) (result ClassifyModel, err err
 }
 
 func (m *defaultClassifyModel) QueryByUid(uid string) (result []ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid}).Find(&result).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{CreateBy: uid}).Find(&result).Error
 	return
 }
 
 func (m *defaultClassifyModel) QueryByTitle(uid, title string) (result ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid, Title: title}).Find(&result).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{CreateBy: uid, Title: title}).Find(&result).Error
 	return
 }
 
 func (m *defaultClassifyModel) QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{Uid: uid, Title: title}).First(&cm).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{CreateBy: uid, Title: title}).First(&cm).Error
 	return
 }
 
@@ -86,6 +87,6 @@ func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
 }
 
 func (m *defaultClassifyModel) Delete(id uint, uid string) (err error) {
-	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}, Uid: uid}).Error
+	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}, CreateBy: uid}).Error
 	return
 }
