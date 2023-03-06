@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 // 分类
 type ClassifyModel struct {
 	BaseModel
-	OnlyCode string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_classify_oc"`
+	OnlyCode string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_classify_oc,unique"`
 	CreateBy string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_classify_uid"`
 	Title    string `json:"title" gorm:"type:varchar"`
 	Color    string `json:"color" gorm:"type:varchar"`

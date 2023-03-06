@@ -6,7 +6,8 @@ import (
 
 type TaskModel struct {
 	BaseModel
-	CreatedBy       string `json:"created_by" gorm:"type:VARCHAR(36);index:idx_task_uid"`
+	OnlyCode        string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_task_oc,unique"`
+	CreatedBy       string `json:"created_by" gorm:"type:VARCHAR(26);index:idx_task_uid"`
 	Title           string `json:"title" gorm:"type:VARCHAR(255)" validate:"required"`
 	ClassifyId      int64  `json:"classify_id" gorm:"type:INTEGER" validate:"required"`
 	ContentId       int64  `json:"content_id" gorm:"type:INTEGER"`

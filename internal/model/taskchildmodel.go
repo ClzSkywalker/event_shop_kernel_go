@@ -8,7 +8,8 @@ import (
 
 type TaskChildModel struct {
 	BaseModel
-	ParentId      int64     `json:"parent_id" gorm:"type:INTEGER;index:idx_task_pid"`
+	OnlyCode      string    `json:"only_code" gorm:"type:VARCHAR(26);index:udx_task_child_oc,unique"`
+	ParentId      string    `json:"parent_id" gorm:"type:VARCHAR(26);index:idx_task_pid"`
 	Title         string    `json:"title" gorm:"type:varchar"`
 	CompletedTime time.Time `json:"completed_time" gorm:"type:timestamp"`
 	GiveUpTime    time.Time `json:"give_up_time" gorm:"type:timestamp"`
@@ -51,12 +52,15 @@ func (m *defaultTaskChildModel) DropTable() (err error) {
 func (m *defaultTaskChildModel) SelectByModel(TaskChildModel) (result []TaskChildModel, err error) {
 	return
 }
+
 func (m *defaultTaskChildModel) Insert(TaskChildModel) (id int64, err error) {
 	return
 }
+
 func (m *defaultTaskChildModel) Update(TaskChildModel) (err error) {
 	return
 }
+
 func (m *defaultTaskChildModel) Delete(int64) (err error) {
 	return
 }
