@@ -1,9 +1,6 @@
 package utils
 
 import (
-	"math/rand"
-	"time"
-
 	"github.com/oklog/ulid/v2"
 )
 
@@ -14,9 +11,7 @@ import (
  * @return          {*}
  */
 func NewUlid() (id string, err error) {
-	entropy := rand.New(rand.NewSource(time.Now().UnixNano()))
-	ms := ulid.Timestamp(time.Now())
-	u, err := ulid.New(ms, entropy)
+	u := ulid.Make()
 	id = u.String()
 	return
 }

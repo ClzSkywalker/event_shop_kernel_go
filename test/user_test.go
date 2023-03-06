@@ -13,7 +13,7 @@ import (
 
 func TestUserRegister(t *testing.T) {
 	initGormAndVar()
-	Convey("user login and register", t, func() {
+	Convey("user login, register, bind", t, func() {
 		Convey("register by emial", func() {
 			remailreq := entity.RegisterByEmailReq{
 				Email: email1,
@@ -100,6 +100,38 @@ func TestUserRegister(t *testing.T) {
 					uid, err := service.LoginByUid(container.GlobalServerContext.UserModel, luq)
 					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
 					So(uid, ShouldBeEmpty)
+				})
+			})
+		})
+
+		Convey("bind user", func() {
+			uid, err := service.RegisterByUid(container.GlobalServerContext.UserModel)
+			So(err, ShouldBeNil)
+			So(uid, ShouldNotBeBlank)
+			Convey("bind by email", func() {
+				req := entity.BindEmailReq{Email: email2}
+				Convey("success", func() {
+					err = service.BindEmailByUid(container.GlobalServerContext.UserModel, uid, req)
+					So(err, ShouldBeNil)
+				})
+
+				Convey("uid not found", func() {
+					err = service.BindEmailByUid(container.GlobalServerContext.UserModel, "notfound", req)
+					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
+				})
+
+				Convey("uid binded email", func() {
+					req = entity.BindEmailReq{Email: email3}
+					err = service.BindEmailByUid(container.GlobalServerContext.UserModel, uid, req)
+					So(err, ShouldBeNil)
+					req.Email = "notfound"
+					err = service.BindEmailByUid(container.GlobalServerContext.UserModel, uid, req)
+					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserBindedEmailErr)
+				})
+
+				Convey("The mailbox is in use", func() {
+					err = service.BindEmailByUid(container.GlobalServerContext.UserModel, uid, req)
+					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserEmailBindByOtherErr)
 				})
 			})
 		})
