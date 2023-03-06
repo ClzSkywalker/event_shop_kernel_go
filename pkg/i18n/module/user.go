@@ -11,6 +11,7 @@ const (
 	UserNotFoundErr
 	UserPwdErr
 	UserPhoneErr
+	UserBindNoUidLoginErr
 )
 
 func init() {
@@ -29,6 +30,9 @@ func init() {
 
 		{Tag: language.Chinese, Key: UserPwdErr, Msg: "号码异常"},
 		{Tag: language.English, Key: UserPwdErr, Msg: "Abnormal number"},
+
+		{Tag: language.Chinese, Key: UserBindNoUidLoginErr, Msg: "用户已绑定其他登录方式，不支持uid登录"},
+		{Tag: language.English, Key: UserBindNoUidLoginErr, Msg: "The user has been bound to another login method and does not support uid login"},
 	}
 	entry.SetEntries(entries...)
 }

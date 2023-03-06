@@ -58,6 +58,29 @@ func RegisterByPhone(c *gin.Context) {
 	ret.Data = entity.LoginRep{Token: token}
 }
 
+func RegisterByUid(c *gin.Context) {
+	ret := httpx.NewResult()
+	defer c.JSON(http.StatusOK, ret)
+	req := entity.RegisterByPhoneReq{}
+	err := validateBind(c, &req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	uid, err := service.RegisterByUid(container.GlobalServerContext.UserModel)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	token, err := service.GenerateToken(uid)
+	if err != nil {
+		err = i18n.NewCodeError(module.UserRegisterErr)
+		ret.SetCodeErr(err)
+		return
+	}
+	ret.Data = entity.RegisterByUidRep{LoginRep: entity.LoginRep{Token: token}, Uid: uid}
+}
+
 func LoginByEmail(c *gin.Context) {
 	ret := httpx.NewResult()
 	defer c.JSON(http.StatusOK, ret)
@@ -68,6 +91,29 @@ func LoginByEmail(c *gin.Context) {
 		return
 	}
 	uid, err := service.LoginByEmail(container.GlobalServerContext.UserModel, req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	token, err := service.GenerateToken(uid)
+	if err != nil {
+		err = i18n.NewCodeError(module.UserRegisterErr)
+		ret.SetCodeErr(err)
+		return
+	}
+	ret.Data = entity.LoginRep{Token: token}
+}
+
+func LoginByPhone(c *gin.Context) {
+	ret := httpx.NewResult()
+	defer c.JSON(http.StatusOK, ret)
+	req := entity.LoginByPhoneReq{}
+	err := validateBind(c, &req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	uid, err := service.LoginByPhone(container.GlobalServerContext.UserModel, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

@@ -15,8 +15,18 @@ type RegisterByPhoneReq struct {
 	Phone string `json:"phone" validate:"required,email,min=6,max=35"`
 }
 
+type RegisterByUidRep struct {
+	LoginRep
+	Uid string `json:"uid"`
+}
+
 type LoginByEmailReq struct {
 	Email string `json:"email" validate:"required,email,min=6"`
+	Pwd   string `json:"pwd" validate:"required,min=6,max=20"`
+}
+
+type LoginByPhoneReq struct {
+	Phone string `json:"phone" validate:"required,min=6"`
 	Pwd   string `json:"pwd" validate:"required,min=6,max=20"`
 }
 

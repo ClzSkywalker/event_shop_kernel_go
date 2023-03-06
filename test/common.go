@@ -12,6 +12,7 @@ import (
 
 func initGormAndVar() {
 	loggerx.DbLog = zap.NewExample()
+	loggerx.ZapLog = zap.NewExample()
 	gdb, idb, err := db.InitTestDatabase()
 	if err != nil {
 		panic(err)

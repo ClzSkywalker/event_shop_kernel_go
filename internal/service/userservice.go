@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"time"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
@@ -183,7 +184,42 @@ func LoginByEmail(tx model.IUserModel, leq entity.LoginByEmailReq) (uid string, 
 		return
 	}
 	if um.Pwd != pwd {
+		err = i18n.NewCodeError(module.UserPwdErr)
+		return
+	}
+	uid = um.Uid
+	return
+}
+
+/**
+ * @Author         : ClzSkywalker
+ * @Date           : 2023-03-06
+ * @Description    : 通过手机号登录
+ * @param           {model.IUserModel} tx
+ * @param           {entity.LoginByPhoneReq} lpq
+ * @return          {*}
+ */
+func LoginByPhone(tx model.IUserModel, lpq entity.LoginByPhoneReq) (uid string, err error) {
+	pwd, err := utils.EncryptPwd(lpq.Pwd, constx.PwdSalt)
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.String("pwd", pwd))
+		err = i18n.NewCodeError(module.EncryptPwdErr)
+		return
+	}
+	um, err := tx.QueryUser(model.UserModel{Phone: lpq.Phone})
+	if err != nil && err != gorm.ErrRecordNotFound {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", lpq))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		loggerx.ZapLog.Info(err.Error(), zap.Any("model", lpq))
+		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if um.Pwd != pwd {
+		loggerx.ZapLog.Info("pwd validate failure", zap.Any("model", lpq))
+		err = i18n.NewCodeError(module.UserPwdErr)
 		return
 	}
 	uid = um.Uid
@@ -199,15 +235,20 @@ func LoginByEmail(tx model.IUserModel, leq entity.LoginByEmailReq) (uid string, 
  * @return          {*}
  */
 func LoginByUid(tx model.IUserModel, luq entity.LoginByUidReq) (uid string, err error) {
-	_, err = tx.QueryUser(model.UserModel{Uid: luq.Uid})
+	um, err := tx.QueryUser(model.UserModel{Uid: luq.Uid})
 	if err != nil && err != gorm.ErrRecordNotFound {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
 		return
 	}
-	if err == gorm.ErrRecordNotFound {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
 		err = i18n.NewCodeError(module.UserNotFoundErr)
+		return
+	}
+	if um.Email != "" ||
+		um.Phone != "" {
+		err = i18n.NewCodeError(module.UserBindNoUidLoginErr)
 		return
 	}
 	uid = luq.Uid

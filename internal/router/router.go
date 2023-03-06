@@ -19,8 +19,16 @@ func RouterManager(c *gin.Engine) {
 	kernel := globalRoute.Group("/kernel")
 	kernel.Handle(http.MethodGet, "/config", ctrl.KernelState)
 
-	globalRoute.Handle(http.MethodPost, "/user/register/email", ctrl.RegisterByEmail)
-	globalRoute.Handle(http.MethodPost, "/user/login/email", ctrl.LoginByEmail)
+	userUnAuth := globalRoute.Group("/user/unauth")
+	{
+		userUnAuth.Handle(http.MethodPost, "/user/register/email", ctrl.RegisterByEmail)
+		userUnAuth.Handle(http.MethodPost, "/user/register/phone", ctrl.RegisterByPhone)
+		userUnAuth.Handle(http.MethodPost, "/user/register/uid", ctrl.RegisterByUid)
+
+		userUnAuth.Handle(http.MethodPost, "/user/login/email", ctrl.LoginByEmail)
+		userUnAuth.Handle(http.MethodPost, "/user/login/phone", ctrl.LoginByPhone)
+		userUnAuth.Handle(http.MethodPost, "/user/login/uid", ctrl.LoginByUid)
+	}
 
 	globalRoute.Handle(http.MethodPost, "/classify", ctrl.InsertClassify)
 
