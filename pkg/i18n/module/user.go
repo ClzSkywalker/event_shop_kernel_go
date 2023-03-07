@@ -8,6 +8,7 @@ import (
 const (
 	UserRegisterErr = userModeuleColde + iota
 	UserRegisterRepeatErr
+	UserDataInit
 	UserNotFoundErr
 	UserPwdErr
 	UserPhoneErr
@@ -23,6 +24,9 @@ func init() {
 	var entries = []entry.Entry{
 		{Tag: language.Chinese, Key: UserRegisterErr, Msg: "用户注册失败"},
 		{Tag: language.English, Key: UserRegisterErr, Msg: "User registration failure"},
+
+		{Tag: language.Chinese, Key: UserDataInit, Msg: "用户数据初始化失败"},
+		{Tag: language.English, Key: UserDataInit, Msg: "User data initialization failed"},
 
 		{Tag: language.Chinese, Key: UserRegisterRepeatErr, Msg: "邮箱/电话已被注册"},
 		{Tag: language.English, Key: UserRegisterRepeatErr, Msg: "Email/phone number has been registered"},

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
@@ -24,7 +25,7 @@ import (
  * @return          {*}
  */
 func GenerateToken(uid string) (token string, err error) {
-	id, err := utils.NewUlid()
+	id := utils.NewUlid()
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error())
 		return
@@ -64,7 +65,7 @@ func RegisterByEmail(tx model.IUserModel, rmr entity.RegisterByEmailReq) (uid st
 		err = i18n.NewCodeError(module.EncryptPwdErr)
 		return
 	}
-	uid, err = utils.NewUlid()
+	uid = utils.NewUlid()
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error())
 		err = i18n.NewCodeError(module.UserRegisterErr)
@@ -95,7 +96,7 @@ func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid st
 		err = i18n.NewCodeError(module.EncryptPwdErr)
 		return
 	}
-	uid, err = utils.NewUlid()
+	uid = utils.NewUlid()
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error())
 		err = i18n.NewCodeError(module.UserRegisterErr)
@@ -119,12 +120,7 @@ func RegisterByPhone(tx model.IUserModel, rmr entity.RegisterByPhoneReq) (uid st
  * @return          {*}
  */
 func RegisterByUid(tx model.IUserModel) (uid string, err error) {
-	uid, err = utils.NewUlid()
-	if err != nil {
-		loggerx.ZapLog.Error(err.Error())
-		err = i18n.NewCodeError(module.UserRegisterErr)
-		return
-	}
+	uid = utils.NewUlid()
 	um := &model.UserModel{
 		CreatedBy: uid,
 	}
@@ -157,6 +153,60 @@ func register(tx model.IUserModel, um *model.UserModel) (uid string, err error) 
 		return
 	}
 	uid = um.CreatedBy
+	return
+}
+
+func InitUserData(uid, lang string) (err error) {
+	tx := container.GlobalServerContext.Db
+	err = tx.Transaction(func(tx *gorm.DB) (err error) {
+		err = model.NewDefaultUserModel(tx).InitData(lang, uid)
+		if err != nil {
+			return
+		}
+
+		tid := utils.NewUlid()
+		err = model.NewDefaultTeamModel(tx).InitData(lang, uid, tid)
+		if err != nil {
+			return
+		}
+		err = model.NewDefaultUserToTeamModel(tx).InitData(uid, tid)
+		if err != nil {
+			return
+		}
+
+		cid := utils.NewUlid()
+		err = model.NewDefaultClassifyModel(tx).InitData(lang, uid, tid, cid)
+		if err != nil {
+			return
+		}
+
+		tmid := utils.NewUlid()
+		err = model.NewDefaultTaskModeModel(tx).InitData(tmid, tid)
+		if err != nil {
+			return
+		}
+
+		err = model.NewDefaultTaskContentModel(tx).InitData()
+		if err != nil {
+			return
+		}
+
+		err = model.NewDefaultTaskModel(tx).InitData(lang, uid, cid, tid)
+		if err != nil {
+			return
+		}
+
+		err = model.NewDefaultTaskChildModel(tx).InitData()
+		if err != nil {
+			return
+		}
+		return
+	})
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
+		err = i18n.NewCodeError(module.UserDataInit)
+		return
+	}
 	return
 }
 

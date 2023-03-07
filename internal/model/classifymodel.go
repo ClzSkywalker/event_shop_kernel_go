@@ -1,12 +1,17 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"gorm.io/gorm"
+)
 
 // 分类
 type ClassifyModel struct {
 	BaseModel
 	OnlyCode string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_classify_oc,unique"`
-	CreateBy string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_classify_uid"`
+	CreateBy string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
+	TeamId   string `json:"tid" gorm:"type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
 	Title    string `json:"title" gorm:"type:varchar"`
 	Color    string `json:"color" gorm:"type:varchar"`
 	Sort     int    `json:"sort" gorm:"type:INTEGER"`
@@ -14,12 +19,14 @@ type ClassifyModel struct {
 
 type IClassifyModel interface {
 	IBaseModel
+	InitData(lang, uid, tid, cid string) (err error)
 	QueryAll() ([]ClassifyModel, error)
 	QueryById(id uint) (result ClassifyModel, err error)
 	QueryByUid(uid string) ([]ClassifyModel, error)
 	QueryByTitle(uid, title string) (ClassifyModel, error)
 	QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error)
 	Insert(*ClassifyModel) (uint, error)
+	InsertAll(cm []*ClassifyModel) (err error)
 	Update(ClassifyModel) error
 	Delete(id uint, uid string) error
 }
@@ -47,6 +54,39 @@ func (m *defaultClassifyModel) CreateTable() (err error) {
 
 func (m *defaultClassifyModel) DropTable() (err error) {
 	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
+	return
+}
+
+func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) {
+	cm1 := &ClassifyModel{OnlyCode: cid, CreateBy: uid, TeamId: tid,
+		Title: "", Color: "", Sort: 0}
+	cm2 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreateBy: uid, TeamId: tid,
+		Title: "", Color: "", Sort: 1}
+	cm3 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreateBy: uid, TeamId: tid,
+		Title: "", Color: "", Sort: 2}
+	cm4 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreateBy: uid, TeamId: tid,
+		Title: "", Color: "", Sort: 3}
+	switch lang {
+	case constx.LangChinese:
+		cm1.Title = "紧急&重要"
+		cm1.Color = "#fd8f80"
+		cm2.Title = "紧急&不重要"
+		cm2.Color = "#a0cb62"
+		cm3.Title = "不紧急&重要"
+		cm3.Color = "#4ac0e4"
+		cm4.Title = "不紧急&不重要"
+		cm4.Color = "#b4b4b4"
+	default:
+		cm1.Title = "Important & Urgent"
+		cm1.Color = "#fd8f80"
+		cm2.Title = "Important & Not Urgent"
+		cm2.Color = "#a0cb62"
+		cm3.Title = "Not Important & Urgent"
+		cm3.Color = "#4ac0e4"
+		cm4.Title = "Not Important & Not Urgent"
+		cm4.Color = "#b4b4b4"
+	}
+	err = m.InsertAll([]*ClassifyModel{cm1, cm2, cm3, cm4})
 	return
 }
 
@@ -78,6 +118,11 @@ func (m *defaultClassifyModel) QueryByUidAndTitle(uid, title string) (cm Classif
 func (m *defaultClassifyModel) Insert(cm *ClassifyModel) (id uint, err error) {
 	err = m.conn.Table(m.table).Create(cm).Error
 	id = cm.Id
+	return
+}
+
+func (m *defaultClassifyModel) InsertAll(cm []*ClassifyModel) (err error) {
+	err = m.conn.Table(m.table).Create(cm).Error
 	return
 }
 

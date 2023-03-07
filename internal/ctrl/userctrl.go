@@ -75,7 +75,12 @@ func RegisterByUid(c *gin.Context) {
 	}
 	token, err := service.GenerateToken(uid)
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		ret.SetCodeErr(err)
+		return
+	}
+	lang := c.Request.Header.Get("Accept-Language")
+	err = service.InitUserData(uid, lang)
+	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}

@@ -10,6 +10,8 @@ type UserToTeamModel struct {
 
 type IUserToTeamModel interface {
 	IBaseModel
+	InitData(uid, tid string) (err error)
+	Insert(p *UserToTeamModel) (id uint, err error)
 }
 
 type defaultUserToTeamModel struct {

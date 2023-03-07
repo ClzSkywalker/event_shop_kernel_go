@@ -1,6 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
+	"gorm.io/gorm"
+)
 
 type TeamModel struct {
 	BaseModel
@@ -12,6 +15,7 @@ type TeamModel struct {
 
 type ITeamModel interface {
 	IBaseModel
+	InitData(lang, tid, uid string) (err error)
 }
 
 type defaultTeamModel struct {
@@ -40,8 +44,15 @@ func (m *defaultTeamModel) DropTable() (err error) {
 	return
 }
 
-func (m *defaultTeamModel) InitData(lang, tid, uid string) (err error) {
-	tm := &TeamModel{TeamId: tid, CreatedBy: uid, Name: "新的起点"}
+func (m *defaultTeamModel) InitData(lang, uid, tid string) (err error) {
+	name := ""
+	switch name {
+	case constx.LangChinese:
+		name = "新的起点"
+	default:
+		name = "new start"
+	}
+	tm := &TeamModel{TeamId: tid, CreatedBy: uid, Name: name}
 	_, err = m.Insert(tm)
 	return
 }

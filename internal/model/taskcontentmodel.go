@@ -23,6 +23,7 @@ type TaskFileModel struct {
 
 type ITaskContentModel interface {
 	IBaseModel
+	InitData() (err error)
 	SelectByModel(TaskContentModel) ([]TaskContentModel, error)
 	Insert(TaskContentModel) (int64, error)
 	Update(TaskContentModel) error
@@ -54,6 +55,11 @@ func (m *defaultTaskContentModel) DropTable() (err error) {
 	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
 }
+
+func (m *defaultTaskContentModel) InitData() (err error) {
+	return
+}
+
 func (m *defaultTaskContentModel) SelectByModel(TaskContentModel) (result []TaskContentModel, err error) {
 	return
 }

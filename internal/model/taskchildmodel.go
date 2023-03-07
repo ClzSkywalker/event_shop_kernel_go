@@ -17,6 +17,7 @@ type TaskChildModel struct {
 
 type ITaskChildModel interface {
 	IBaseModel
+	InitData() (err error)
 	SelectByModel(TaskChildModel) ([]TaskChildModel, error)
 	Insert(TaskChildModel) (int64, error)
 	Update(TaskChildModel) error
@@ -46,6 +47,10 @@ func (m *defaultTaskChildModel) CreateTable() (err error) {
 
 func (m *defaultTaskChildModel) DropTable() (err error) {
 	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
+	return
+}
+
+func (m *defaultTaskChildModel) InitData() (err error) {
 	return
 }
 

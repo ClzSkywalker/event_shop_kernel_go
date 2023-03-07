@@ -111,7 +111,3 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 		model.NewDefaultClassifyModel(tx).CreateTable)
 	return idb
 }
-
-func InitData(idb db.IOriginDb, tx *gorm.DB) {
-	model.NewDefaultUserModel(tx)
-}

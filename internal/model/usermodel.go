@@ -20,6 +20,7 @@ type UserModel struct {
 
 type IUserModel interface {
 	IBaseModel
+	InitData(lang, uid string) (err error)
 	Insert(um *UserModel) (id uint, err error)
 	QueryUser(um UserModel) (ru UserModel, err error)
 	CheckRegisterRepeat(um UserModel) (ru UserModel, err error)
@@ -54,8 +55,15 @@ func (m *defaultUserModel) DropTable() (err error) {
 	return
 }
 
-func (m *defaultUserModel) InitData(uid string) (err error) {
-	um := &UserModel{CreatedBy: uid, Version: constx.KernelVersion}
+func (m *defaultUserModel) InitData(lang, uid string) (err error) {
+	nickName := ""
+	switch lang {
+	case constx.LangChinese:
+		nickName = "未名"
+	default:
+		nickName = "sunshine"
+	}
+	um := &UserModel{CreatedBy: uid, NickName: nickName, Version: constx.KernelVersion}
 	_, err = m.Insert(um)
 	return
 }

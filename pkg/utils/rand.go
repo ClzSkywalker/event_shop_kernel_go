@@ -10,7 +10,7 @@ import (
  * @Description    : 创建一个ulid
  * @return          {*}
  */
-func NewUlid() (id string, err error) {
+func NewUlid() (id string) {
 	u := ulid.Make()
 	id = u.String()
 	return
