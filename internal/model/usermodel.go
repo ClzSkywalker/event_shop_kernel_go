@@ -63,8 +63,8 @@ func (m *defaultUserModel) InitData(lang, uid string) (err error) {
 	default:
 		nickName = "sunshine"
 	}
-	um := &UserModel{CreatedBy: uid, NickName: nickName, Version: constx.KernelVersion}
-	_, err = m.Insert(um)
+	um := UserModel{CreatedBy: uid, NickName: nickName, Version: constx.KernelVersion}
+	err = m.Update(um)
 	return
 }
 

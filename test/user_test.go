@@ -6,6 +6,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	. "github.com/smartystreets/goconvey/convey"
@@ -25,6 +26,8 @@ func TestUserRegister(t *testing.T) {
 			So(uid, ShouldNotBeEmpty)
 			_, err = service.RegisterByEmail(container.GlobalServerContext.UserModel, remailreq)
 			So(err, ShouldNotBeNil)
+			err = service.InitUserData(uid, constx.LangChinese)
+			So(err, ShouldBeNil)
 		})
 
 		Convey("login by email", func() {
@@ -60,6 +63,8 @@ func TestUserRegister(t *testing.T) {
 			So(uid, ShouldNotBeBlank)
 			_, err = service.RegisterByPhone(container.GlobalServerContext.UserModel, req)
 			So(err, ShouldNotBeNil)
+			err = service.InitUserData(uid, constx.LangChinese)
+			So(err, ShouldBeNil)
 		})
 
 		Convey("login by phone", func() {
@@ -88,6 +93,8 @@ func TestUserRegister(t *testing.T) {
 			uid, err := service.RegisterByUid(container.GlobalServerContext.UserModel)
 			So(err, ShouldBeNil)
 			So(uid, ShouldNotBeBlank)
+			err = service.InitUserData(uid, constx.LangChinese)
+			So(err, ShouldBeNil)
 			Convey("login by uid", func() {
 				luq := entity.LoginByUidReq{Uid: uid}
 				Convey("success", func() {
