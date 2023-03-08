@@ -18,7 +18,6 @@ type sqliteDbStruct struct {
 	migrateList []constx.AutoMigrateFunc // migrate func list
 	CreateFunc  []constx.CreateTableFunc
 	DropFunc    []constx.DropTableFunc
-	InitData    func() (err error)
 }
 
 /**
@@ -71,11 +70,6 @@ func (s *sqliteDbStruct) OnInitDb(mode string, ch chan<- constx.DbInitStateType)
 
 	ch <- DbCreating
 	err = s.onCreate()
-	if err != nil {
-		return
-	}
-
-	err = s.onInitData()
 	if err != nil {
 		return
 	}
@@ -153,13 +147,5 @@ func (s *sqliteDbStruct) onDrop() (err error) {
 	s.log.Info("init database ondrop end", zap.Int(
 		"oldVersion", s.curVersion,
 	), zap.Int("newVersion", s.lastVersion))
-	return
-}
-
-func (s *sqliteDbStruct) onInitData() (err error) {
-	if s.isInit {
-		return
-	}
-	err = s.InitData()
 	return
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -49,9 +50,23 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 	once := new(sync.Once)
 	once.Do(func() {
 		GlobalServerContext = NewBaskServiceContext(GlobalServerContext, database)
-		err = database.Transaction(func(tx *gorm.DB) error {
+		err = database.Transaction(func(tx *gorm.DB) (err error) {
 			idb = InitIDB(idb, tx)
-			return idb.OnInitDb(GlobalServerContext.Config.Mode, ch)
+			err = idb.OnInitDb(GlobalServerContext.Config.Mode, ch)
+			if err != nil {
+				return err
+			}
+			if GlobalServerContext.Config.Mode == gin.TestMode {
+				um := &model.UserModel{
+					CreatedBy: utils.NewUlid(),
+				}
+				_, err = model.NewDefaultUserModel(tx).Insert(um)
+				if err != nil {
+					return
+				}
+				err = InitData(tx, constx.LangChinese, um.CreatedBy)
+			}
+			return
 		})
 		if err != nil {
 			ch <- db.DbInitFailure

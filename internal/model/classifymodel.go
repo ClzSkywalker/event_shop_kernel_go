@@ -9,12 +9,12 @@ import (
 // 分类
 type ClassifyModel struct {
 	BaseModel
-	OnlyCode string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_classify_oc,unique"`
-	CreateBy string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
-	TeamId   string `json:"tid" gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
-	Title    string `json:"title" gorm:"type:varchar"`
-	Color    string `json:"color" gorm:"type:varchar"`
-	Sort     int    `json:"sort" gorm:"type:INTEGER"`
+	OnlyCode  string `gorm:"column:oc;type:VARCHAR(26);index:udx_classify_oc,unique"`
+	CreatedBy string `gorm:"column:created_by;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
+	TeamId    string `gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
+	Title     string `gorm:"column:title;type:varchar"`
+	Color     string `gorm:"column:color;type:varchar"`
+	Sort      int    `gorm:"column:sort;type:INTEGER"`
 }
 
 type IClassifyModel interface {
@@ -58,13 +58,13 @@ func (m *defaultClassifyModel) DropTable() (err error) {
 }
 
 func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) {
-	cm1 := &ClassifyModel{OnlyCode: cid, CreateBy: uid, TeamId: tid,
+	cm1 := &ClassifyModel{OnlyCode: cid, CreatedBy: uid, TeamId: tid,
 		Title: "", Color: "", Sort: 0}
-	cm2 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreateBy: uid, TeamId: tid,
+	cm2 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
 		Title: "", Color: "", Sort: 1}
-	cm3 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreateBy: uid, TeamId: tid,
+	cm3 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
 		Title: "", Color: "", Sort: 2}
-	cm4 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreateBy: uid, TeamId: tid,
+	cm4 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
 		Title: "", Color: "", Sort: 3}
 	switch lang {
 	case constx.LangChinese:
@@ -101,17 +101,17 @@ func (m *defaultClassifyModel) QueryById(id uint) (result ClassifyModel, err err
 }
 
 func (m *defaultClassifyModel) QueryByUid(uid string) (result []ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{CreateBy: uid}).Find(&result).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{CreatedBy: uid}).Find(&result).Error
 	return
 }
 
 func (m *defaultClassifyModel) QueryByTitle(uid, title string) (result ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{CreateBy: uid, Title: title}).Find(&result).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{CreatedBy: uid, Title: title}).Find(&result).Error
 	return
 }
 
 func (m *defaultClassifyModel) QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{CreateBy: uid, Title: title}).First(&cm).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{CreatedBy: uid, Title: title}).First(&cm).Error
 	return
 }
 
@@ -132,6 +132,6 @@ func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
 }
 
 func (m *defaultClassifyModel) Delete(id uint, uid string) (err error) {
-	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}, CreateBy: uid}).Error
+	err = m.conn.Table(m.table).Delete(ClassifyModel{BaseModel: BaseModel{Id: id}, CreatedBy: uid}).Error
 	return
 }

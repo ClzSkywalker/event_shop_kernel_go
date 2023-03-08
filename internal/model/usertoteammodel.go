@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type UserToTeamModel struct {
 	BaseModel
-	Uid string `json:"uid,omitempty" gorm:"type:VARCHAR(26);index:udx_utt_uid_tid_add,priority:1,unique"`
-	Tid string `json:"tid,omitempty" gorm:"type:VARCHAR(26);index:udx_utt_uid_tid_add,priority:2,unique"`
+	Uid string `gorm:"column:uid;type:VARCHAR(26);index:udx_utt_uid_tid_add,priority:1,unique"`
+	Tid string `gorm:"column:tid;type:VARCHAR(26);index:udx_utt_uid_tid_add,priority:2,unique"`
 }
 
 type IUserToTeamModel interface {

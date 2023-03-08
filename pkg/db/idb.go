@@ -14,6 +14,5 @@ type IOriginDb interface {
 	OnInitDb(mode string, ch chan<- constx.DbInitStateType) (err error)
 	onCreate() (err error)
 	onUpgrade() (err error)
-	onInitData() (err error)
 	onDrop() (err error)
 }

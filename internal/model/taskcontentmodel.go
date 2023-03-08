@@ -11,9 +11,9 @@ const (
 
 type TaskContentModel struct {
 	BaseModel
-	TaskId   string          `json:"task_id" gorm:"type:VARCHAR(26);index:idx_task_content_tid,unique"`
-	Content  string          `json:"content" gorm:"type:varchar"`
-	FileList []TaskFileModel `json:"file_list" gorm:"type:varchar"`
+	TaskId   string          `gorm:"column:oc;type:VARCHAR(26);index:idx_task_content_tid,unique"`
+	Content  string          `gorm:"column:content;type:varchar"`
+	FileList []TaskFileModel `gorm:"column:file_list;type:varchar"`
 }
 
 type TaskFileModel struct {

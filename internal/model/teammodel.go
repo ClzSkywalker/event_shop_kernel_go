@@ -7,10 +7,10 @@ import (
 
 type TeamModel struct {
 	BaseModel
-	TeamId      string `json:"team_id,omitempty" gorm:"type:VARCHAR(26);index:udx_team_tid,unique"`
-	CreatedBy   string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_team_uid"`
-	Name        string `json:"name,omitempty"`
-	Description string `json:"description,omitempty"`
+	TeamId      string `gorm:"column:team_id;type:VARCHAR(26);index:udx_team_tid,unique"`
+	CreatedBy   string `gorm:"column:created_by;type:VARCHAR(26);index:idx_team_uid"`
+	Name        string `gorm:"column:name;type:VARCHAR"`
+	Description string `gorm:"column:description;type:VARCHAR"`
 }
 
 type ITeamModel interface {

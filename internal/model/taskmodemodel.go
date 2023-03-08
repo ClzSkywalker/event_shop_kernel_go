@@ -22,10 +22,10 @@ const (
 
 type TaskModeModel struct {
 	BaseModel
-	OnlyCode string         `json:"only_code" gorm:"type:VARCHAR(26);index:udx_task_mode_oc,unique"`
-	ModeType TaskModeType   `json:"mode_type" gorm:"type:INTEGER"` // 重复模式 TaskModeEnum
-	TeamId   string         `json:"team_id" gorm:"type:VARCHAR(26);index:idx_task_mode_tid"`
-	Config   datatypes.JSON `json:"config" gorm:"type:varchar"`
+	OnlyCode string         `gorm:"column:oc;type:VARCHAR(26);index:udx_task_mode_oc,unique"`
+	ModeType TaskModeType   `gorm:"column:mode_type;type:INTEGER"` // 重复模式 TaskModeEnum
+	TeamId   string         `gorm:"column:team_id;type:VARCHAR(26);index:idx_task_mode_tid"`
+	Config   datatypes.JSON `gorm:"column:config;type:varchar"`
 }
 
 type TaskModeConfigModel struct {

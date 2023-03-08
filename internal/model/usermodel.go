@@ -7,15 +7,15 @@ import (
 
 type UserModel struct {
 	BaseModel
-	CreatedBy    string              `json:"uid,omitempty" gorm:"type:VARCHAR(26);index:udx_user_uid,unique"`
-	NickName     string              `json:"nick_name,omitempty" gorm:"type:VARCHAR(255)"`
-	MemberType   constx.UserType     `json:"member_type,omitempty" gorm:"type:INTEGER"`   // 用户类型
-	RegisterType constx.RegisterTypt `json:"register_type,omitempty" gorm:"type:INTEGER"` // 注册方式
-	Avatar       string              `json:"avatar,omitempty" gorm:"type:VARCHAR(255)"`
-	Email        string              `json:"email,omitempty" gorm:"type:VARCHAR(30);index:idx_user_email"`
-	Phone        string              `json:"phone,omitempty" gorm:"type:VARCHAR(30);index:idx_user_phone"`
-	Pwd          string              `json:"pwd,omitempty" gorm:"type:VARCHAR"`
-	Version      string              `json:"version,omitempty" gorm:"type:VARCHAR(30)"` // 最后一次登录的版本
+	CreatedBy    string              `gorm:"column:team_id;type:VARCHAR(26);index:udx_user_uid,unique"`
+	NickName     string              `gorm:"column:;type:VARCHAR"`
+	MemberType   constx.UserType     `gorm:"column:member_type;type:INTEGER"`   // 用户类型
+	RegisterType constx.RegisterTypt `gorm:"column:register_type;type:INTEGER"` // 注册方式
+	Picture      string              `gorm:"column:picture;type:VARCHAR"`
+	Email        string              `gorm:"column:email;type:VARCHAR(30);index:idx_user_email"`
+	Phone        string              `gorm:"column:phone;type:VARCHAR(30);index:idx_user_phone"`
+	Pwd          string              `gorm:"column:pwd;type:VARCHAR"`
+	Version      string              `gorm:"column:version;type:VARCHAR(30)"` // 最后一次登录的版本
 }
 
 type IUserModel interface {

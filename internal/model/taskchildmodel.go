@@ -1,18 +1,16 @@
 package model
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
 type TaskChildModel struct {
 	BaseModel
-	OnlyCode      string    `json:"only_code" gorm:"type:VARCHAR(26);index:udx_task_child_oc,unique"`
-	ParentId      string    `json:"parent_id" gorm:"type:VARCHAR(26);index:idx_task_pid"`
-	Title         string    `json:"title" gorm:"type:varchar"`
-	CompletedTime time.Time `json:"completed_time" gorm:"type:timestamp"`
-	GiveUpTime    time.Time `json:"give_up_time" gorm:"type:timestamp"`
+	OnlyCode    string `gorm:"column:oc;type:VARCHAR(26);index:udx_task_child_oc,unique"`
+	ParentId    string `gorm:"column:parent_id;type:VARCHAR(26);index:idx_task_pid"`
+	Title       string `gorm:"column:title;type:varchar"`
+	CompletedAt int64  `gorm:"column:completed_at;type:INTEGER"`
+	GiveUpAt    int64  `gorm:"column:give_up_at;type:INTEGER"`
 }
 
 type ITaskChildModel interface {

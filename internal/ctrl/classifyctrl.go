@@ -30,10 +30,10 @@ func InsertClassify(c *gin.Context) {
 	}
 	value, _ := c.Get(constx.TokenUid)
 	id, err := service.InsertClassify(container.GlobalServerContext.ClassifyModel, &model.ClassifyModel{
-		CreateBy: value.(string),
-		Title:    cm.Title,
-		Color:    cm.Color,
-		Sort:     cm.Sort,
+		CreatedBy: value.(string),
+		Title:     cm.Title,
+		Color:     cm.Color,
+		Sort:      cm.Sort,
 	})
 	if err != nil {
 		ret.SetCodeErr(err)

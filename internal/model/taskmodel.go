@@ -8,16 +8,16 @@ import (
 
 type TaskModel struct {
 	BaseModel
-	OnlyCode        string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_task_oc,unique"`
-	CreatedBy       string `json:"created_by" gorm:"type:VARCHAR(26);index:idx_task_uid"`
-	Title           string `json:"title" gorm:"type:VARCHAR(255)"`
-	ClassifyId      string `json:"classify_id" gorm:"type:VARCHAR(26);index:idx_task_cid"`
-	ContentId       string `json:"content_id" gorm:"type:VARCHAR(26)"`
-	TaskModeId      string `json:"task_mode_id" gorm:"type:VARCHAR(26)"`
-	ComplemetedTime int64  `json:"complemeted_time" gorm:"type:INTEGER"`
-	GiveUpTime      int64  `json:"give_up_time" gorm:"type:INTEGER"`
-	StartTime       int64  `json:"start_time" gorm:"type:INTEGER;index"`
-	EndTime         int64  `json:"end_time" gorm:"type:INTEGER;index"`
+	OnlyCode    string `gorm:"column:oc;type:VARCHAR(26);index:udx_task_oc,unique"`
+	CreatedBy   string `gorm:"column:created_by;type:VARCHAR(26);index:idx_task_uid"`
+	Title       string `gorm:"column:title;type:VARCHAR(255)"`
+	ClassifyId  string `gorm:"column:classify_id;type:VARCHAR(26);index:idx_task_cid"`
+	ContentId   string `gorm:"column:content_id;type:VARCHAR(26)"`
+	TaskModeId  string `gorm:"column:task_mode_id;type:VARCHAR(26)"`
+	CompletedAt int64  `gorm:"column:completed_at;type:INTEGER"`
+	GiveUpAt    int64  `gorm:"column:give_up_at;type:INTEGER"`
+	StartAt     int64  `gorm:"column:start_at;type:INTEGER;index"`
+	EndAt       int64  `gorm:"column:end_at;type:INTEGER;index"`
 }
 
 type ITaskModel interface {
@@ -67,7 +67,7 @@ func (m *defaultTaskModel) InitData(lang, uid, cid, tid string) (err error) {
 		t1.Title = "The first step"
 		t2.Title = "test"
 	}
-	err = m.InsertAll([]*TaskModel{t1})
+	err = m.InsertAll([]*TaskModel{t1, t2})
 	return
 }
 

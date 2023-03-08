@@ -25,7 +25,7 @@ func QueryAllClassify(tx model.IClassifyModel) (cms []model.ClassifyModel, err e
 }
 
 func InsertClassify(tx model.IClassifyModel, cm *model.ClassifyModel) (id uint, err error) {
-	_, err = QueryClassifyByUidAndTitle(tx, cm.CreateBy, cm.Title)
+	_, err = QueryClassifyByUidAndTitle(tx, cm.CreatedBy, cm.Title)
 	if err != gorm.ErrRecordNotFound {
 		err = i18n.NewCodeError(module.ClassifyExistedErr)
 		return
@@ -39,7 +39,7 @@ func InsertClassify(tx model.IClassifyModel, cm *model.ClassifyModel) (id uint, 
 }
 
 func UpdateClassify(tx model.IClassifyModel, cm model.ClassifyModel) (err error) {
-	_, err = QueryClassifyByUidAndTitle(tx, cm.CreateBy, cm.Title)
+	_, err = QueryClassifyByUidAndTitle(tx, cm.CreatedBy, cm.Title)
 	if err != nil {
 		err = i18n.NewCodeError(module.ClassifyNotfoundErr)
 		return
