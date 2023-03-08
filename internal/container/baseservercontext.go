@@ -15,7 +15,10 @@ import (
 	"gorm.io/gorm"
 )
 
-var GlobalServerContext *BaseServiceContext = &BaseServiceContext{}
+var (
+	GlobalServerContext *BaseServiceContext = &BaseServiceContext{}
+	once                                    = new(sync.Once)
+)
 
 type BaseServiceContext struct {
 	Config           AppConfig
@@ -47,7 +50,6 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 			zap.String("path", GlobalServerContext.Config.DbPath))
 		return
 	}
-	once := new(sync.Once)
 	once.Do(func() {
 		GlobalServerContext = NewBaskServiceContext(GlobalServerContext, database)
 		err = database.Transaction(func(tx *gorm.DB) (err error) {
@@ -56,6 +58,8 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 			if err != nil {
 				return err
 			}
+
+			// test mode 初始化一个用户
 			if GlobalServerContext.Config.Mode == gin.TestMode {
 				um := &model.UserModel{
 					CreatedBy: utils.NewUlid(),
