@@ -159,54 +159,9 @@ func register(tx model.IUserModel, um *model.UserModel) (uid string, err error) 
 func InitUserData(uid, lang string) (err error) {
 	tx := container.GlobalServerContext.Db
 	err = tx.Transaction(func(tx *gorm.DB) (err error) {
-		err = model.NewDefaultUserModel(tx).InitData(lang, uid)
-		if err != nil {
-			return
-		}
-
-		tid := utils.NewUlid()
-		err = model.NewDefaultTeamModel(tx).InitData(lang, uid, tid)
-		if err != nil {
-			return
-		}
-		err = model.NewDefaultUserToTeamModel(tx).InitData(uid, tid)
-		if err != nil {
-			return
-		}
-
-		cid := utils.NewUlid()
-		err = model.NewDefaultClassifyModel(tx).InitData(lang, uid, tid, cid)
-		if err != nil {
-			return
-		}
-
-		tmid := utils.NewUlid()
-		err = model.NewDefaultTaskModeModel(tx).InitData(tmid, tid)
-		if err != nil {
-			return
-		}
-
-		err = model.NewDefaultTaskContentModel(tx).InitData()
-		if err != nil {
-			return
-		}
-
-		err = model.NewDefaultTaskModel(tx).InitData(lang, uid, cid, tid)
-		if err != nil {
-			return
-		}
-
-		err = model.NewDefaultTaskChildModel(tx).InitData()
-		if err != nil {
-			return
-		}
+		err = container.InitData(tx, lang, uid)
 		return
 	})
-	if err != nil {
-		loggerx.ZapLog.Error(err.Error())
-		err = i18n.NewCodeError(module.UserDataInit)
-		return
-	}
 	return
 }
 

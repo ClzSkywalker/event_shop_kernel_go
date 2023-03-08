@@ -7,7 +7,9 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -110,4 +112,55 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 		model.NewDefaultTaskModeModel(tx).CreateTable,
 		model.NewDefaultClassifyModel(tx).CreateTable)
 	return idb
+}
+
+func InitData(tx *gorm.DB, lang, uid string) (err error) {
+	defer func() {
+		if err != nil {
+			loggerx.ZapLog.Error(err.Error())
+			err = i18n.NewCodeError(module.UserDataInit)
+		}
+	}()
+	err = model.NewDefaultUserModel(tx).InitData(lang, uid)
+	if err != nil {
+		return
+	}
+
+	tid := utils.NewUlid()
+	err = model.NewDefaultTeamModel(tx).InitData(lang, uid, tid)
+	if err != nil {
+		return
+	}
+	err = model.NewDefaultUserToTeamModel(tx).InitData(uid, tid)
+	if err != nil {
+		return
+	}
+
+	cid := utils.NewUlid()
+	err = model.NewDefaultClassifyModel(tx).InitData(lang, uid, tid, cid)
+	if err != nil {
+		return
+	}
+
+	tmid := utils.NewUlid()
+	err = model.NewDefaultTaskModeModel(tx).InitData(tmid, tid)
+	if err != nil {
+		return
+	}
+
+	err = model.NewDefaultTaskContentModel(tx).InitData()
+	if err != nil {
+		return
+	}
+
+	err = model.NewDefaultTaskModel(tx).InitData(lang, uid, cid, tid)
+	if err != nil {
+		return
+	}
+
+	err = model.NewDefaultTaskChildModel(tx).InitData()
+	if err != nil {
+		return
+	}
+	return
 }

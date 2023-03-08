@@ -62,12 +62,6 @@ func RegisterByPhone(c *gin.Context) {
 func RegisterByUid(c *gin.Context) {
 	ret := httpx.NewResult()
 	defer c.JSON(http.StatusOK, ret)
-	req := entity.RegisterByPhoneReq{}
-	err := validateBind(c, &req)
-	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
 	uid, err := service.RegisterByUid(container.GlobalServerContext.UserModel)
 	if err != nil {
 		ret.SetCodeErr(err)

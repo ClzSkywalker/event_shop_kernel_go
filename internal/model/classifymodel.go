@@ -11,7 +11,7 @@ type ClassifyModel struct {
 	BaseModel
 	OnlyCode string `json:"only_code" gorm:"type:VARCHAR(26);index:udx_classify_oc,unique"`
 	CreateBy string `json:"created_by,omitempty" gorm:"type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
-	TeamId   string `json:"tid" gorm:"type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
+	TeamId   string `json:"tid" gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
 	Title    string `json:"title" gorm:"type:varchar"`
 	Color    string `json:"color" gorm:"type:varchar"`
 	Sort     int    `json:"sort" gorm:"type:INTEGER"`
