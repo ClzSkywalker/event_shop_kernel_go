@@ -17,6 +17,8 @@ type ITeamModel interface {
 	IBaseModel
 	InitData(lang, tid, uid string) (err error)
 	Query(p TeamModel) (result TeamModel, err error)
+	Update(p TeamModel) (err error)
+	Delete(p TeamModel) (err error)
 }
 
 type defaultTeamModel struct {
@@ -70,5 +72,15 @@ func (m *defaultTeamModel) Query(p TeamModel) (result TeamModel, err error) {
 func (m *defaultTeamModel) Insert(tm *TeamModel) (id uint, err error) {
 	err = m.conn.Table(m.table).Create(tm).Error
 	id = tm.Id
+	return
+}
+
+func (m *defaultTeamModel) Update(p TeamModel) (err error) {
+	err = m.conn.Table(m.table).Where(TeamModel{TeamId: p.TeamId}).Updates(p).Error
+	return
+}
+
+func (m *defaultTeamModel) Delete(p TeamModel) (err error) {
+	err = m.conn.Table(m.table).Where(TeamModel{TeamId: p.TeamId}).Delete(p).Error
 	return
 }
