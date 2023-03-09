@@ -8,6 +8,7 @@ import (
 type UserModel struct {
 	BaseModel
 	CreatedBy    string              `gorm:"column:team_id;type:VARCHAR(26);index:udx_user_uid,unique"`
+	TeamIdPort   string              `gorm:"column:team_id_port;type:VARCHAR(26);"` // 上次进入的入口
 	NickName     string              `gorm:"column:;type:VARCHAR"`
 	MemberType   constx.UserType     `gorm:"column:member_type;type:INTEGER"`   // 用户类型
 	RegisterType constx.RegisterTypt `gorm:"column:register_type;type:INTEGER"` // 注册方式
@@ -53,6 +54,9 @@ func (m *defaultUserModel) CreateTable() (err error) {
 func (m *defaultUserModel) DropTable() (err error) {
 	err = m.conn.Table(m.table).Migrator().DropTable(m.table)
 	return
+}
+func (m *defaultUserModel) GetTx() (tx *gorm.DB) {
+	return m.conn
 }
 
 func (m *defaultUserModel) InitData(lang, uid string) (err error) {

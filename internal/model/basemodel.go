@@ -1,6 +1,7 @@
 package model
 
 import (
+	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
 
@@ -26,4 +27,5 @@ type IBaseModel interface {
 	TableName() string
 	CreateTable() (err error) // 创建表
 	DropTable() (err error)   // 删除表
+	GetTx() (tx *gorm.DB)
 }

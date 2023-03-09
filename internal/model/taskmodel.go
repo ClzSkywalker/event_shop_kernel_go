@@ -56,6 +56,10 @@ func (m *defaultTaskModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultTaskModel) GetTx() (tx *gorm.DB) {
+	return m.conn
+}
+
 func (m *defaultTaskModel) InitData(lang, uid, cid, tid string) (err error) {
 	t1 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid}
 	t2 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid}

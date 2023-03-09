@@ -16,7 +16,7 @@ func CreateTaskMode(c *gin.Context) {
 	ret := httpx.NewResult()
 	defer c.JSON(http.StatusOK, ret)
 	tm := model.TaskModeModel{}
-	err := validateBind(c, &tm)
+	ctx, err := validateBind(c, &tm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -27,7 +27,7 @@ func CreateTaskMode(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	errx := i18n.NewCodeError(module.SuccessCode)
+	errx := i18n.NewCodeError(ctx.Language, module.SuccessCode)
 	ret.Data = id
 	ret.SetCodeErr(errx)
 }

@@ -1,5 +1,13 @@
 package entity
 
+import "github.com/golang-jwt/jwt/v5"
+
+type TokenInfo struct {
+	JMap jwt.MapClaims
+	UID  string // 用户id
+	TID  string // 团队id
+}
+
 type registerBody struct {
 	NickName string `json:"nick_name" validate:"required,min=3,max=20"`
 	Pwd      string `json:"pwd" validate:"required,min=6,max=20"`

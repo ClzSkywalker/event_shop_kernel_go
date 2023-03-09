@@ -16,6 +16,7 @@ type TeamModel struct {
 type ITeamModel interface {
 	IBaseModel
 	InitData(lang, tid, uid string) (err error)
+	Query(p TeamModel) (result TeamModel, err error)
 }
 
 type defaultTeamModel struct {
@@ -44,6 +45,10 @@ func (m *defaultTeamModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultTeamModel) GetTx() (tx *gorm.DB) {
+	return m.conn
+}
+
 func (m *defaultTeamModel) InitData(lang, uid, tid string) (err error) {
 	name := ""
 	switch name {
@@ -54,6 +59,11 @@ func (m *defaultTeamModel) InitData(lang, uid, tid string) (err error) {
 	}
 	tm := &TeamModel{TeamId: tid, CreatedBy: uid, Name: name}
 	_, err = m.Insert(tm)
+	return
+}
+
+func (m *defaultTeamModel) Query(p TeamModel) (result TeamModel, err error) {
+	err = m.conn.Table(m.table).Where(p).First(&result).Error
 	return
 }
 

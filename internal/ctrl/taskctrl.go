@@ -14,12 +14,12 @@ func InsertTask(c *gin.Context) {
 	ret := httpx.NewResult()
 	defer c.JSON(http.StatusOK, ret)
 	tm := model.TaskModel{}
-	err := validateBind(c, &tm)
+	ctx, err := validateBind(c, &tm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	id, err := service.InsertTask(container.GlobalServerContext.TaskModel, &tm)
+	id, err := service.InsertTask(ctx, container.GlobalServerContext.TaskModel, &tm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

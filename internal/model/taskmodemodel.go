@@ -68,6 +68,10 @@ func (m *defaultTaskModeModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultTaskModeModel) GetTx() (tx *gorm.DB) {
+	return m.conn
+}
+
 func (m *defaultTaskModeModel) InitData(tmid, tid string) (err error) {
 	tm1 := &TaskModeModel{OnlyCode: tmid, TeamId: tid, ModeType: TaskModeNormal}
 	tm2 := &TaskModeModel{OnlyCode: utils.NewUlid(), TeamId: tid, ModeType: TaskModeDay}

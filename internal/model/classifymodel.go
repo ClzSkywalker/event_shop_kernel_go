@@ -57,6 +57,10 @@ func (m *defaultClassifyModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultClassifyModel) GetTx() (tx *gorm.DB) {
+	return m.conn
+}
+
 func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) {
 	cm1 := &ClassifyModel{OnlyCode: cid, CreatedBy: uid, TeamId: tid,
 		Title: "", Color: "", Sort: 0}

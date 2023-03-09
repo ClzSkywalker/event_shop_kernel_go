@@ -23,13 +23,13 @@ func InsertClassify(c *gin.Context) {
 		c.JSON(http.StatusOK, ret)
 	}()
 	cm := entity.ClassifyInsertReq{}
-	err = validateBind(c, &cm)
+	ctx, err := validateBind(c, &cm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	value, _ := c.Get(constx.TokenUid)
-	id, err := service.InsertClassify(container.GlobalServerContext.ClassifyModel, &model.ClassifyModel{
+	value, _ := c.Get(constx.TokenUID)
+	id, err := service.InsertClassify(ctx, container.GlobalServerContext.ClassifyModel, &model.ClassifyModel{
 		CreatedBy: value.(string),
 		Title:     cm.Title,
 		Color:     cm.Color,

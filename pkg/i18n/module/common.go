@@ -13,6 +13,7 @@ const (
 	taskModeModuleCode = 110001
 	taskModuleCode     = 120001
 	classifyModuleCode = 130001
+	teamModuleCode     = 140001
 
 	SystemErrorCode = 10001 + iota
 	TranslatorNotFoundErr

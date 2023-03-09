@@ -3,6 +3,7 @@ package test
 import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/contextx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func initGormAndVar() {
+func initGormAndVar() (ctx *contextx.Contextx) {
 	loggerx.DbLog = zap.NewExample()
 	loggerx.ZapLog = zap.NewExample()
 	gdb, idb, err := db.InitTestDatabase()
@@ -26,4 +27,6 @@ func initGormAndVar() {
 		panic(err)
 	}
 	container.GlobalServerContext = container.NewBaskServiceContext(container.GlobalServerContext, gdb)
+	ctx = &contextx.Contextx{Language: constx.LangChinese}
+	return
 }

@@ -68,7 +68,8 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 				if err != nil {
 					return
 				}
-				err = InitData(tx, constx.LangChinese, um.CreatedBy)
+				tid := utils.NewUlid()
+				err = InitData(tx, constx.LangChinese, um.CreatedBy, tid)
 			}
 			return
 		})
@@ -133,11 +134,11 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 	return idb
 }
 
-func InitData(tx *gorm.DB, lang, uid string) (err error) {
+func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 	defer func() {
 		if err != nil {
 			loggerx.ZapLog.Error(err.Error())
-			err = i18n.NewCodeError(module.UserDataInit)
+			err = i18n.NewCodeError(lang, module.UserDataInit)
 		}
 	}()
 	err = model.NewDefaultUserModel(tx).InitData(lang, uid)
@@ -145,7 +146,6 @@ func InitData(tx *gorm.DB, lang, uid string) (err error) {
 		return
 	}
 
-	tid := utils.NewUlid()
 	err = model.NewDefaultTeamModel(tx).InitData(lang, uid, tid)
 	if err != nil {
 		return

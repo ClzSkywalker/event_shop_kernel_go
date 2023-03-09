@@ -16,10 +16,12 @@ const (
 	TokenIssuer    = "ClzSkywalker"
 	TokenExpiresAt = 86400 * 3
 	TokenSub       = "event shop"
-	TokenUid       = "uid"
+	TokenUID       = "uid" // 用户id
+	TokenTID       = "tid" // 团队id
 	TokenSecret    = "Token=5RNEYJXWQA"
 
 	HeaderAuthorization = "Authorization"
+	HeaderLang          = "Accept-Language"
 )
 
 // 时间格式

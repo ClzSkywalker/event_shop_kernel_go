@@ -24,9 +24,10 @@ import (
 func JwtMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
+		lang := c.GetHeader("Authorization")
 		ret := httpx.NewResult()
 		if token == "" {
-			err := i18n.NewCodeError(module.TokenInvalid)
+			err := i18n.NewCodeError(lang, module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -45,20 +46,20 @@ func JwtMiddleware() gin.HandlerFunc {
 			c.Abort()
 		}
 		if epTime.Time.Before(time.Now()) {
-			err := i18n.NewCodeError(module.TokenExpired)
+			err := i18n.NewCodeError(lang, module.TokenExpired)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
 		}
-		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUid]
+		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUID]
 		if !ok || uid.(string) == "" {
 			loggerx.ReqLog.Error(err.Error(), zap.Any("claims", t.Claims.(jwt.MapClaims)))
-			err := i18n.NewCodeError(module.TokenInvalid)
+			err := i18n.NewCodeError(lang, module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
 		}
-		c.Set(constx.TokenUid, uid)
+		c.Set(constx.TokenUID, uid)
 		c.Next()
 	}
 }

@@ -40,6 +40,10 @@ func (m *defaultUserToTeamModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultUserToTeamModel) GetTx() (tx *gorm.DB) {
+	return m.conn
+}
+
 func (m *defaultUserToTeamModel) InitData(uid, tid string) (err error) {
 	um := &UserToTeamModel{Uid: uid, Tid: tid}
 	_, err = m.Insert(um)

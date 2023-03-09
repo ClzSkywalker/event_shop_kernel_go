@@ -48,6 +48,10 @@ func (m *defaultTaskChildModel) DropTable() (err error) {
 	return
 }
 
+func (m *defaultTaskChildModel) GetTx() (tx *gorm.DB) {
+	return m.conn
+}
+
 func (m *defaultTaskChildModel) InitData() (err error) {
 	return
 }

@@ -55,13 +55,18 @@ func Trans(lang string, err errorx.CodeError) string {
 /**
  * @Author         : Angular
  * @Date           : 2023-02-10
- * @Description    : 返回 error，并用中文封装好msg
+ * @Description    : 返回 error，并翻译
  * @param           {int64} code
  * @param           {...interface{}} fields 变量参数
  * @return          {*}
  */
-func NewCodeError(code int64, fields ...interface{}) (err errorx.CodeError) {
+func NewCodeError(lang string, code int64, fields ...interface{}) (err errorx.CodeError) {
 	err = errorx.CodeError{Code: code, Field: fields}
-	err.Msg = Trans(constx.LangChinese, err)
+	switch lang {
+	case constx.LangChinese, constx.LangEnglish:
+	default:
+		lang = constx.LangEnglish
+	}
+	err.Msg = Trans(lang, err)
 	return
 }

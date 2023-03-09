@@ -21,14 +21,14 @@ func TestJwtToken(t *testing.T) {
 				Subject:   constx.TokenSub,
 				ID:        "t-id",
 			}, map[string]interface{}{
-				constx.TokenUid: "u-id",
+				constx.TokenUID: "u-id",
 			})
 			token, err = GenerateToken(constx.TokenSecret, claim)
 			So(err, ShouldEqual, nil)
 			Convey("parse token", func() {
 				jtoken, err := ParseToken(token, constx.TokenSecret)
 				So(err, ShouldEqual, nil)
-				So(jtoken.Claims.(jwt.MapClaims)[constx.TokenUid], ShouldEqual, "u-id")
+				So(jtoken.Claims.(jwt.MapClaims)[constx.TokenUID], ShouldEqual, "u-id")
 			})
 		})
 	})
