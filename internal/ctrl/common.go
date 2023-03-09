@@ -2,8 +2,8 @@ package ctrl
 
 import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
+	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/contextx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
@@ -26,5 +26,7 @@ func validateBind(c *gin.Context, m interface{}) (ctx *contextx.Contextx, err er
 	}
 	ctx.Language = lang
 	ctx.Context = c
+	ctx.UID = c.GetString(constx.TokenUID)
+	ctx.TID = c.GetString(constx.TokenTID)
 	return
 }

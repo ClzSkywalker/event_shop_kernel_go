@@ -7,7 +7,6 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
 	"github.com/gin-gonic/gin"
 )
@@ -28,9 +27,8 @@ func InsertClassify(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	value, _ := c.Get(constx.TokenUID)
 	id, err := service.InsertClassify(ctx, container.GlobalServerContext.ClassifyModel, &model.ClassifyModel{
-		CreatedBy: value.(string),
+		CreatedBy: ctx.UID,
 		Title:     cm.Title,
 		Color:     cm.Color,
 		Sort:      cm.Sort,

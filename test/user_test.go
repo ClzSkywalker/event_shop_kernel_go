@@ -11,7 +11,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestUserRegister(t *testing.T) {
+func TestUserRegisterAndLogin(t *testing.T) {
 	ctx := initGormAndVar()
 	Convey("user login, register, bind", t, func() {
 		Convey("register by emial", func() {

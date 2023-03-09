@@ -3,9 +3,9 @@ package entity
 import "github.com/golang-jwt/jwt/v5"
 
 type TokenInfo struct {
-	JMap jwt.MapClaims
-	UID  string // 用户id
-	TID  string // 团队id
+	JMap jwt.MapClaims `json:"-"`
+	UID  string        `json:"uid"` // 用户id
+	TID  string        `json:"tid"` // 团队id
 }
 
 type registerBody struct {

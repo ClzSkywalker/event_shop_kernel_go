@@ -59,7 +59,16 @@ func JwtMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
 		}
+		tid, ok := t.Claims.(jwt.MapClaims)[constx.TokenTID]
+		if !ok || tid.(string) == "" {
+			loggerx.ReqLog.Error(err.Error(), zap.Any("claims", t.Claims.(jwt.MapClaims)))
+			err := i18n.NewCodeError(lang, module.TokenInvalid)
+			ret.SetCodeErr(err)
+			c.JSON(http.StatusOK, ret)
+			c.Abort()
+		}
 		c.Set(constx.TokenUID, uid)
+		c.Set(constx.TokenTID, tid)
 		c.Next()
 	}
 }
