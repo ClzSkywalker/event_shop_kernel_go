@@ -58,3 +58,13 @@ func (m *defaultUserToTeamModel) Insert(p *UserToTeamModel) (id uint, err error)
 	id = p.Id
 	return
 }
+
+func (m *defaultUserToTeamModel) Create(utt *UserToTeamModel) (err error) {
+	err = m.conn.Table(m.table).Create(utt).Error
+	return
+}
+
+func (m *defaultUserToTeamModel) Delete(utt *UserToTeamModel) (err error) {
+	err = m.conn.Table(m.table).Where(utt).Delete(utt).Error
+	return
+}

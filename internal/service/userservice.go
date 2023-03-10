@@ -106,7 +106,7 @@ func register(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeamModel
 		return
 	}
 
-	_, err = ttx.Query(model.TeamModel{TeamId: um.TeamIdPort})
+	_, err = ttx.First(model.TeamModel{TeamId: um.TeamIdPort})
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		err = i18n.NewCodeError(ctx.Language, module.TeamRepeatErr)
 		return

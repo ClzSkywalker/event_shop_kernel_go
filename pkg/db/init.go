@@ -71,7 +71,13 @@ func InitDatabase(dbPath, mode string) (db *gorm.DB, idb IOriginDb, err error) {
 }
 
 func InitTestDatabase() (db *gorm.DB, idb IOriginDb, err error) {
-	db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	dbLog := loggerx.NewDbLog(loggerx.DbLog, logger.Config{
+		SlowThreshold:             100,         // 慢 SQL 阈值
+		Colorful:                  true,        // 禁用彩色打印
+		IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound（记录未找到）错误
+		LogLevel:                  logger.Info, // 日志级别
+	}, gin.TestMode)
+	db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{Logger: dbLog})
 	if err != nil {
 		return
 	}

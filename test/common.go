@@ -3,9 +3,11 @@ package test
 import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
+	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -28,5 +30,18 @@ func initGormAndVar() (ctx *contextx.Contextx) {
 	}
 	container.GlobalServerContext = container.NewBaskServiceContext(container.GlobalServerContext, gdb)
 	ctx = &contextx.Contextx{Language: constx.LangChinese}
+	um := &model.UserModel{
+		CreatedBy: utils.NewUlid(),
+	}
+	_, err = model.NewDefaultUserModel(gdb).Insert(um)
+	if err != nil {
+		return
+	}
+	tid := utils.NewUlid()
+	err = container.InitData(gdb, constx.LangChinese, um.CreatedBy, tid)
+	if err != nil {
+		return
+	}
+	ctx.TID = um.CreatedBy
 	return
 }
