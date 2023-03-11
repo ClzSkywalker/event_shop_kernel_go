@@ -24,7 +24,8 @@ func TeamCreate(ctx *contextx.Contextx, req entity.TeamCreateReq) (tid string, e
 func TeamUpdate(ctx *contextx.Contextx, req entity.TeamUpdateReq) (err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		ctx.Tx = tx
-		err := infrastructure.TeamUpdate(ctx, model.TeamModel{Name: req.Name, Description: req.Description})
+		err := infrastructure.TeamUpdate(ctx, model.TeamModel{Name: req.Name, Description: req.Description,
+			TeamId: req.TeamId})
 		return err
 	})
 	return

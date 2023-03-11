@@ -34,7 +34,8 @@ func TeamFindMyTeam(ctx *contextx.Contextx) (tmList []entity.TeamItem, err error
 	return
 }
 
-func TeamQueryFirst(ctx contextx.Contextx, tm model.ITeamModel, p model.TeamModel) (result model.TeamModel, err error) {
+func TeamQueryFirst(ctx *contextx.Contextx, p model.TeamModel) (result model.TeamModel, err error) {
+	tm := model.NewDefaultTeamModel(ctx.Tx)
 	result, err = tm.First(p)
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error())
@@ -73,7 +74,7 @@ func TeamUpdate(ctx *contextx.Contextx, m model.TeamModel) (err error) {
 	tm := model.NewDefaultTeamModel(ctx.Tx)
 	_, err = tm.First(model.TeamModel{TeamId: m.TeamId})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.TeamFindErr)
+		err = i18n.NewCodeError(ctx.Language, module.TeamNotFound)
 		return
 	}
 	err = tm.Update(m)

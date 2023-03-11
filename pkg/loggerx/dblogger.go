@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"runtime"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -60,12 +61,29 @@ func (db *dbLog) Trace(ctx context.Context, begin time.Time, fc func() (sql stri
 	switch {
 	case err != nil && db.LogLevel >= logger.Error && (!errors.Is(err, gorm.ErrRecordNotFound) || !db.IgnoreRecordNotFoundError):
 		sql, rows := fc()
+		sql = formatSql(sql)
 		db.Log.Error("db trace err:", zap.String("file", file), zap.Int("line", line), zap.String("func", funcName), zap.Error(err), zap.Float64("ms", float64(elapsed.Nanoseconds())/1e6), zap.Int64("rows", rows), zap.String("sql", sql))
 	case elapsed > db.SlowThreshold && db.SlowThreshold != 0 && db.LogLevel >= logger.Warn:
 		sql, rows := fc()
+		sql = formatSql(sql)
 		db.Log.Info("db trace ware:", zap.String("file", file), zap.Int("line", line), zap.String("func", funcName), zap.Duration("SLOW SQL>=", db.SlowThreshold), zap.Int64("rows", rows), zap.String("sql", sql))
 	case db.LogLevel == logger.Info:
 		sql, rows := fc()
+		sql = formatSql(sql)
 		db.Log.Info("db trace info:", zap.String("file", file), zap.Int("line", line), zap.String("func", funcName), zap.Float64("ms", float64(elapsed.Nanoseconds())/1e6), zap.Int64("rows", rows), zap.String("sql", sql))
 	}
+}
+
+/**
+ * @Author         : Angular
+ * @Date           : 2023-02-21
+ * @Description    : 格式化sql,用于移除干扰字符
+ * @param           {string} sql
+ * @return          {*}
+ */
+func formatSql(sql string) string {
+	sql = strings.ReplaceAll(sql, "\n", " ")
+	sql = strings.ReplaceAll(sql, "\t", " ")
+	sql = strings.ReplaceAll(sql, "\\", "")
+	return sql
 }

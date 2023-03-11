@@ -42,6 +42,7 @@ func initGormAndVar() (ctx *contextx.Contextx) {
 	if err != nil {
 		return
 	}
-	ctx.TID = um.CreatedBy
+	ctx.TID = tid
+	ctx.UID = um.CreatedBy
 	return
 }

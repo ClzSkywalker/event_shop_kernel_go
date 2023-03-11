@@ -77,7 +77,7 @@ func InitTestDatabase() (db *gorm.DB, idb IOriginDb, err error) {
 		IgnoreRecordNotFoundError: true,        // 忽略ErrRecordNotFound（记录未找到）错误
 		LogLevel:                  logger.Info, // 日志级别
 	}, gin.TestMode)
-	db, err = gorm.Open(sqlite.Open(":memory:"), &gorm.Config{Logger: dbLog})
+	db, err = gorm.Open(sqlite.Open("../assert/ectype/convey.db"), &gorm.Config{Logger: dbLog})
 	if err != nil {
 		return
 	}
