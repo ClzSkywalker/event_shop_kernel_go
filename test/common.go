@@ -29,7 +29,7 @@ func initGormAndVar() (ctx *contextx.Contextx) {
 		panic(err)
 	}
 	container.GlobalServerContext = container.NewBaskServiceContext(container.GlobalServerContext, gdb)
-	ctx = &contextx.Contextx{Language: constx.LangChinese}
+	ctx = &contextx.Contextx{Language: constx.LangChinese, Tx: container.GlobalServerContext.Db}
 	um := &model.UserModel{
 		CreatedBy: utils.NewUlid(),
 	}

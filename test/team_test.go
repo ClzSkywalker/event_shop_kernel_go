@@ -3,7 +3,8 @@ package test
 import (
 	"testing"
 
-	"github.com/clz.skywalker/event.shop/kernal/internal/container"
+	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
+	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -11,8 +12,11 @@ import (
 func TestTeam(t *testing.T) {
 	ctx := initGormAndVar()
 	Convey("team", t, func() {
-		tmList, err := service.TeamFindMyTeam(ctx, container.GlobalServerContext.TeamModel)
+		tmList, err := infrastructure.TeamFindMyTeam(ctx)
 		So(err, ShouldBeNil)
 		So(len(tmList), ShouldBeGreaterThan, 0)
+		Convey("create team", func() {
+			service.TeamCreate(ctx, entity.TeamCreateReq{})
+		})
 	})
 }

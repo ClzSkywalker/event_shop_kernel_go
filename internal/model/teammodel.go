@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 
+	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"gorm.io/gorm"
 )
@@ -23,8 +24,9 @@ type ITeamModel interface {
 	IBaseModel
 	InitData(lang, tid, uid string) (err error)
 	Find(p TeamModel) (result []TeamModel, err error)
-	FindMyTeam(uid string) (result []TeamModel, err error)
+	FindMyTeam(uid string) (result []entity.TeamItem, err error)
 	First(p TeamModel) (result TeamModel, err error)
+	Create(p *TeamModel) (id uint, err error)
 	Update(p TeamModel) (err error)
 	Delete(tid string) (err error)
 }
@@ -68,7 +70,7 @@ func (m *defaultTeamModel) InitData(lang, uid, tid string) (err error) {
 		name = "new start"
 	}
 	tm := &TeamModel{TeamId: tid, CreatedBy: uid, Name: name}
-	_, err = m.Insert(tm)
+	_, err = m.Create(tm)
 	return
 }
 
@@ -77,11 +79,16 @@ func (m *defaultTeamModel) Find(p TeamModel) (result []TeamModel, err error) {
 	return
 }
 
-func (m *defaultTeamModel) FindMyTeam(uid string) (result []TeamModel, err error) {
-	err = m.conn.Model(TeamModel{}).
-		Joins(fmt.Sprintf("join %s on %s.uid=%s.created_by",
-			UserToTeamTableName, UserToTeamTableName, TeamTableName)).
-		Find(&result).Error
+func (m *defaultTeamModel) FindMyTeam(uid string) (result []entity.TeamItem, err error) {
+	err = m.conn.Raw(fmt.Sprintf(`select
+	t.*,
+	utt.sort
+from
+	%s t
+join %s utt on
+	t.created_by = utt.uid
+order by
+	utt.sort asc`, TeamTableName, UserToTeamTableName)).Scan(&result).Error
 	return
 }
 
@@ -90,7 +97,7 @@ func (m *defaultTeamModel) First(p TeamModel) (result TeamModel, err error) {
 	return
 }
 
-func (m *defaultTeamModel) Insert(tm *TeamModel) (id uint, err error) {
+func (m *defaultTeamModel) Create(tm *TeamModel) (id uint, err error) {
 	err = m.conn.Table(m.table).Create(tm).Error
 	id = tm.Id
 	return

@@ -24,4 +24,52 @@ flutter pub get
 把当前的项目目录 放到 C盘上去执行
 ```
 
+```text
+├─.githooks
+├─.vscode
+├─assert
+│  └─ectype
+├─cmd
+│  ├─api
+│  └─mobile
+├─internal
+│  ├─container
+│  ├─contextx
+│  ├─ctrl
+│  ├─entity
+│  ├─Infrastructure
+│  ├─middleware
+│  ├─model
+│  ├─router
+│  ├─server
+│  └─service
+├─logs
+├─output
+├─pkg
+│  ├─bmobx
+│  ├─constx
+│  ├─datatypesx
+│  ├─db
+│  ├─httpx
+│  ├─i18n
+│  │  ├─entry
+│  │  ├─errorx
+│  │  └─module
+│  ├─loggerx
+│  ├─processx
+│  ├─recoverx
+│  └─utils
+├─script
+└─test
+```
+
+1. assert 存放静态资源
+infrastructure 
+基础结构层：用于存放不带事务的基础处理，加上基础逻辑校验
+
+service
+服务层：携带事务，用于组合infrastructure逻辑，组合成基础api接口逻辑
+
+ctrl
+接口层：用于校验参数
 

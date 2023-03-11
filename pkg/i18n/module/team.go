@@ -11,6 +11,7 @@ const (
 	TeamNotFound
 	TeamUpdateErr
 	TeamDeleteErr
+	TeamCreateErr
 )
 
 func init() {
@@ -21,14 +22,17 @@ func init() {
 		{Tag: language.Chinese, Key: TeamFindErr, Msg: "团队查询错误"},
 		{Tag: language.English, Key: TeamFindErr, Msg: "Team query error"},
 
-		{Tag: language.Chinese, Key: TeamFindErr, Msg: "团队没有找到"},
-		{Tag: language.English, Key: TeamFindErr, Msg: "The team did not find"},
+		{Tag: language.Chinese, Key: TeamNotFound, Msg: "团队没有找到"},
+		{Tag: language.English, Key: TeamNotFound, Msg: "The team did not find"},
 
 		{Tag: language.Chinese, Key: TeamUpdateErr, Msg: "团队更新失败"},
 		{Tag: language.English, Key: TeamUpdateErr, Msg: "Team update failure"},
 
 		{Tag: language.Chinese, Key: TeamDeleteErr, Msg: "团队删除失败"},
 		{Tag: language.English, Key: TeamDeleteErr, Msg: "Team deletion failure"},
+
+		{Tag: language.Chinese, Key: TeamCreateErr, Msg: "团队创建失败"},
+		{Tag: language.English, Key: TeamCreateErr, Msg: "Team creation failure"},
 	}
 	entry.SetEntries(entries...)
 }

@@ -5,8 +5,8 @@ import (
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
+	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
@@ -28,7 +28,7 @@ func RegisterByEmail(c *gin.Context) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		base := &container.BaseServiceContext{}
 		base = container.NewBaskServiceContext(base, tx)
-		um, err = service.RegisterByEmail(ctx, base.UserModel, base.TeamModel, req)
+		um, err = infrastructure.RegisterByEmail(ctx, base.UserModel, base.TeamModel, req)
 		return err
 	})
 	if err != nil {
@@ -36,7 +36,7 @@ func RegisterByEmail(c *gin.Context) {
 		return
 	}
 
-	token, err := service.GenerateToken(entity.TokenInfo{
+	token, err := infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,
 	})
@@ -61,7 +61,7 @@ func RegisterByPhone(c *gin.Context) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		base := &container.BaseServiceContext{}
 		base = container.NewBaskServiceContext(base, tx)
-		um, err = service.RegisterByPhone(ctx, base.UserModel, base.TeamModel, req)
+		um, err = infrastructure.RegisterByPhone(ctx, base.UserModel, base.TeamModel, req)
 		return err
 	})
 	if err != nil {
@@ -69,7 +69,7 @@ func RegisterByPhone(c *gin.Context) {
 		return
 	}
 
-	token, err := service.GenerateToken(entity.TokenInfo{
+	token, err := infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,
 	})
@@ -94,7 +94,7 @@ func RegisterByUid(c *gin.Context) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		base := &container.BaseServiceContext{}
 		base = container.NewBaskServiceContext(base, tx)
-		um, err = service.RegisterByUid(ctx, base.UserModel, base.TeamModel)
+		um, err = infrastructure.RegisterByUid(ctx, base.UserModel, base.TeamModel)
 		return err
 	})
 	if err != nil {
@@ -102,7 +102,7 @@ func RegisterByUid(c *gin.Context) {
 		return
 	}
 
-	token, err := service.GenerateToken(entity.TokenInfo{
+	token, err := infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,
 	})
@@ -122,12 +122,12 @@ func LoginByEmail(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := service.LoginByEmail(ctx, container.GlobalServerContext.UserModel, req)
+	um, err := infrastructure.LoginByEmail(ctx, container.GlobalServerContext.UserModel, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	token, err := service.GenerateToken(entity.TokenInfo{
+	token, err := infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,
 	})
@@ -148,12 +148,12 @@ func LoginByPhone(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := service.LoginByPhone(ctx, container.GlobalServerContext.UserModel, req)
+	um, err := infrastructure.LoginByPhone(ctx, container.GlobalServerContext.UserModel, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	token, err := service.GenerateToken(entity.TokenInfo{
+	token, err := infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,
 	})
@@ -174,12 +174,12 @@ func LoginByUid(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := service.LoginByUid(ctx, container.GlobalServerContext.UserModel, req)
+	um, err := infrastructure.LoginByUid(ctx, container.GlobalServerContext.UserModel, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	token, err := service.GenerateToken(entity.TokenInfo{
+	token, err := infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,
 	})
@@ -201,7 +201,7 @@ func BindEmailByUid(c *gin.Context) {
 		return
 	}
 	uid, _ := c.Get(constx.TokenUID)
-	err = service.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
+	err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -218,7 +218,7 @@ func BindPhoneByUid(c *gin.Context) {
 		return
 	}
 	uid, _ := c.Get(constx.TokenUID)
-	err = service.BindPhoneByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
+	err = infrastructure.BindPhoneByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

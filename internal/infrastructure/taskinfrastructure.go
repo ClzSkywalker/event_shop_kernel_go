@@ -1,4 +1,4 @@
-package service
+package infrastructure
 
 import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
