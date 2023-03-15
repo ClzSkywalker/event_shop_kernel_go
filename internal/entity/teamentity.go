@@ -17,10 +17,14 @@ type TeamCreateReq struct {
 	Sort        int    `json:"sort,omitempty"`
 }
 
+type TeamCreateResp struct {
+	TeamId string `json:"team_id"`
+}
+
 type TeamUpdateReq struct {
 	TeamItem
 }
 
 type TeamDelReq struct {
-	TeamId string `json:"team_id,omitempty"`
+	TeamId string `json:"team_id" binding:"required"`
 }

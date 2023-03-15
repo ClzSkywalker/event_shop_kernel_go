@@ -29,6 +29,7 @@ type ITeamModel interface {
 	Create(p *TeamModel) (id uint, err error)
 	Update(p TeamModel) (err error)
 	Delete(tid string) (err error)
+	FindMyTeamName(uid, tname string) (result entity.TeamItem, err error)
 }
 
 type defaultTeamModel struct {
@@ -89,6 +90,19 @@ join %s utt on
 	t.created_by = utt.uid
 order by
 	utt.sort asc`, TeamTableName, UserToTeamTableName)).Scan(&result).Error
+	return
+}
+
+func (m *defaultTeamModel) FindMyTeamName(uid, tname string) (result entity.TeamItem, err error) {
+	err = m.conn.Raw(fmt.Sprintf(`select
+	t.*,
+	utt.sort
+from
+	%s t
+join %s utt on
+	t.created_by = utt.uid
+where t.name='%s';
+`, TeamTableName, UserToTeamTableName, tname)).Scan(&result).Error
 	return
 }
 

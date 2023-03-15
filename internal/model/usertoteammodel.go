@@ -13,6 +13,7 @@ type IUserToTeamModel interface {
 	IBaseModel
 	InitData(uid, tid string) (err error)
 	Insert(p *UserToTeamModel) (id uint, err error)
+	First(p UserToTeamModel) (result UserToTeamModel, err error)
 }
 
 type defaultUserToTeamModel struct {
@@ -67,5 +68,10 @@ func (m *defaultUserToTeamModel) Create(utt *UserToTeamModel) (err error) {
 
 func (m *defaultUserToTeamModel) Delete(utt *UserToTeamModel) (err error) {
 	err = m.conn.Table(m.table).Where(utt).Delete(utt).Error
+	return
+}
+
+func (m *defaultUserToTeamModel) First(p UserToTeamModel) (result UserToTeamModel, err error) {
+	err = m.conn.Table(m.table).Where(p).First(&result).Error
 	return
 }

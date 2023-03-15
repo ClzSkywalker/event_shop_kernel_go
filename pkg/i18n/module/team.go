@@ -12,6 +12,7 @@ const (
 	TeamUpdateErr
 	TeamDeleteErr
 	TeamCreateErr
+	TeamNameRepeatErr
 )
 
 func init() {
@@ -33,6 +34,9 @@ func init() {
 
 		{Tag: language.Chinese, Key: TeamCreateErr, Msg: "团队创建失败"},
 		{Tag: language.English, Key: TeamCreateErr, Msg: "Team creation failure"},
+
+		{Tag: language.Chinese, Key: TeamNameRepeatErr, Msg: "团队名称重复"},
+		{Tag: language.English, Key: TeamNameRepeatErr, Msg: "Team name duplication"},
 	}
 	entry.SetEntries(entries...)
 }

@@ -37,6 +37,14 @@ func RouterManager(c *gin.Engine) {
 		userAuth.Handle(http.MethodPost, "/bind/phone", ctrl.BindPhoneByUid)
 	}
 
+	team := globalRoute.Group("/team").Use(middleware.JwtMiddleware())
+	{
+		team.Handle(http.MethodPost, "", ctrl.TeamCreate)
+		team.Handle(http.MethodPut, "", ctrl.TeamUpdate)
+		team.Handle(http.MethodDelete, "/:team_id", ctrl.TeamDel)
+		team.Handle(http.MethodGet, "", ctrl.TeamFindMyTeam)
+	}
+
 	classify := globalRoute.Group("/classify").Use(middleware.JwtMiddleware())
 	{
 		classify.Handle(http.MethodPost, "/classify", ctrl.InsertClassify)

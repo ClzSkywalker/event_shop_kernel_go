@@ -52,6 +52,14 @@ func TeamQueryFirst(ctx *contextx.Contextx, p model.TeamModel) (result model.Tea
 func TeamCreate(ctx *contextx.Contextx, tm *model.TeamModel, sort int) (tid string, err error) {
 	tx := model.NewDefaultTeamModel(ctx.Tx)
 	utm := model.NewDefaultUserToTeamModel(ctx.Tx)
+
+	_, err = tx.FindMyTeamName(ctx.UID, tm.Name)
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
+		err = i18n.NewCodeError(ctx.Language, module.TeamNameRepeatErr)
+		return
+	}
+
 	tid = utils.NewUlid()
 	tm.TeamId = tid
 	tm.CreatedBy = ctx.TID
