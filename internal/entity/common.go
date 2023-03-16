@@ -1,5 +1,5 @@
 package entity
 
 type CommonResponseId struct {
-	Id uint `json:"id,omitempty"`
+	OnlyCode string `json:"oc,omitempty"`
 }

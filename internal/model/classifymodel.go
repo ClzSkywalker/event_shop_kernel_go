@@ -20,15 +20,12 @@ type ClassifyModel struct {
 type IClassifyModel interface {
 	IBaseModel
 	InitData(lang, uid, tid, cid string) (err error)
-	QueryAll(teamId string) ([]ClassifyModel, error)
-	QueryById(id uint) (result ClassifyModel, err error)
-	QueryByUid(teamId, uid string) ([]ClassifyModel, error)
-	QueryByTitle(teamId, uid, title string) (ClassifyModel, error)
-	QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error)
+	FindByTeamId(teamId string) ([]ClassifyModel, error)
+	First(p ClassifyModel) (result ClassifyModel, err error)
 	Insert(*ClassifyModel) (uint, error)
 	InsertAll(cm []*ClassifyModel) (err error)
 	Update(ClassifyModel) error
-	Delete(oc, uid string) error
+	Delete(oc, tid string) error
 }
 
 type defaultClassifyModel struct {
@@ -94,28 +91,13 @@ func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) 
 	return
 }
 
-func (m *defaultClassifyModel) QueryAll(teamId string) (cms []ClassifyModel, err error) {
+func (m *defaultClassifyModel) FindByTeamId(teamId string) (cms []ClassifyModel, err error) {
 	err = m.conn.Table(m.table).Where(ClassifyModel{TeamId: teamId}).Find(&cms).Error
 	return
 }
 
-func (m *defaultClassifyModel) QueryById(id uint) (result ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{BaseModel: BaseModel{Id: id}}).First(&result).Error
-	return
-}
-
-func (m *defaultClassifyModel) QueryByUid(teamId, uid string) (result []ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{TeamId: teamId, CreatedBy: uid}).Find(&result).Error
-	return
-}
-
-func (m *defaultClassifyModel) QueryByTitle(teamId, uid, title string) (result ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{TeamId: teamId, CreatedBy: uid, Title: title}).Find(&result).Error
-	return
-}
-
-func (m *defaultClassifyModel) QueryByUidAndTitle(uid, title string) (cm ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{CreatedBy: uid, Title: title}).First(&cm).Error
+func (m *defaultClassifyModel) First(p ClassifyModel) (result ClassifyModel, err error) {
+	err = m.conn.Table(m.table).Where(p).First(&result).Error
 	return
 }
 
@@ -135,7 +117,7 @@ func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
 	return
 }
 
-func (m *defaultClassifyModel) Delete(oc, uid string) (err error) {
-	err = m.conn.Table(m.table).Delete(ClassifyModel{OnlyCode: oc, CreatedBy: uid}).Error
+func (m *defaultClassifyModel) Delete(oc, tid string) (err error) {
+	err = m.conn.Table(m.table).Delete(ClassifyModel{OnlyCode: oc, TeamId: tid}).Error
 	return
 }

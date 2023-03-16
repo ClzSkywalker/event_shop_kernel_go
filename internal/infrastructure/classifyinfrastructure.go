@@ -1,49 +1,48 @@
 package infrastructure
 
 import (
+	"errors"
+
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
-	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-func QueryClassifyByUidAndTitle(ctx *contextx.Contextx, tx model.IClassifyModel,
-	title string) (result model.ClassifyModel, err error) {
-	result, err = tx.QueryByTitle(ctx.TID, ctx.UID, title)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		loggerx.ZapLog.Error(err.Error(), zap.Any("ctx", ctx), zap.String("title", title))
+func ClassifyFindByTeamId(ctx *contextx.Contextx, tx model.IClassifyModel) (cms []model.ClassifyModel, err error) {
+	cms, err = tx.FindByTeamId(ctx.TID)
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("ctx", ctx))
 		err = i18n.NewCodeError(ctx.Language, module.ClassifyQueryErr)
 		return
 	}
 	return
 }
 
-func QueryAllClassify(tx model.IClassifyModel, t entity.TokenInfo) (cms []model.ClassifyModel, err error) {
-	cms, err = tx.QueryAll(t.TID)
-	return
-}
-
-func InsertClassify(ctx *contextx.Contextx, tx model.IClassifyModel, cm *model.ClassifyModel) (id uint, err error) {
-	_, err = QueryClassifyByUidAndTitle(ctx, tx, cm.Title)
-	if err != gorm.ErrRecordNotFound {
+func ClassifyInsert(ctx *contextx.Contextx, tx model.IClassifyModel, cm *model.ClassifyModel) (cid string, err error) {
+	_, err = tx.First(model.ClassifyModel{TeamId: cm.TeamId})
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		err = i18n.NewCodeError(ctx.Language, module.ClassifyExistedErr)
 		return
 	}
 
-	id, err = tx.Insert(cm)
+	oc := utils.NewUlid()
+	cm.OnlyCode = oc
+	_, err = tx.Insert(cm)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", cm))
 		err = i18n.NewCodeError(ctx.Language, module.ClassifyInsertErr)
 	}
+	cid = oc
 	return
 }
 
-func UpdateClassify(ctx *contextx.Contextx, tx model.IClassifyModel, t entity.TokenInfo, cm model.ClassifyModel) (err error) {
-	_, err = QueryClassifyByUidAndTitle(ctx, tx, cm.Title)
+func ClassifyUpdate(ctx *contextx.Contextx, tx model.IClassifyModel, cm model.ClassifyModel) (err error) {
+	_, err = tx.First(cm)
 	if err != nil {
 		err = i18n.NewCodeError(ctx.Language, module.ClassifyNotfoundErr)
 		return
@@ -56,10 +55,10 @@ func UpdateClassify(ctx *contextx.Contextx, tx model.IClassifyModel, t entity.To
 	return
 }
 
-func DeleteClassify(ctx *contextx.Contextx, tx model.IClassifyModel, oc, uid string) (err error) {
-	err = tx.Delete(oc, uid)
+func ClassifyDel(ctx *contextx.Contextx, tx model.IClassifyModel, oc string) (err error) {
+	err = tx.Delete(oc, ctx.UID)
 	if err != nil {
-		loggerx.ZapLog.Error(err.Error(), zap.String("oc", oc), zap.String("uid", uid))
+		loggerx.ZapLog.Error(err.Error(), zap.String("oc", oc), zap.String("tid", ctx.TID))
 		err = i18n.NewCodeError(ctx.Language, module.ClassifyUpdateErr)
 	}
 	return
