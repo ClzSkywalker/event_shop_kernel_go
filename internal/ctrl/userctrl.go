@@ -6,13 +6,12 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
-	"github.com/clz.skywalker/event.shop/kernal/internal/model"
+	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func RegisterByEmail(c *gin.Context) {
@@ -24,24 +23,8 @@ func RegisterByEmail(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um := model.UserModel{}
-	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		um, err = infrastructure.RegisterByEmail(ctx, base.UserModel, base.TeamModel, req)
-		return err
-	})
+	token, err := service.UserRegisterByEmail(ctx, req)
 	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
-
-	token, err := infrastructure.GenerateToken(entity.TokenInfo{
-		UID: um.CreatedBy,
-		TID: um.TeamIdPort,
-	})
-	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}
@@ -57,24 +40,8 @@ func RegisterByPhone(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um := model.UserModel{}
-	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		um, err = infrastructure.RegisterByPhone(ctx, base.UserModel, base.TeamModel, req)
-		return err
-	})
+	token, err := service.UserRegisterByPhone(ctx, req)
 	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
-
-	token, err := infrastructure.GenerateToken(entity.TokenInfo{
-		UID: um.CreatedBy,
-		TID: um.TeamIdPort,
-	})
-	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}
@@ -90,27 +57,13 @@ func RegisterByUid(c *gin.Context) {
 		return
 	}
 
-	um := model.UserModel{}
-	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		um, err = infrastructure.RegisterByUid(ctx, base.UserModel, base.TeamModel)
-		return err
-	})
+	token, err := service.UserRegisterByUid(ctx)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
 
-	token, err := infrastructure.GenerateToken(entity.TokenInfo{
-		UID: um.CreatedBy,
-		TID: um.TeamIdPort,
-	})
-	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
-	ret.Data = entity.RegisterByUidRep{LoginRep: entity.LoginRep{Token: token}, Uid: um.CreatedBy}
+	ret.Data = entity.LoginRep{Token: token}
 }
 
 func LoginByEmail(c *gin.Context) {
@@ -191,6 +144,35 @@ func LoginByUid(c *gin.Context) {
 	ret.Data = entity.LoginRep{Token: token}
 }
 
+func UserGetInfo(c *gin.Context) {
+	ret := httpx.NewResult()
+	defer c.JSON(http.StatusOK, ret)
+	ctx, err := validateBind(c, nil)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	um, err := infrastructure.GetUserInfo(ctx, container.GlobalServerContext.UserModel, ctx.UID)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	resp := entity.UserResp{
+		UserItem: entity.UserItem{
+			CreatedBy:    um.CreatedBy,
+			TeamIdPort:   um.TeamIdPort,
+			NickName:     um.NickName,
+			MemberType:   um.MemberType,
+			RegisterType: um.RegisterType,
+			Picture:      um.Picture,
+			Email:        um.Email,
+			Phone:        um.Phone,
+			Version:      um.Version,
+		},
+	}
+	ret.Data = resp
+}
+
 func BindEmailByUid(c *gin.Context) {
 	ret := httpx.NewResult()
 	defer c.JSON(http.StatusOK, ret)
@@ -219,6 +201,22 @@ func BindPhoneByUid(c *gin.Context) {
 	}
 	uid, _ := c.Get(constx.TokenUID)
 	err = infrastructure.BindPhoneByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+}
+
+func UserUpdate(c *gin.Context) {
+	ret := httpx.NewResult()
+	defer c.JSON(http.StatusOK, ret)
+	req := entity.UserUpdateReq{}
+	ctx, err := validateBind(c, &req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	err = service.UserUpdate(ctx, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

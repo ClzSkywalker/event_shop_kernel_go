@@ -33,6 +33,8 @@ func RouterManager(c *gin.Engine) {
 
 	userAuth := globalRoute.Group("/user/auth").Use(middleware.JwtMiddleware())
 	{
+		userAuth.Handle(http.MethodGet, "", ctrl.UserGetInfo)
+		userAuth.Handle(http.MethodPut, "", ctrl.UserUpdate)
 		userAuth.Handle(http.MethodPost, "/bind/email", ctrl.BindEmailByUid)
 		userAuth.Handle(http.MethodPost, "/bind/phone", ctrl.BindPhoneByUid)
 	}

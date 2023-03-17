@@ -55,8 +55,8 @@ func init() {
 		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "电话已被其他用户绑定"},
 		{Tag: language.English, Key: UserBindedEmailErr, Msg: "The phone has been bound to another user"},
 
-		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "用户更新失败"},
-		{Tag: language.English, Key: UserBindedEmailErr, Msg: "User update failure"},
+		{Tag: language.Chinese, Key: UserUpdateErr, Msg: "用户更新失败"},
+		{Tag: language.English, Key: UserUpdateErr, Msg: "User update failure"},
 	}
 	entry.SetEntries(entries...)
 }

@@ -150,6 +150,13 @@ func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 	if err != nil {
 		return
 	}
+
+	// 绑定用户入口
+	err = model.NewDefaultUserModel(tx).Update(model.UserModel{CreatedBy: uid, TeamIdPort: tid})
+	if err != nil {
+		return
+	}
+
 	err = model.NewDefaultUserToTeamModel(tx).InitData(uid, tid)
 	if err != nil {
 		return

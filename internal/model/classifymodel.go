@@ -60,32 +60,28 @@ func (m *defaultClassifyModel) GetTx() (tx *gorm.DB) {
 
 func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) {
 	cm1 := &ClassifyModel{OnlyCode: cid, CreatedBy: uid, TeamId: tid,
-		Title: "", Color: "", Sort: 0}
+		Title: "", Color: "#fd8f80", Sort: 0}
 	cm2 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
-		Title: "", Color: "", Sort: 1}
+		Title: "", Color: "#a0cb62", Sort: 1}
 	cm3 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
-		Title: "", Color: "", Sort: 2}
+		Title: "", Color: "#4ac0e4", Sort: 2}
 	cm4 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
-		Title: "", Color: "", Sort: 3}
+		Title: "", Color: "#b4b4b4", Sort: 3}
+	cm5 := &ClassifyModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, TeamId: tid,
+		Title: "", Color: "#b4b4b4", Sort: 4}
 	switch lang {
 	case constx.LangChinese:
 		cm1.Title = "紧急&重要"
-		cm1.Color = "#fd8f80"
 		cm2.Title = "紧急&不重要"
-		cm2.Color = "#a0cb62"
 		cm3.Title = "不紧急&重要"
-		cm3.Color = "#4ac0e4"
 		cm4.Title = "不紧急&不重要"
-		cm4.Color = "#b4b4b4"
+		cm5.Title = "未分类"
 	default:
 		cm1.Title = "Important & Urgent"
-		cm1.Color = "#fd8f80"
 		cm2.Title = "Important & Not Urgent"
-		cm2.Color = "#a0cb62"
 		cm3.Title = "Not Important & Urgent"
-		cm3.Color = "#4ac0e4"
 		cm4.Title = "Not Important & Not Urgent"
-		cm4.Color = "#b4b4b4"
+		cm5.Title = "unclassified"
 	}
 	err = m.InsertAll([]*ClassifyModel{cm1, cm2, cm3, cm4})
 	return

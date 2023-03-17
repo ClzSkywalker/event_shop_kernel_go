@@ -206,7 +206,7 @@ func LoginByPhone(ctx *contextx.Contextx, tx model.IUserModel, lpq entity.LoginB
  */
 func LoginByUid(ctx *contextx.Contextx, tx model.IUserModel, luq entity.LoginByUidReq) (um model.UserModel, err error) {
 	um, err = tx.QueryUser(model.UserModel{CreatedBy: luq.Uid})
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
@@ -219,6 +219,21 @@ func LoginByUid(ctx *contextx.Contextx, tx model.IUserModel, luq entity.LoginByU
 	if um.Email != "" ||
 		um.Phone != "" {
 		err = i18n.NewCodeError(ctx.Language, module.UserBindNoUidLoginErr)
+		return
+	}
+	return
+}
+
+func GetUserInfo(ctx *contextx.Contextx, tx model.IUserModel, uid string) (u model.UserModel, err error) {
+	u, err = tx.QueryUser(model.UserModel{CreatedBy: uid})
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid))
+		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid))
+		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
 	}
 	return
@@ -293,6 +308,19 @@ func BindPhoneByUid(ctx *contextx.Contextx, tx model.IUserModel, uid string, req
 		return
 	}
 	err = tx.Update(model.UserModel{CreatedBy: uid, Phone: req.Phone})
+	if err != nil {
+		err = i18n.NewCodeError(ctx.Language, module.UserUpdateErr)
+		return
+	}
+	return
+}
+
+func UserUpdate(ctx *contextx.Contextx, tx model.IUserModel, req model.UserModel) (err error) {
+	_, err = GetUserInfo(ctx, tx, req.CreatedBy)
+	if err != nil {
+		return
+	}
+	err = tx.Update(req)
 	if err != nil {
 		err = i18n.NewCodeError(ctx.Language, module.UserUpdateErr)
 		return

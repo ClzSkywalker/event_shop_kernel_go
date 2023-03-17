@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type TokenInfo struct {
 	JMap jwt.MapClaims `json:"-"`
@@ -21,11 +24,6 @@ type RegisterByEmailReq struct {
 type RegisterByPhoneReq struct {
 	registerBody
 	Phone string `json:"phone" validate:"required,email,min=6,max=35"`
-}
-
-type RegisterByUidRep struct {
-	LoginRep
-	Uid string `json:"uid"`
 }
 
 type LoginByEmailReq struct {
@@ -52,4 +50,24 @@ type BindEmailReq struct {
 
 type BindPhoneReq struct {
 	Phone string `json:"phone" validate:"required,min=6"`
+}
+
+type UserItem struct {
+	CreatedBy    string              `json:"created_by,omitempty"`
+	TeamIdPort   string              `json:"team_id_port,omitempty"`
+	NickName     string              `json:"nick_name,omitempty"`
+	MemberType   constx.UserType     `json:"member_type,omitempty"`
+	RegisterType constx.RegisterTypt `json:"register_type,omitempty"`
+	Picture      string              `json:"picture,omitempty"`
+	Email        string              `json:"email,omitempty"`
+	Phone        string              `json:"phone,omitempty"`
+	Version      string              `json:"version,omitempty"`
+}
+
+type UserResp struct {
+	UserItem
+}
+
+type UserUpdateReq struct {
+	UserItem
 }
