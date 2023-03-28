@@ -7,7 +7,7 @@ import (
 	_ "golang.org/x/mobile/bind"
 )
 
-func StartKernel(port, local int, mode, dbPath, logPath string) {
+func StartKernel(port int, mode, dbPath, logPath string) {
 	go recoverx.RecoverFunc(func() {
 		server.KernelServer(container.AppConfig{
 			Port:    port,

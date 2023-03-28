@@ -11,19 +11,23 @@ import (
 )
 
 func validateBind(c *gin.Context, m interface{}) (ctx *contextx.Contextx, err error) {
+	ctx = &contextx.Contextx{}
 	lang := c.GetHeader(constx.HeaderLang)
-	err = c.ShouldBind(&m)
-	if err != nil {
-		err = i18n.NewCodeError(lang, module.RequestParamBindErr, err.Error())
-		loggerx.ZapLog.Error(err.Error())
-		return
+	if m != nil {
+		err = c.ShouldBind(&m)
+		if err != nil && m != nil {
+			err = i18n.NewCodeError(lang, module.RequestParamBindErr, err.Error())
+			loggerx.ZapLog.Error(err.Error())
+			return
+		}
+		err = container.GlobalServerContext.Validator.ValidateParam(lang, m)
+		if err != nil && m != nil {
+			err = i18n.NewCodeError(lang, module.TranslatorNotFoundErr, err.Error())
+			loggerx.ZapLog.Error(err.Error())
+			return
+		}
 	}
-	err = container.GlobalServerContext.Validator.ValidateParam(lang, m)
-	if err != nil {
-		err = i18n.NewCodeError(lang, module.TranslatorNotFoundErr, err.Error())
-		loggerx.ZapLog.Error(err.Error())
-		return
-	}
+
 	ctx.Language = lang
 	ctx.Context = c
 	ctx.UID = c.GetString(constx.TokenUID)

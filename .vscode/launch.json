@@ -45,7 +45,7 @@
         "api",
         "--port=6905",
         "--mode=release",
-        "--dbPath=./assert/ectype/todo_shop.db",
+        "--dbPath=./assert/todo_shop.db",
         "--logPath=./logs"
       ]
     }
