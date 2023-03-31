@@ -31,12 +31,14 @@ func JwtMiddleware() gin.HandlerFunc {
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
+			return
 		}
 		t, err := utils.ParseToken(token, constx.TokenSecret)
 		if err != nil {
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
+			return
 		}
 		epTime, err := t.Claims.GetExpirationTime()
 		if err != nil {
@@ -44,12 +46,14 @@ func JwtMiddleware() gin.HandlerFunc {
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
+			return
 		}
 		if epTime.Time.Before(time.Now()) {
 			err := i18n.NewCodeError(lang, module.TokenExpired)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
+			return
 		}
 		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUID]
 		if !ok || uid.(string) == "" {
@@ -58,6 +62,7 @@ func JwtMiddleware() gin.HandlerFunc {
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
+			return
 		}
 		tid, ok := t.Claims.(jwt.MapClaims)[constx.TokenTID]
 		if !ok || tid.(string) == "" {
@@ -66,6 +71,7 @@ func JwtMiddleware() gin.HandlerFunc {
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
+			return
 		}
 		c.Set(constx.TokenUID, uid)
 		c.Set(constx.TokenTID, tid)
