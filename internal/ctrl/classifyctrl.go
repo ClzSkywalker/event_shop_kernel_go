@@ -38,7 +38,7 @@ func ClassifyQueryTeam(c *gin.Context) {
 			Sort:      cms[i].Sort,
 		})
 	}
-	ret.Data = resp
+	ret.Data = resp.Data
 }
 
 func ClassifyInsert(c *gin.Context) {

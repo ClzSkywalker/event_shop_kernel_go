@@ -64,6 +64,9 @@ func UserRegisterByUid(ctx *contextx.Contextx) (token string, err error) {
 		um, err = infrastructure.RegisterByUid(ctx, base.UserModel, base.TeamModel)
 		return err
 	})
+	if err != nil {
+		return
+	}
 	token, err = infrastructure.GenerateToken(entity.TokenInfo{
 		UID: um.CreatedBy,
 		TID: um.TeamIdPort,

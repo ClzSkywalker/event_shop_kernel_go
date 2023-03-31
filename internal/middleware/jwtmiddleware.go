@@ -57,7 +57,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		}
 		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUID]
 		if !ok || uid.(string) == "" {
-			loggerx.ReqLog.Error(err.Error(), zap.Any("claims", t.Claims.(jwt.MapClaims)))
+			loggerx.ReqLog.Error("claim err", zap.Any("claims", t.Claims.(jwt.MapClaims)))
 			err := i18n.NewCodeError(lang, module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
@@ -66,7 +66,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		}
 		tid, ok := t.Claims.(jwt.MapClaims)[constx.TokenTID]
 		if !ok || tid.(string) == "" {
-			loggerx.ReqLog.Error(err.Error(), zap.Any("claims", t.Claims.(jwt.MapClaims)))
+			loggerx.ReqLog.Error("claim err", zap.Any("claims", t.Claims.(jwt.MapClaims)))
 			err := i18n.NewCodeError(lang, module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
