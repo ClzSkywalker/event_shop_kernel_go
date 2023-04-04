@@ -15,7 +15,7 @@
         "api",
         "--port=6905",
         "--mode=debug",
-        "--dbPath=./assert/ectype/todo_shop.db",
+        "--dbPath=./assert/ectype/todo_shop_test.db",
         "--logPath=./logs"
       ]
     },

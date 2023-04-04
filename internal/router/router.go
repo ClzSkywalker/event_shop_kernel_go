@@ -49,11 +49,15 @@ func RouterManager(c *gin.Engine) {
 
 	classify := globalRoute.Group("/classify").Use(middleware.JwtMiddleware())
 	{
+		classify.Handle(http.MethodGet, "", ctrl.ClassifyQueryTeam)
 		classify.Handle(http.MethodPost, "", ctrl.ClassifyInsert)
 		classify.Handle(http.MethodPut, "", ctrl.ClassifyUpdate)
 		classify.Handle(http.MethodDelete, "/:only_code", ctrl.ClassifyDel)
-		classify.Handle(http.MethodGet, "", ctrl.ClassifyQueryTeam)
 	}
-	globalRoute.Handle(http.MethodPost, "/task", ctrl.InsertTask)
-	globalRoute.Handle(http.MethodPost, "/task_mode", ctrl.CreateTaskMode)
+
+	task := globalRoute.Group("/task").Use(middleware.JwtMiddleware())
+	{
+		task.Handle(http.MethodPost, "", ctrl.InsertTask)
+		task.Handle(http.MethodPost, "/task_mode", ctrl.CreateTaskMode)
+	}
 }

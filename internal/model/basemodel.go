@@ -16,6 +16,19 @@ const (
 	TaskContentTableName = "task_content"
 )
 
+const (
+	// 父子文件夹递归查询
+	recursiveSql = `WITH RECURSIVE all_folders AS (
+		SELECT * 
+		FROM %s
+		WHERE parent_id IS NULL
+		UNION ALL
+		SELECT *
+		FROM all_folders af
+		JOIN %s f ON f.parent_id = af.id
+	  )`
+)
+
 type BaseModel struct {
 	Id        uint                  `gorm:"primarykey"`
 	CreatedAt int64                 `json:"created_at" gorm:"autoUpdateTime"`

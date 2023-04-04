@@ -16,6 +16,7 @@ type ClassifyItem struct {
 	Title     string `json:"title"`
 	Color     string `json:"color"`
 	Sort      int    `json:"sort"`
+	ParentId  string `json:"parent_id"`
 }
 
 type ClassifyFind struct {

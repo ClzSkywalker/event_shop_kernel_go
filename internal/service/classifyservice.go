@@ -28,6 +28,7 @@ func ClassifyUpdate(ctx *contextx.Contextx, req entity.ClassifyItem) (err error)
 		err = infrastructure.ClassifyUpdate(ctx, container.GlobalServerContext.ClassifyModel, model.ClassifyModel{
 			CreatedBy: ctx.UID,
 			TeamId:    ctx.TID,
+			OnlyCode:  req.OnlyCode,
 			Title:     req.Title,
 			Color:     req.Color,
 			Sort:      req.Sort,

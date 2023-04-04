@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"gorm.io/gorm"
@@ -15,6 +17,7 @@ type ClassifyModel struct {
 	Title     string `gorm:"column:title;type:varchar"`
 	Color     string `gorm:"column:color;type:varchar"`
 	Sort      int    `gorm:"column:sort;type:INTEGER"`
+	ParentId  string `gorm:"parent_id;type:varchar(26)"`
 }
 
 type IClassifyModel interface {
@@ -88,7 +91,9 @@ func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) 
 }
 
 func (m *defaultClassifyModel) FindByTeamId(teamId string) (cms []ClassifyModel, err error) {
-	err = m.conn.Table(m.table).Where(ClassifyModel{TeamId: teamId}).Find(&cms).Error
+	err = m.conn.Raw(fmt.Sprintf(recursiveSql+`
+	  SELECT *
+	  FROM all_folders where team_id=%s and deleted_at=0;`, m.table, m.table, teamId)).Scan(&cms).Error
 	return
 }
 

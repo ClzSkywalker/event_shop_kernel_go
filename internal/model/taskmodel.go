@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"gorm.io/gorm"
@@ -18,6 +20,7 @@ type TaskModel struct {
 	GiveUpAt    int64  `gorm:"column:give_up_at;type:INTEGER"`
 	StartAt     int64  `gorm:"column:start_at;type:INTEGER;index"`
 	EndAt       int64  `gorm:"column:end_at;type:INTEGER;index"`
+	ParentId    string `gorm:"parent_id;type:varchar(26)"`
 }
 
 type ITaskModel interface {
@@ -76,6 +79,13 @@ func (m *defaultTaskModel) InitData(lang, uid, cid, tid string) (err error) {
 }
 
 func (m *defaultTaskModel) SelectByModel(TaskModel) (result []TaskModel, err error) {
+	return
+}
+
+func (m *defaultTaskModel) FindByClassifyId(classifyId string) (result []TaskModel, err error) {
+	err = m.conn.Raw(fmt.Sprintf(recursiveSql+`
+	  SELECT *
+	  FROM all_folders where team_id=%s and deleted_at=0;`, m.table, m.table, classifyId)).Scan(&result).Error
 	return
 }
 

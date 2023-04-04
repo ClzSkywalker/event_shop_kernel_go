@@ -14,7 +14,7 @@ const (
 	PwdSalt = "LeagueOfLegends"
 
 	TokenIssuer    = "ClzSkywalker"
-	TokenExpiresAt = 86400 * 3
+	TokenExpiresAt = 86400 * 99
 	TokenSub       = "event shop"
 	TokenUID       = "uid" // 用户id
 	TokenTID       = "tid" // 团队id
