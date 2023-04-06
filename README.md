@@ -27,6 +27,9 @@ flutter pub get
 ```text
 ├─.githooks
 ├─.vscode
+├─.VSCodeCounter
+│  ├─2023-03-07_21-00-57
+│  └─2023-04-06_19-48-08
 ├─assert
 │  └─ectype
 ├─cmd
@@ -37,7 +40,7 @@ flutter pub get
 │  ├─contextx
 │  ├─ctrl
 │  ├─entity
-│  ├─Infrastructure
+│  ├─infrastructure
 │  ├─middleware
 │  ├─model
 │  ├─router
@@ -45,6 +48,8 @@ flutter pub get
 │  └─service
 ├─logs
 ├─output
+│  ├─android
+│  └─windows
 ├─pkg
 │  ├─bmobx
 │  ├─constx

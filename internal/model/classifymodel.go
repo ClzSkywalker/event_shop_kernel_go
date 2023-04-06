@@ -11,13 +11,15 @@ import (
 // 分类
 type ClassifyModel struct {
 	BaseModel
-	OnlyCode  string `gorm:"column:oc;type:VARCHAR(26);index:udx_classify_oc,unique"`
-	CreatedBy string `gorm:"column:created_by;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
-	TeamId    string `gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
-	Title     string `gorm:"column:title;type:varchar"`
-	Color     string `gorm:"column:color;type:varchar"`
-	Sort      int    `gorm:"column:sort;type:INTEGER"`
-	ParentId  string `gorm:"parent_id;type:varchar(26)"`
+	OnlyCode  string               `gorm:"column:oc;type:VARCHAR(26);index:udx_classify_oc,unique"`
+	CreatedBy string               `gorm:"column:created_by;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
+	TeamId    string               `gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
+	Title     string               `gorm:"column:title;type:varchar"`
+	Color     string               `gorm:"column:color;type:varchar"`
+	ShowType  constx.TaskShowType  `gorm:"column:show_type,type:INTEGER"` // 展示模式
+	OrderType constx.TaskOrderType `gorm:"column:order_type,type:INTEGER"`
+	Sort      int                  `gorm:"column:sort;type:INTEGER"`
+	ParentId  string               `gorm:"parent_id;type:varchar(26)"`
 }
 
 type IClassifyModel interface {

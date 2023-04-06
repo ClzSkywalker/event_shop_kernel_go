@@ -18,6 +18,7 @@ const (
 	SystemErrorCode = 10001 + iota
 	TranslatorNotFoundErr
 	RequestParamBindErr
+	ReqMissErr
 	DbErrorErr
 	EncryptPwdErr
 	GenerateUlidErr
@@ -38,6 +39,9 @@ func init() {
 
 		{Tag: language.Chinese, Key: RequestParamBindErr, Msg: "参数传递错误:%s"},
 		{Tag: language.English, Key: RequestParamBindErr, Msg: "Parameter passing error:%s"},
+
+		{Tag: language.Chinese, Key: ReqMissErr, Msg: "请求信息缺失"},
+		{Tag: language.English, Key: ReqMissErr, Msg: "Request missing information"},
 
 		{Tag: language.Chinese, Key: EncryptPwdErr, Msg: "创建密码错误，请换一个密码"},
 		{Tag: language.English, Key: EncryptPwdErr, Msg: "Incorrect password creation, please change the password"},

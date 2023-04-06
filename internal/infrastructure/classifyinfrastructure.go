@@ -55,6 +55,24 @@ func ClassifyUpdate(ctx *contextx.Contextx, cm model.ClassifyModel) (err error) 
 	return
 }
 
+//
+// Author         : ClzSkywalker
+// Date           : 2023-04-06
+// Description    : 更新排序
+// param           {*contextx.Contextx} ctx
+// param           {[]model.ClassifyModel} cmList
+// return          {*}
+//
+func ClassifyOrderUpdate(ctx *contextx.Contextx, cmList []model.ClassifyModel) (err error) {
+	for i := 0; i < len(cmList); i++ {
+		err = ctx.BaseTx.ClassifyModel.Update(cmList[i])
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 func ClassifyDel(ctx *contextx.Contextx, classifyId string) (err error) {
 	result, err := ctx.BaseTx.TaskModel.FindByClassifyId(classifyId)
 	if err != nil {

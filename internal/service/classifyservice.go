@@ -6,6 +6,8 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +37,26 @@ func ClassifyUpdate(ctx *contextx.Contextx, req entity.ClassifyItem) (err error)
 			Color:     req.Color,
 			Sort:      req.Sort,
 		})
+		return err
+	})
+	return
+}
+
+func ClassifyOrderUpdate(ctx *contextx.Contextx, req entity.ClassifyOrderReq) (err error) {
+	cmList := make([]model.ClassifyModel, 0, len(req.Data))
+	for _, item := range req.Data {
+		if item.OnlyCode == "" {
+			err = i18n.NewCodeError(ctx.Language, module.ReqMissErr)
+			return
+		}
+		cmList = append(cmList, model.ClassifyModel{
+			OnlyCode: item.OnlyCode,
+			Sort:     item.Sort,
+		})
+	}
+	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.ClassifyOrderUpdate(ctx, cmList)
 		return err
 	})
 	return

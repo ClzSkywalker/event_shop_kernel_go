@@ -79,6 +79,25 @@ func ClassifyUpdate(c *gin.Context) {
 	}
 }
 
+func ClassifyOrderUpdate(c *gin.Context) {
+	ret := httpx.NewResult()
+	var err error
+	defer func() {
+		c.JSON(http.StatusOK, ret)
+	}()
+	req := entity.ClassifyOrderReq{}
+	ctx, err := validateBind(c, &req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	err = service.ClassifyOrderUpdate(ctx, req)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+}
+
 func ClassifyDel(c *gin.Context) {
 	ret := httpx.NewResult()
 	var err error
