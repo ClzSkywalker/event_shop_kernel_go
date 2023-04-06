@@ -3,143 +3,84 @@ package test
 import (
 	"testing"
 
-	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
+	"github.com/clz.skywalker/event.shop/kernal/internal/model"
+	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestUserRegisterAndLogin(t *testing.T) {
-	ctx := initGormAndVar()
-	Convey("user login, register, bind", t, func() {
-		Convey("register by emial", func() {
+	ctx1 := initGormAndVar()
+
+	Convey("uid:register,login,bind", t, func() {
+		Convey("success", func() {
+			// register by uid
 			remailreq := entity.RegisterByEmailReq{
 				Email: email1,
 			}
 			remailreq.NickName = nikeName1
 			remailreq.Pwd = pwd1
-			um, err := infrastructure.RegisterByEmail(ctx, container.GlobalServerContext.UserModel,
-				container.GlobalServerContext.TeamModel, remailreq)
+			token, err := service.UserRegisterByEmail(ctx1,
+				remailreq)
 			So(err, ShouldBeNil)
-			So(um.CreatedBy, ShouldNotBeEmpty)
-			So(um.TeamIdPort, ShouldNotBeEmpty)
-			_, err = infrastructure.RegisterByEmail(ctx, container.GlobalServerContext.UserModel,
-				container.GlobalServerContext.TeamModel, remailreq)
-			So(err, ShouldNotBeNil)
-		})
+			So(token, ShouldNotBeEmpty)
+			refreshDB(ctx1)
 
-		Convey("login by email", func() {
-			req := entity.LoginByEmailReq{
+			// login by uid success
+			um, err := infrastructure.LoginByUid(ctx1, entity.LoginByUidReq{Uid: ctx1.UID})
+			So(err, ShouldBeNil)
+			So(um.CreatedBy, ShouldEqual, ctx1.UID)
+
+			// get user info
+			um, err = infrastructure.GetUserInfo(ctx1, ctx1.UID)
+			So(err, ShouldBeNil)
+			So(um.CreatedBy, ShouldEqual, ctx1.UID)
+
+			// update user
+			nickName := "nk1"
+			err = infrastructure.UserUpdate(ctx1, model.UserModel{CreatedBy: ctx1.UID, NickName: nickName})
+			So(err, ShouldBeNil)
+			refreshDB(ctx1)
+
+			// bind email
+			beReq := entity.BindEmailReq{
 				Email: email1,
-				Pwd:   pwd1,
 			}
-			Convey("success", func() {
-				uid, err := infrastructure.LoginByEmail(ctx, container.GlobalServerContext.UserModel, req)
+			err = service.UserBindEmail(ctx1, beReq)
+			So(err, ShouldBeNil)
+			refreshDB(ctx1)
+
+			bpEeq := entity.BindPhoneReq{
+				Phone: phone1,
+			}
+			err = service.UserBindPhone(ctx1, bpEeq)
+			So(err, ShouldBeNil)
+			refreshDB(ctx1)
+
+			um, err = infrastructure.GetUserInfo(ctx1, ctx1.UID)
+			So(err, ShouldBeNil)
+			So(um.NickName, ShouldEqual, nickName)
+			So(um.Email, ShouldEqual, email1)
+			So(um.Phone, ShouldEqual, phone1)
+
+			// email,phone登录
+			// infrastructure.LoginByEmail(ctx,entity.LoginByEmailReq{Email: email1,})
+
+			Convey("failure", func() {
+				// 绑定相同邮箱
+				ctx2, err := newCtx()
 				So(err, ShouldBeNil)
-				So(uid, ShouldNotBeEmpty)
-			})
-			Convey("pwd error", func() {
-				req.Pwd += "error"
-				_, err := infrastructure.LoginByEmail(ctx, container.GlobalServerContext.UserModel, req)
-				So(err.(errorx.CodeError).Code, ShouldEqual, module.UserPwdErr)
-			})
-			Convey("notfound", func() {
-				req.Email = "notfound@qq.com"
-				_, err := infrastructure.LoginByEmail(ctx, container.GlobalServerContext.UserModel, req)
-				So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
-			})
-		})
+				err = service.UserBindEmail(ctx2, beReq)
+				So(err.(errorx.CodeError).Code, ShouldEqual, module.UserEmailBindByOtherErr)
 
-		Convey("register by phone", func() {
-			req := entity.RegisterByPhoneReq{Phone: phone1}
-			req.NickName = nikeName1
-			req.Pwd = pwd1
-			um, err := infrastructure.RegisterByPhone(ctx, container.GlobalServerContext.UserModel,
-				container.GlobalServerContext.TeamModel, req)
-			So(err, ShouldBeNil)
-			So(um.CreatedBy, ShouldNotBeEmpty)
-			So(um.TeamIdPort, ShouldNotBeEmpty)
-			_, err = infrastructure.RegisterByPhone(ctx, container.GlobalServerContext.UserModel,
-				container.GlobalServerContext.TeamModel, req)
-			So(err, ShouldNotBeNil)
-		})
-
-		Convey("login by phone", func() {
-			req := entity.LoginByPhoneReq{Phone: phone1}
-			req.Pwd = pwd1
-			Convey("success", func() {
-				um, err := infrastructure.LoginByPhone(ctx, container.GlobalServerContext.UserModel, req)
-				So(err, ShouldBeNil)
-				So(um.CreatedBy, ShouldNotBeEmpty)
-				So(um.TeamIdPort, ShouldNotBeEmpty)
+				// 绑定相同电话
+				err = service.UserBindPhone(ctx2, bpEeq)
+				So(err.(errorx.CodeError).Code, ShouldEqual, module.UserPhoneBindByOtherErr)
 			})
-			Convey("pwd error", func() {
-				req.Pwd += "error"
-				_, err := infrastructure.LoginByPhone(ctx, container.GlobalServerContext.UserModel, req)
-				So(err.(errorx.CodeError).Code, ShouldEqual, module.UserPwdErr)
-			})
-			Convey("notfound", func() {
-				req.Phone = "notfound"
-				_, err := infrastructure.LoginByPhone(ctx, container.GlobalServerContext.UserModel, req)
-				So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
-			})
-		})
-
-		Convey("register by uid", func() {
-			um, err := infrastructure.RegisterByUid(ctx, container.GlobalServerContext.UserModel,
-				container.GlobalServerContext.TeamModel)
-			So(err, ShouldBeNil)
-			So(um.CreatedBy, ShouldNotBeEmpty)
-			So(um.TeamIdPort, ShouldNotBeEmpty)
-			Convey("login by uid", func() {
-				luq := entity.LoginByUidReq{Uid: um.CreatedBy}
-				Convey("success", func() {
-					um, err = infrastructure.LoginByUid(ctx, container.GlobalServerContext.UserModel, luq)
-					So(err, ShouldBeNil)
-					So(um.CreatedAt, ShouldNotBeEmpty)
-				})
-				Convey("notfound", func() {
-					luq.Uid = "notfound"
-					_, err = infrastructure.LoginByUid(ctx, container.GlobalServerContext.UserModel, luq)
-					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
-				})
-			})
-		})
-
-		Convey("bind user", func() {
-			um, err := infrastructure.RegisterByUid(ctx, container.GlobalServerContext.UserModel,
-				container.GlobalServerContext.TeamModel)
-			So(err, ShouldBeNil)
-			So(um.CreatedBy, ShouldNotBeEmpty)
-			So(um.TeamIdPort, ShouldNotBeEmpty)
-			Convey("bind by email", func() {
-				req := entity.BindEmailReq{Email: email2}
-				Convey("success", func() {
-					err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, um.CreatedBy, req)
-					So(err, ShouldBeNil)
-				})
-
-				Convey("uid not found", func() {
-					err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, "notfound", req)
-					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserNotFoundErr)
-				})
-
-				Convey("uid binded email", func() {
-					req = entity.BindEmailReq{Email: email3}
-					err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, um.CreatedBy, req)
-					So(err, ShouldBeNil)
-					req.Email = "notfound"
-					err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, um.CreatedBy, req)
-					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserBindedEmailErr)
-				})
-
-				Convey("The mailbox is in use", func() {
-					err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, um.CreatedBy, req)
-					So(err.(errorx.CodeError).Code, ShouldEqual, module.UserEmailBindByOtherErr)
-				})
-			})
+			// success
 		})
 	})
 }

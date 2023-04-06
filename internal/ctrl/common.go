@@ -32,5 +32,6 @@ func validateBind(c *gin.Context, m interface{}) (ctx *contextx.Contextx, err er
 	ctx.Context = c
 	ctx.UID = c.GetString(constx.TokenUID)
 	ctx.TID = c.GetString(constx.TokenTID)
+	ctx.BaseTx = *container.GlobalServerContext
 	return
 }

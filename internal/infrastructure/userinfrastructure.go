@@ -24,7 +24,7 @@ import (
  * @param           {entity.RegisterEmailReq} rmr
  * @return          {*}
  */
-func RegisterByEmail(ctx *contextx.Contextx, tx model.IUserModel, ttx model.ITeamModel,
+func RegisterByEmail(ctx *contextx.Contextx,
 	rmr entity.RegisterByEmailReq) (resp model.UserModel, err error) {
 	pwd, err := utils.EncryptPwd(rmr.Pwd, constx.PwdSalt)
 	if err != nil {
@@ -40,7 +40,7 @@ func RegisterByEmail(ctx *contextx.Contextx, tx model.IUserModel, ttx model.ITea
 		TeamIdPort:   utils.NewUlid(),
 		RegisterType: constx.EmailRT,
 	}
-	return register(ctx, tx, ttx, um)
+	return register(ctx, um)
 }
 
 /**
@@ -51,7 +51,7 @@ func RegisterByEmail(ctx *contextx.Contextx, tx model.IUserModel, ttx model.ITea
  * @param           {entity.RegisterByPhoneReq} rmr
  * @return          {*}
  */
-func RegisterByPhone(ctx *contextx.Contextx, tx model.IUserModel, ttx model.ITeamModel,
+func RegisterByPhone(ctx *contextx.Contextx,
 	rmr entity.RegisterByPhoneReq) (resp model.UserModel, err error) {
 	pwd, err := utils.EncryptPwd(rmr.Pwd, constx.PwdSalt)
 	if err != nil {
@@ -67,7 +67,7 @@ func RegisterByPhone(ctx *contextx.Contextx, tx model.IUserModel, ttx model.ITea
 		TeamIdPort:   utils.NewUlid(),
 		RegisterType: constx.PhoneRT,
 	}
-	return register(ctx, tx, ttx, um)
+	return register(ctx, um)
 }
 
 /**
@@ -77,12 +77,12 @@ func RegisterByPhone(ctx *contextx.Contextx, tx model.IUserModel, ttx model.ITea
  * @param           {model.IUserModel} tx
  * @return          {*}
  */
-func RegisterByUid(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeamModel) (umresp model.UserModel, err error) {
+func RegisterByUid(ctx *contextx.Contextx) (umresp model.UserModel, err error) {
 	um := &model.UserModel{
 		CreatedBy:  utils.NewUlid(),
 		TeamIdPort: utils.NewUlid(),
 	}
-	return register(ctx, utx, ttx, um)
+	return register(ctx, um)
 }
 
 /**
@@ -93,8 +93,8 @@ func RegisterByUid(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeam
  * @param           {*model.UserModel} um
  * @return          {*}
  */
-func register(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeamModel, um *model.UserModel) (umresp model.UserModel, err error) {
-	_, err = utx.CheckRegisterRepeat(*um)
+func register(ctx *contextx.Contextx, um *model.UserModel) (umresp model.UserModel, err error) {
+	_, err = ctx.BaseTx.UserModel.CheckRegisterRepeat(*um)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", um))
 		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
@@ -106,20 +106,20 @@ func register(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeamModel
 		return
 	}
 
-	_, err = ttx.First(model.TeamModel{TeamId: um.TeamIdPort})
+	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{TeamId: um.TeamIdPort})
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		err = i18n.NewCodeError(ctx.Language, module.TeamRepeatErr)
 		return
 	}
 
-	_, err = utx.Insert(um)
+	_, err = ctx.BaseTx.UserModel.Insert(um)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", um))
 		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
 		return
 	}
 
-	tx2 := utx.GetTx()
+	tx2 := ctx.BaseTx.Db
 	err = container.InitData(tx2, ctx.Language, um.CreatedBy, um.TeamIdPort)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error())
@@ -127,6 +127,8 @@ func register(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeamModel
 		return
 	}
 	umresp = *um
+	ctx.UID = um.CreatedBy
+	ctx.TID = um.TeamIdPort
 	return
 }
 
@@ -138,14 +140,14 @@ func register(ctx *contextx.Contextx, utx model.IUserModel, ttx model.ITeamModel
  * @param           {entity.LoginByEmailReq} leq
  * @return          {*}
  */
-func LoginByEmail(ctx *contextx.Contextx, tx model.IUserModel, leq entity.LoginByEmailReq) (um model.UserModel, err error) {
+func LoginByEmail(ctx *contextx.Contextx, leq entity.LoginByEmailReq) (um model.UserModel, err error) {
 	pwd, err := utils.EncryptPwd(leq.Pwd, constx.PwdSalt)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("pwd", pwd))
 		err = i18n.NewCodeError(ctx.Language, module.EncryptPwdErr)
 		return
 	}
-	um, err = tx.QueryUser(model.UserModel{Email: leq.Email})
+	um, err = ctx.BaseTx.UserModel.QueryUser(model.UserModel{Email: leq.Email})
 	if err != nil && err != gorm.ErrRecordNotFound {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", leq))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
@@ -170,14 +172,14 @@ func LoginByEmail(ctx *contextx.Contextx, tx model.IUserModel, leq entity.LoginB
  * @param           {entity.LoginByPhoneReq} lpq
  * @return          {*}
  */
-func LoginByPhone(ctx *contextx.Contextx, tx model.IUserModel, lpq entity.LoginByPhoneReq) (um model.UserModel, err error) {
+func LoginByPhone(ctx *contextx.Contextx, lpq entity.LoginByPhoneReq) (um model.UserModel, err error) {
 	pwd, err := utils.EncryptPwd(lpq.Pwd, constx.PwdSalt)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("pwd", pwd))
 		err = i18n.NewCodeError(ctx.Language, module.EncryptPwdErr)
 		return
 	}
-	um, err = tx.QueryUser(model.UserModel{Phone: lpq.Phone})
+	um, err = ctx.BaseTx.UserModel.QueryUser(model.UserModel{Phone: lpq.Phone})
 	if err != nil && err != gorm.ErrRecordNotFound {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", lpq))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
@@ -204,8 +206,8 @@ func LoginByPhone(ctx *contextx.Contextx, tx model.IUserModel, lpq entity.LoginB
  * @param           {entity.LoginByUidReq} luq
  * @return          {*}
  */
-func LoginByUid(ctx *contextx.Contextx, tx model.IUserModel, luq entity.LoginByUidReq) (um model.UserModel, err error) {
-	um, err = tx.QueryUser(model.UserModel{CreatedBy: luq.Uid})
+func LoginByUid(ctx *contextx.Contextx, luq entity.LoginByUidReq) (um model.UserModel, err error) {
+	um, err = ctx.BaseTx.UserModel.QueryUser(model.UserModel{CreatedBy: luq.Uid})
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", luq))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
@@ -216,16 +218,11 @@ func LoginByUid(ctx *contextx.Contextx, tx model.IUserModel, luq entity.LoginByU
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
 	}
-	if um.Email != "" ||
-		um.Phone != "" {
-		err = i18n.NewCodeError(ctx.Language, module.UserBindNoUidLoginErr)
-		return
-	}
 	return
 }
 
-func GetUserInfo(ctx *contextx.Contextx, tx model.IUserModel, uid string) (u model.UserModel, err error) {
-	u, err = tx.QueryUser(model.UserModel{CreatedBy: uid})
+func GetUserInfo(ctx *contextx.Contextx, uid string) (u model.UserModel, err error) {
+	u, err = ctx.BaseTx.UserModel.QueryUser(model.UserModel{CreatedBy: uid})
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
@@ -248,28 +245,24 @@ func GetUserInfo(ctx *contextx.Contextx, tx model.IUserModel, uid string) (u mod
  * @param           {entity.BindEmailReq} req
  * @return          {*}
  */
-func BindEmailByUid(ctx *contextx.Contextx, tx model.IUserModel, uid string, req entity.BindEmailReq) (err error) {
-	um1, err := tx.QueryUser(model.UserModel{CreatedBy: uid})
+func BindEmailByUid(ctx *contextx.Contextx, req entity.BindEmailReq) (err error) {
+	_, err = ctx.BaseTx.UserModel.QueryUser(model.UserModel{CreatedBy: ctx.UID})
 	if err != nil {
-		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid), zap.Any("model", req))
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", ctx.UID), zap.Any("model", req))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
 	}
-	if um1.Email != "" {
-		err = i18n.NewCodeError(ctx.Language, module.UserBindedEmailErr)
-		return
-	}
-	_, err = tx.QueryUser(model.UserModel{Email: req.Email})
+	u2, err := ctx.BaseTx.UserModel.QueryUser(model.UserModel{Email: req.Email})
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", req))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
 	}
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
+	if !errors.Is(err, gorm.ErrRecordNotFound) && u2.CreatedBy != ctx.UID {
 		err = i18n.NewCodeError(ctx.Language, module.UserEmailBindByOtherErr)
 		return
 	}
-	err = tx.Update(model.UserModel{CreatedBy: uid, Email: req.Email})
+	err = ctx.BaseTx.UserModel.Update(model.UserModel{CreatedBy: ctx.UID, Email: req.Email})
 	if err != nil {
 		err = i18n.NewCodeError(ctx.Language, module.UserUpdateErr)
 		return
@@ -286,28 +279,24 @@ func BindEmailByUid(ctx *contextx.Contextx, tx model.IUserModel, uid string, req
  * @param           {entity.BindPhoneReq} req
  * @return          {*}
  */
-func BindPhoneByUid(ctx *contextx.Contextx, tx model.IUserModel, uid string, req entity.BindPhoneReq) (err error) {
-	um1, err := tx.QueryUser(model.UserModel{CreatedBy: uid})
+func BindPhoneByUid(ctx *contextx.Contextx, req entity.BindPhoneReq) (err error) {
+	_, err = ctx.BaseTx.UserModel.QueryUser(model.UserModel{CreatedBy: ctx.UID})
 	if err != nil {
-		loggerx.ZapLog.Error(err.Error(), zap.String("uid", uid), zap.Any("model", req))
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", ctx.UID), zap.Any("model", req))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
 	}
-	if um1.Email != "" {
-		err = i18n.NewCodeError(ctx.Language, module.UserBindedPhoneErr)
-		return
-	}
-	_, err = tx.QueryUser(model.UserModel{Phone: req.Phone})
+	um2, err := ctx.BaseTx.UserModel.QueryUser(model.UserModel{Phone: req.Phone})
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", req))
 		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
 		return
 	}
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		err = i18n.NewCodeError(ctx.Language, module.UserEmailBindByOtherErr)
+	if !errors.Is(err, gorm.ErrRecordNotFound) && um2.CreatedBy != ctx.UID {
+		err = i18n.NewCodeError(ctx.Language, module.UserPhoneBindByOtherErr)
 		return
 	}
-	err = tx.Update(model.UserModel{CreatedBy: uid, Phone: req.Phone})
+	err = ctx.BaseTx.UserModel.Update(model.UserModel{CreatedBy: ctx.UID, Phone: req.Phone})
 	if err != nil {
 		err = i18n.NewCodeError(ctx.Language, module.UserUpdateErr)
 		return
@@ -315,12 +304,37 @@ func BindPhoneByUid(ctx *contextx.Contextx, tx model.IUserModel, uid string, req
 	return
 }
 
-func UserUpdate(ctx *contextx.Contextx, tx model.IUserModel, req model.UserModel) (err error) {
-	_, err = GetUserInfo(ctx, tx, req.CreatedBy)
+func UserResetPwd(ctx *contextx.Contextx, oldPwd, newPwd string) (err error) {
+	um1, err := ctx.BaseTx.UserModel.QueryUser(model.UserModel{CreatedBy: ctx.UID})
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", ctx.UID))
+		err = i18n.NewCodeError(ctx.Language, module.UserNotFoundErr)
+		return
+	}
+	if um1.Pwd != oldPwd {
+		err = i18n.NewCodeError(ctx.Language, module.UserPwdErr)
+		return
+	}
+	pwd, err := utils.EncryptPwd(newPwd, constx.PwdSalt)
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.String("uid", ctx.UID), zap.Any("pwd", newPwd))
+		err = i18n.NewCodeError(ctx.Language, module.EncryptPwdErr)
+		return
+	}
+	err = ctx.BaseTx.UserModel.Update(model.UserModel{CreatedBy: ctx.UID, Pwd: pwd})
+	if err != nil {
+		err = i18n.NewCodeError(ctx.Language, module.UserUpdateErr)
+		return
+	}
+	return
+}
+
+func UserUpdate(ctx *contextx.Contextx, req model.UserModel) (err error) {
+	_, err = GetUserInfo(ctx, req.CreatedBy)
 	if err != nil {
 		return
 	}
-	err = tx.Update(req)
+	err = ctx.BaseTx.UserModel.Update(req)
 	if err != nil {
 		err = i18n.NewCodeError(ctx.Language, module.UserUpdateErr)
 		return

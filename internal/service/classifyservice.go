@@ -11,7 +11,8 @@ import (
 
 func ClassifyCreate(ctx *contextx.Contextx, req entity.ClassifyInsertReq) (cid string, err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		cid, err = infrastructure.ClassifyInsert(ctx, container.GlobalServerContext.ClassifyModel, &model.ClassifyModel{
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		cid, err = infrastructure.ClassifyInsert(ctx, &model.ClassifyModel{
 			CreatedBy: ctx.UID,
 			TeamId:    ctx.TID,
 			Title:     req.Title,
@@ -25,7 +26,8 @@ func ClassifyCreate(ctx *contextx.Contextx, req entity.ClassifyInsertReq) (cid s
 
 func ClassifyUpdate(ctx *contextx.Contextx, req entity.ClassifyItem) (err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		err = infrastructure.ClassifyUpdate(ctx, container.GlobalServerContext.ClassifyModel, model.ClassifyModel{
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.ClassifyUpdate(ctx, model.ClassifyModel{
 			CreatedBy: ctx.UID,
 			TeamId:    ctx.TID,
 			OnlyCode:  req.OnlyCode,
@@ -40,7 +42,8 @@ func ClassifyUpdate(ctx *contextx.Contextx, req entity.ClassifyItem) (err error)
 
 func ClassifyDel(ctx *contextx.Contextx, req entity.ClassifyDelReq) (err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		err = infrastructure.ClassifyDel(ctx, container.GlobalServerContext.ClassifyModel, req.OnlyCode)
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.ClassifyDel(ctx, req.OnlyCode)
 		return err
 	})
 	return

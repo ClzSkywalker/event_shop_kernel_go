@@ -3,11 +3,10 @@ package test
 import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
-	"github.com/clz.skywalker/event.shop/kernal/internal/model"
+	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -28,21 +27,21 @@ func initGormAndVar() (ctx *contextx.Contextx) {
 	if err != nil {
 		panic(err)
 	}
-	container.GlobalServerContext = container.NewBaskServiceContext(container.GlobalServerContext, gdb)
-	ctx = &contextx.Contextx{Language: constx.LangChinese, Tx: container.GlobalServerContext.Db}
-	um := &model.UserModel{
-		CreatedBy: utils.NewUlid(),
-	}
-	_, err = model.NewDefaultUserModel(gdb).Insert(um)
+	container.GlobalServerContext = container.NewBaseServiceContext(container.GlobalServerContext, gdb)
+	ctx, err = newCtx()
 	if err != nil {
-		return
+		panic(err)
 	}
-	tid := utils.NewUlid()
-	err = container.InitData(gdb, constx.LangChinese, um.CreatedBy, tid)
-	if err != nil {
-		return
-	}
-	ctx.TID = tid
-	ctx.UID = um.CreatedBy
+	return ctx
+}
+
+func newCtx() (ctx *contextx.Contextx, err error) {
+	ctx = &contextx.Contextx{Language: constx.LangChinese}
+	ctx.BaseTx = *container.NewBaseServiceContext(container.GlobalServerContext, container.GlobalServerContext.Db)
+	_, err = service.UserRegisterByUid(ctx)
 	return
+}
+
+func refreshDB(ctx *contextx.Contextx) {
+	ctx.BaseTx = *container.NewBaseServiceContext(container.GlobalServerContext, container.GlobalServerContext.Db)
 }

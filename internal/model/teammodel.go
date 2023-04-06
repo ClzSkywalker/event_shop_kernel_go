@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 
-	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"gorm.io/gorm"
 )
@@ -24,12 +23,12 @@ type ITeamModel interface {
 	IBaseModel
 	InitData(lang, tid, uid string) (err error)
 	Find(p TeamModel) (result []TeamModel, err error)
-	FindMyTeam(uid string) (result []entity.TeamItem, err error)
+	FindMyTeam(uid string) (result []TeamModel, err error)
 	First(p TeamModel) (result TeamModel, err error)
 	Create(p *TeamModel) (id uint, err error)
 	Update(p TeamModel) (err error)
 	Delete(tid string) (err error)
-	FindMyTeamName(uid, tname string) (result entity.TeamItem, err error)
+	FindMyTeamName(uid, tname string) (result TeamModel, err error)
 }
 
 type defaultTeamModel struct {
@@ -80,7 +79,7 @@ func (m *defaultTeamModel) Find(p TeamModel) (result []TeamModel, err error) {
 	return
 }
 
-func (m *defaultTeamModel) FindMyTeam(uid string) (result []entity.TeamItem, err error) {
+func (m *defaultTeamModel) FindMyTeam(uid string) (result []TeamModel, err error) {
 	err = m.conn.Raw(fmt.Sprintf(`select
 	t.*,
 	utt.sort
@@ -93,7 +92,7 @@ order by
 	return
 }
 
-func (m *defaultTeamModel) FindMyTeamName(uid, tname string) (result entity.TeamItem, err error) {
+func (m *defaultTeamModel) FindMyTeamName(uid, tname string) (result TeamModel, err error) {
 	err = m.conn.Raw(fmt.Sprintf(`select
 	t.*,
 	utt.sort

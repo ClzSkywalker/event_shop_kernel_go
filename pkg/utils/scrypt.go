@@ -12,7 +12,7 @@ import (
  * @param           {string} pwd
  * @return          {*}
  */
-func EncryptPwd(salt, pwd string) (epwd string, err error) {
+func EncryptPwd(pwd, salt string) (epwd string, err error) {
 	pwdByte, err := scrypt.Key([]byte(pwd), []byte(salt), 1<<15, 8, 1, 32)
 	epwd = string(pwdByte)
 	return

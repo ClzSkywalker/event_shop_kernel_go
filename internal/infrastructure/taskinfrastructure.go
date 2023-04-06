@@ -9,8 +9,13 @@ import (
 	"go.uber.org/zap"
 )
 
-func InsertTask(ctx *contextx.Contextx, m model.ITaskModel, tm *model.TaskModel) (id uint, err error) {
-	id, err = m.Insert(tm)
+func TaskFindByClassifyId(ctx *contextx.Contextx, classifyId string) (result []model.TaskModel, err error) {
+	result, err = ctx.BaseTx.TaskModel.FindByClassifyId(classifyId)
+	return
+}
+
+func InsertTask(ctx *contextx.Contextx, tm *model.TaskModel) (id uint, err error) {
+	id, err = ctx.BaseTx.TaskModel.Insert(tm)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
 		err = i18n.NewCodeError(ctx.Language, module.TaskInsertErr, err.Error())

@@ -14,9 +14,8 @@ import (
 func UserRegisterByEmail(ctx *contextx.Contextx, req entity.RegisterByEmailReq) (token string, err error) {
 	um := model.UserModel{}
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		um, err = infrastructure.RegisterByEmail(ctx, base.UserModel, base.TeamModel, req)
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		um, err = infrastructure.RegisterByEmail(ctx, req)
 		return err
 	})
 	if err != nil {
@@ -36,9 +35,8 @@ func UserRegisterByEmail(ctx *contextx.Contextx, req entity.RegisterByEmailReq) 
 func UserRegisterByPhone(ctx *contextx.Contextx, req entity.RegisterByPhoneReq) (token string, err error) {
 	um := model.UserModel{}
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		um, err = infrastructure.RegisterByPhone(ctx, base.UserModel, base.TeamModel, req)
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		um, err = infrastructure.RegisterByPhone(ctx, req)
 		return err
 	})
 	if err != nil {
@@ -58,10 +56,9 @@ func UserRegisterByPhone(ctx *contextx.Contextx, req entity.RegisterByPhoneReq) 
 
 func UserRegisterByUid(ctx *contextx.Contextx) (token string, err error) {
 	um := model.UserModel{}
-	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		um, err = infrastructure.RegisterByUid(ctx, base.UserModel, base.TeamModel)
+	err = ctx.BaseTx.Db.Transaction(func(tx *gorm.DB) error {
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		um, err = infrastructure.RegisterByUid(ctx)
 		return err
 	})
 	if err != nil {
@@ -78,17 +75,43 @@ func UserRegisterByUid(ctx *contextx.Contextx) (token string, err error) {
 	return
 }
 
+func UserResetPwd(ctx *contextx.Contextx, req entity.UserResetPwdReq) (err error) {
+	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.UserResetPwd(ctx, req.OldPwd, req.OldPwd)
+		return err
+	})
+	return
+}
+
 func UserUpdate(ctx *contextx.Contextx, req entity.UserUpdateReq) (err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
-		base := &container.BaseServiceContext{}
-		base = container.NewBaskServiceContext(base, tx)
-		err = infrastructure.UserUpdate(ctx, base.UserModel, model.UserModel{
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.UserUpdate(ctx, model.UserModel{
 			CreatedBy:  req.CreatedBy,
 			TeamIdPort: req.TeamIdPort,
 			NickName:   req.NickName,
 			Phone:      req.Phone,
 			Version:    req.Version,
 		})
+		return err
+	})
+	return
+}
+
+func UserBindEmail(ctx *contextx.Contextx, req entity.BindEmailReq) (err error) {
+	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.BindEmailByUid(ctx, req)
+		return err
+	})
+	return
+}
+
+func UserBindPhone(ctx *contextx.Contextx, req entity.BindPhoneReq) (err error) {
+	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
+		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
+		err = infrastructure.BindPhoneByUid(ctx, req)
 		return err
 	})
 	return

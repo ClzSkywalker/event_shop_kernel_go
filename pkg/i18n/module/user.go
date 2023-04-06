@@ -49,11 +49,11 @@ func init() {
 		{Tag: language.Chinese, Key: UserBindedPhoneErr, Msg: "用户已绑定电话"},
 		{Tag: language.English, Key: UserBindedPhoneErr, Msg: "The user has a bound phone"},
 
-		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "邮箱已被其他用户绑定"},
-		{Tag: language.English, Key: UserBindedEmailErr, Msg: "The mailbox has been bound to another user"},
+		{Tag: language.Chinese, Key: UserEmailBindByOtherErr, Msg: "邮箱已被其他用户绑定"},
+		{Tag: language.English, Key: UserEmailBindByOtherErr, Msg: "The mailbox has been bound to another user"},
 
-		{Tag: language.Chinese, Key: UserBindedEmailErr, Msg: "电话已被其他用户绑定"},
-		{Tag: language.English, Key: UserBindedEmailErr, Msg: "The phone has been bound to another user"},
+		{Tag: language.Chinese, Key: UserPhoneBindByOtherErr, Msg: "电话已被其他用户绑定"},
+		{Tag: language.English, Key: UserPhoneBindByOtherErr, Msg: "The phone has been bound to another user"},
 
 		{Tag: language.Chinese, Key: UserUpdateErr, Msg: "用户更新失败"},
 		{Tag: language.English, Key: UserUpdateErr, Msg: "User update failure"},

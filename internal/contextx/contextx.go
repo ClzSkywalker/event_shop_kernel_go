@@ -3,7 +3,7 @@ package contextx
 import (
 	"context"
 
-	"gorm.io/gorm"
+	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 )
 
 // 自定义context
@@ -11,8 +11,8 @@ import (
 
 type Contextx struct {
 	context.Context `json:"-"`
-	Language        string   `json:"language,omitempty"`
-	TID             string   `json:"tid,omitempty"` // team id
-	UID             string   `json:"uid,omitempty"` // user id
-	Tx              *gorm.DB `json:"-"`
+	Language        string                       `json:"language,omitempty"`
+	TID             string                       `json:"tid,omitempty"` // team id
+	UID             string                       `json:"uid,omitempty"` // user id
+	BaseTx          container.BaseServiceContext `json:"-"`
 }

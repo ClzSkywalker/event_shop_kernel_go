@@ -12,6 +12,7 @@ const (
 	ClassifyUpdateErr
 	ClassifyNotfoundErr
 	ClassifyDeleteErr
+	ClassifyDelExistTask
 )
 
 func init() {
@@ -28,6 +29,8 @@ func init() {
 		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Classification does not exist"},
 		{Tag: language.Chinese, Key: ClassifyInsertErr, Msg: "分类删除失败"},
 		{Tag: language.English, Key: ClassifyInsertErr, Msg: "Class deletion failure"},
+		{Tag: language.Chinese, Key: ClassifyDelExistTask, Msg: "该分类中存任务，不可删除"},
+		{Tag: language.English, Key: ClassifyInsertErr, Msg: "This category contains tasks and cannot be deleted"},
 	}
 	entry.SetEntries(entries...)
 }

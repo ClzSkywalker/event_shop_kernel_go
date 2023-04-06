@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/ctrl"
-	"github.com/clz.skywalker/event.shop/kernal/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,7 +19,10 @@ func RouterManager(c *gin.Engine) {
 	kernel := globalRoute.Group("/kernel")
 	kernel.Handle(http.MethodGet, "/config", ctrl.KernelState)
 
-	userUnAuth := globalRoute.Group("/user/unauth")
+	unAuth := globalRoute.Group("/unauth")
+	auth := globalRoute.Group("/auth")
+
+	userUnAuth := unAuth.Group("/user")
 	{
 		userUnAuth.Handle(http.MethodPost, "/register/email", ctrl.RegisterByEmail)
 		userUnAuth.Handle(http.MethodPost, "/register/phone", ctrl.RegisterByPhone)
@@ -31,7 +33,7 @@ func RouterManager(c *gin.Engine) {
 		userUnAuth.Handle(http.MethodPost, "/login/uid", ctrl.LoginByUid)
 	}
 
-	userAuth := globalRoute.Group("/user/auth").Use(middleware.JwtMiddleware())
+	userAuth := auth.Group("/auth")
 	{
 		userAuth.Handle(http.MethodGet, "/userinfo", ctrl.UserGetInfo)
 		userAuth.Handle(http.MethodPut, "/userinfo", ctrl.UserUpdate)
@@ -39,7 +41,7 @@ func RouterManager(c *gin.Engine) {
 		userAuth.Handle(http.MethodPost, "/bind/phone", ctrl.BindPhoneByUid)
 	}
 
-	team := globalRoute.Group("/team").Use(middleware.JwtMiddleware())
+	team := auth.Group("/team")
 	{
 		team.Handle(http.MethodPost, "", ctrl.TeamCreate)
 		team.Handle(http.MethodPut, "", ctrl.TeamUpdate)
@@ -47,7 +49,7 @@ func RouterManager(c *gin.Engine) {
 		team.Handle(http.MethodGet, "", ctrl.TeamFindMyTeam)
 	}
 
-	classify := globalRoute.Group("/classify").Use(middleware.JwtMiddleware())
+	classify := auth.Group("/classify")
 	{
 		classify.Handle(http.MethodGet, "", ctrl.ClassifyQueryTeam)
 		classify.Handle(http.MethodPost, "", ctrl.ClassifyInsert)
@@ -55,9 +57,14 @@ func RouterManager(c *gin.Engine) {
 		classify.Handle(http.MethodDelete, "/:only_code", ctrl.ClassifyDel)
 	}
 
-	task := globalRoute.Group("/task").Use(middleware.JwtMiddleware())
+	task := auth.Group("/task")
 	{
+		task.Handle(http.MethodGet, "/:classify_id")
 		task.Handle(http.MethodPost, "", ctrl.InsertTask)
-		task.Handle(http.MethodPost, "/task_mode", ctrl.CreateTaskMode)
+	}
+
+	taskMode := auth.Group("/task_mode")
+	{
+		taskMode.Handle(http.MethodPost, "/task_mode", ctrl.CreateTaskMode)
 	}
 }

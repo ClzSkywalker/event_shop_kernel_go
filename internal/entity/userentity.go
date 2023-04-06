@@ -71,3 +71,8 @@ type UserResp struct {
 type UserUpdateReq struct {
 	UserItem
 }
+
+type UserResetPwdReq struct {
+	OldPwd string `json:"old_pwd,omitempty"`
+	NewPwd string `json:"new_pwd,omitempty"`
+}

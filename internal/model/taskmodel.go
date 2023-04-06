@@ -26,6 +26,7 @@ type TaskModel struct {
 type ITaskModel interface {
 	IBaseModel
 	InitData(lang, uid, cid, tid string) (err error)
+	FindByClassifyId(classifyId string) (result []TaskModel, err error)
 	SelectByModel(TaskModel) ([]TaskModel, error)
 	Insert(*TaskModel) (uint, error)
 	InsertAll(tm []*TaskModel) (err error)

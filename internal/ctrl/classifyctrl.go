@@ -3,7 +3,6 @@ package ctrl
 import (
 	"net/http"
 
-	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
@@ -23,7 +22,7 @@ func ClassifyQueryTeam(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	cms, err := infrastructure.ClassifyFindByTeamId(ctx, container.GlobalServerContext.ClassifyModel)
+	cms, err := infrastructure.ClassifyFindByTeamId(ctx)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

@@ -28,7 +28,7 @@ type IClassifyModel interface {
 	Insert(*ClassifyModel) (uint, error)
 	InsertAll(cm []*ClassifyModel) (err error)
 	Update(ClassifyModel) error
-	Delete(oc, tid string) error
+	Delete(tid, oc string) error
 }
 
 type defaultClassifyModel struct {
@@ -118,7 +118,7 @@ func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
 	return
 }
 
-func (m *defaultClassifyModel) Delete(oc, tid string) (err error) {
+func (m *defaultClassifyModel) Delete(tid, oc string) (err error) {
 	err = m.conn.Table(m.table).Delete(ClassifyModel{OnlyCode: oc, TeamId: tid}).Error
 	return
 }

@@ -51,7 +51,7 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 		return
 	}
 	once.Do(func() {
-		GlobalServerContext = NewBaskServiceContext(GlobalServerContext, database)
+		GlobalServerContext = NewBaseServiceContext(GlobalServerContext, database)
 		err = database.Transaction(func(tx *gorm.DB) (err error) {
 			idb = InitIDB(idb, tx)
 			err = idb.OnInitDb(GlobalServerContext.Config.Mode, ch)
@@ -98,7 +98,7 @@ func TailDbInitStatus(ch <-chan constx.DbInitStateType) {
 	}
 }
 
-func NewBaskServiceContext(base *BaseServiceContext, database *gorm.DB) *BaseServiceContext {
+func NewBaseServiceContext(base *BaseServiceContext, database *gorm.DB) *BaseServiceContext {
 	base.Db = database
 	base.UserModel = model.NewDefaultUserModel(database)
 	base.TeamModel = model.NewDefaultTeamModel(database)
@@ -134,6 +134,16 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 	return idb
 }
 
+//
+// Author         : ClzSkywalker
+// Date           : 2023-04-06
+// Description    : 初始化用户数据
+// param           {*gorm.DB} tx
+// param           {*} lang
+// param           {*} uid
+// param           {string} tid
+// return          {*}
+//
 func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 	defer func() {
 		if err != nil {

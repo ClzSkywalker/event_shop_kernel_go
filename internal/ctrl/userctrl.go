@@ -3,11 +3,9 @@ package ctrl
 import (
 	"net/http"
 
-	"github.com/clz.skywalker/event.shop/kernal/internal/container"
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
@@ -75,7 +73,7 @@ func LoginByEmail(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := infrastructure.LoginByEmail(ctx, container.GlobalServerContext.UserModel, req)
+	um, err := infrastructure.LoginByEmail(ctx, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -101,7 +99,7 @@ func LoginByPhone(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := infrastructure.LoginByPhone(ctx, container.GlobalServerContext.UserModel, req)
+	um, err := infrastructure.LoginByPhone(ctx, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -127,7 +125,7 @@ func LoginByUid(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := infrastructure.LoginByUid(ctx, container.GlobalServerContext.UserModel, req)
+	um, err := infrastructure.LoginByUid(ctx, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -152,7 +150,7 @@ func UserGetInfo(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	um, err := infrastructure.GetUserInfo(ctx, container.GlobalServerContext.UserModel, ctx.UID)
+	um, err := infrastructure.GetUserInfo(ctx, ctx.UID)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -182,8 +180,7 @@ func BindEmailByUid(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	uid, _ := c.Get(constx.TokenUID)
-	err = infrastructure.BindEmailByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
+	err = infrastructure.BindEmailByUid(ctx, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
@@ -199,8 +196,7 @@ func BindPhoneByUid(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	uid, _ := c.Get(constx.TokenUID)
-	err = infrastructure.BindPhoneByUid(ctx, container.GlobalServerContext.UserModel, uid.(string), req)
+	err = infrastructure.BindPhoneByUid(ctx, req)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
