@@ -43,7 +43,7 @@ func InsertTask(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	id, err := infrastructure.InsertTask(ctx, &tm)
+	id, err := infrastructure.TaskInsert(ctx, &tm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

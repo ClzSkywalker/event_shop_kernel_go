@@ -27,11 +27,11 @@ type ITaskModel interface {
 	IBaseModel
 	InitData(lang, uid, cid, tid string) (err error)
 	FindByClassifyId(classifyId string) (result []TaskModel, err error)
-	SelectByModel(TaskModel) ([]TaskModel, error)
+	FindByModel(TaskModel) ([]TaskModel, error)
 	Insert(*TaskModel) (uint, error)
 	InsertAll(tm []*TaskModel) (err error)
 	Update(*TaskModel) error
-	Delete(uint) error
+	Delete(oc string) error
 }
 
 type defaultTaskModel struct {
@@ -79,7 +79,7 @@ func (m *defaultTaskModel) InitData(lang, uid, cid, tid string) (err error) {
 	return
 }
 
-func (m *defaultTaskModel) SelectByModel(TaskModel) (result []TaskModel, err error) {
+func (m *defaultTaskModel) FindByModel(TaskModel) (result []TaskModel, err error) {
 	return
 }
 
@@ -106,7 +106,7 @@ func (m *defaultTaskModel) Update(tm *TaskModel) (err error) {
 	return
 }
 
-func (m *defaultTaskModel) Delete(id uint) (err error) {
-	err = m.conn.Table(m.table).Delete(&TaskModel{BaseModel: BaseModel{Id: id}}).Error
+func (m *defaultTaskModel) Delete(oc string) (err error) {
+	err = m.conn.Table(m.table).Delete(&TaskModel{OnlyCode: oc}).Error
 	return
 }

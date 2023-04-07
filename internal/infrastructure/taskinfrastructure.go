@@ -14,11 +14,29 @@ func TaskFindByClassifyId(ctx *contextx.Contextx, classifyId string) (result []m
 	return
 }
 
-func InsertTask(ctx *contextx.Contextx, tm *model.TaskModel) (id uint, err error) {
+func TaskInsert(ctx *contextx.Contextx, tm *model.TaskModel) (id uint, err error) {
 	id, err = ctx.BaseTx.TaskModel.Insert(tm)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
-		err = i18n.NewCodeError(ctx.Language, module.TaskInsertErr, err.Error())
+		err = i18n.NewCodeError(ctx.Language, module.TaskInsertErr)
+	}
+	return
+}
+
+func TaskUpdate(ctx *contextx.Contextx, tm model.TaskModel) (err error) {
+	err = ctx.BaseTx.TaskModel.Update(&tm)
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
+		err = i18n.NewCodeError(ctx.Language, module.TaskUpdateErr)
+	}
+	return
+}
+
+func TaskDelete(ctx *contextx.Contextx, id string) (err error) {
+	err = ctx.BaseTx.TaskModel.Delete(id)
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error(), zap.Any("oc", id))
+		err = i18n.NewCodeError(ctx.Language, module.TaskDeleteErr)
 	}
 	return
 }
