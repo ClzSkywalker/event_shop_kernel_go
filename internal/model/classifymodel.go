@@ -16,8 +16,8 @@ type ClassifyModel struct {
 	TeamId    string               `gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
 	Title     string               `gorm:"column:title;type:varchar"`
 	Color     string               `gorm:"column:color;type:varchar"`
-	ShowType  constx.TaskShowType  `gorm:"column:show_type,type:INTEGER"` // 展示模式
-	OrderType constx.TaskOrderType `gorm:"column:order_type,type:INTEGER"`
+	ShowType  constx.TaskShowType  `gorm:"column:show_type;type:INTEGER"` // 展示模式
+	OrderType constx.TaskOrderType `gorm:"column:order_type;type:INTEGER"`
 	Sort      int                  `gorm:"column:sort;type:INTEGER"`
 	ParentId  string               `gorm:"parent_id;type:varchar(26)"`
 }
@@ -95,7 +95,7 @@ func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) 
 func (m *defaultClassifyModel) FindByTeamId(teamId string) (cms []ClassifyModel, err error) {
 	err = m.conn.Raw(fmt.Sprintf(recursiveSql+`
 	  SELECT *
-	  FROM all_folders where team_id=%s and deleted_at=0;`, m.table, m.table, teamId)).Scan(&cms).Error
+	  FROM all_folders where team_id='%s' and deleted_at=0;`, m.table, m.table, m.table, teamId)).Scan(&cms).Error
 	return
 }
 

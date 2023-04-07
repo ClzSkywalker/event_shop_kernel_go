@@ -16,6 +16,7 @@ const (
 	teamModuleCode     = 140001
 
 	SystemErrorCode = 10001 + iota
+	StructToStructErr
 	TranslatorNotFoundErr
 	RequestParamBindErr
 	ReqMissErr
@@ -33,6 +34,9 @@ func init() {
 
 		{Tag: language.Chinese, Key: SystemErrorCode, Msg: "系统内部错误:%s"},
 		{Tag: language.English, Key: SystemErrorCode, Msg: "Internal system error:%s"},
+
+		{Tag: language.Chinese, Key: StructToStructErr, Msg: "系统类型转换错误:%s"},
+		{Tag: language.English, Key: StructToStructErr, Msg: "System type conversion error:%s"},
 
 		{Tag: language.Chinese, Key: TranslatorNotFoundErr, Msg: "校验器: %s 未找到"},
 		{Tag: language.English, Key: TranslatorNotFoundErr, Msg: "validator: %s not found"},

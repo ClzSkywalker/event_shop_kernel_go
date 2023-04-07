@@ -148,7 +148,7 @@ func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 	defer func() {
 		if err != nil {
 			loggerx.ZapLog.Error(err.Error())
-			err = i18n.NewCodeError(lang, module.UserDataInit)
+			err = i18n.NewCodeError(module.UserDataInit)
 		}
 	}()
 	err = model.NewDefaultUserModel(tx).InitData(lang, uid)

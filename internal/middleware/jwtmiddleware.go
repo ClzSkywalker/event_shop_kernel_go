@@ -23,11 +23,12 @@ import (
  */
 func JwtMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		lang := c.GetHeader("Authorization")
-		ret := httpx.NewResult()
+		token := c.GetHeader(constx.HeaderAuthorization)
+		value, _ := c.Get(constx.CtxRet)
+		ret := value.(*httpx.Result)
+
 		if token == "" {
-			err := i18n.NewCodeError(lang, module.TokenInvalid)
+			err := i18n.NewCodeError(module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -49,7 +50,7 @@ func JwtMiddleware() gin.HandlerFunc {
 			return
 		}
 		if epTime.Time.Before(time.Now()) {
-			err := i18n.NewCodeError(lang, module.TokenExpired)
+			err := i18n.NewCodeError(module.TokenExpired)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -58,7 +59,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUID]
 		if !ok || uid.(string) == "" {
 			loggerx.ReqLog.Error("claim err", zap.Any("claims", t.Claims.(jwt.MapClaims)))
-			err := i18n.NewCodeError(lang, module.TokenInvalid)
+			err := i18n.NewCodeError(module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -67,7 +68,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		tid, ok := t.Claims.(jwt.MapClaims)[constx.TokenTID]
 		if !ok || tid.(string) == "" {
 			loggerx.ReqLog.Error("claim err", zap.Any("claims", t.Claims.(jwt.MapClaims)))
-			err := i18n.NewCodeError(lang, module.TokenInvalid)
+			err := i18n.NewCodeError(module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()

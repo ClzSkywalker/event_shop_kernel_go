@@ -6,13 +6,11 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
 	"github.com/gin-gonic/gin"
 )
 
 func ClassifyQueryTeam(c *gin.Context) {
-	ret := httpx.NewResult()
-	var err error
+	ret := getResult(c)
 	defer func() {
 		c.JSON(http.StatusOK, ret)
 	}()
@@ -41,7 +39,7 @@ func ClassifyQueryTeam(c *gin.Context) {
 }
 
 func ClassifyInsert(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	var err error
 	defer func() {
 		c.JSON(http.StatusOK, ret)
@@ -61,7 +59,7 @@ func ClassifyInsert(c *gin.Context) {
 }
 
 func ClassifyUpdate(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	var err error
 	defer func() {
 		c.JSON(http.StatusOK, ret)
@@ -80,7 +78,7 @@ func ClassifyUpdate(c *gin.Context) {
 }
 
 func ClassifyOrderUpdate(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	var err error
 	defer func() {
 		c.JSON(http.StatusOK, ret)
@@ -99,7 +97,7 @@ func ClassifyOrderUpdate(c *gin.Context) {
 }
 
 func ClassifyDel(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	var err error
 	defer func() {
 		c.JSON(http.StatusOK, ret)

@@ -3,6 +3,7 @@ package constx
 const (
 	KernelVersion = "v0.0.1"
 
+	LangDefault = LangEnglish
 	LangEnglish = "en"
 	LangChinese = "zh"
 
@@ -22,6 +23,8 @@ const (
 
 	HeaderAuthorization = "Authorization"
 	HeaderLang          = "Accept-Language"
+
+	CtxRet = "ret"
 )
 
 // 时间格式

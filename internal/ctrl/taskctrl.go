@@ -5,14 +5,13 @@ import (
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
-	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
+	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func FindClassifyById(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
 	param := entity.TaskFindByClassifyIdEntity{}
 	ctx, err := validateBind(c, &param)
@@ -34,16 +33,16 @@ func FindClassifyById(c *gin.Context) {
 	ret.Data = data
 }
 
-func InsertTask(c *gin.Context) {
-	ret := httpx.NewResult()
+func TaskInsert(c *gin.Context) {
+	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
-	tm := model.TaskModel{}
+	tm := entity.TaskEntity{}
 	ctx, err := validateBind(c, &tm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	id, err := infrastructure.TaskInsert(ctx, &tm)
+	id, err := service.TaskInsert(ctx, tm)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

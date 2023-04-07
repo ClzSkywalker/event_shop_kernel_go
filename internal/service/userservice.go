@@ -26,7 +26,7 @@ func UserRegisterByEmail(ctx *contextx.Contextx, req entity.RegisterByEmailReq) 
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
+		err = i18n.NewCodeError(module.UserRegisterErr)
 		return
 	}
 	return
@@ -48,7 +48,7 @@ func UserRegisterByPhone(ctx *contextx.Contextx, req entity.RegisterByPhoneReq) 
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
+		err = i18n.NewCodeError(module.UserRegisterErr)
 		return
 	}
 	return
@@ -69,7 +69,7 @@ func UserRegisterByUid(ctx *contextx.Contextx) (token string, err error) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
+		err = i18n.NewCodeError(module.UserRegisterErr)
 		return
 	}
 	return

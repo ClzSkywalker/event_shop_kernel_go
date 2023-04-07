@@ -46,7 +46,7 @@ func ClassifyOrderUpdate(ctx *contextx.Contextx, req entity.ClassifyOrderReq) (e
 	cmList := make([]model.ClassifyModel, 0, len(req.Data))
 	for _, item := range req.Data {
 		if item.OnlyCode == "" {
-			err = i18n.NewCodeError(ctx.Language, module.ReqMissErr)
+			err = i18n.NewCodeError(module.ReqMissErr)
 			return
 		}
 		cmList = append(cmList, model.ClassifyModel{

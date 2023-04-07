@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/ctrl"
+	"github.com/clz.skywalker/event.shop/kernal/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,12 +16,12 @@ import (
  * @return          {*}
  */
 func RouterManager(c *gin.Engine) {
-	globalRoute := c.Group("api/v1")
+	globalRoute := c.Group("api/v1", middleware.ResultMiddleware())
 	kernel := globalRoute.Group("/kernel")
 	kernel.Handle(http.MethodGet, "/config", ctrl.KernelState)
 
 	unAuth := globalRoute.Group("/unauth")
-	auth := globalRoute.Group("/auth")
+	auth := globalRoute.Group("/auth", middleware.JwtMiddleware())
 
 	userUnAuth := unAuth.Group("/user")
 	{
@@ -33,7 +34,7 @@ func RouterManager(c *gin.Engine) {
 		userUnAuth.Handle(http.MethodPost, "/login/uid", ctrl.LoginByUid)
 	}
 
-	userAuth := auth.Group("/auth")
+	userAuth := auth.Group("/user")
 	{
 		userAuth.Handle(http.MethodGet, "/userinfo", ctrl.UserGetInfo)
 		userAuth.Handle(http.MethodPut, "/userinfo", ctrl.UserUpdate)
@@ -60,7 +61,7 @@ func RouterManager(c *gin.Engine) {
 	task := auth.Group("/task")
 	{
 		task.Handle(http.MethodGet, "/:classify_id")
-		task.Handle(http.MethodPost, "", ctrl.InsertTask)
+		task.Handle(http.MethodPost, "", ctrl.TaskInsert)
 		task.Handle(http.MethodPut, "")
 		task.Handle(http.MethodDelete, "")
 	}

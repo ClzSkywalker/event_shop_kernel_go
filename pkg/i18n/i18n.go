@@ -46,10 +46,7 @@ func Trans(lang string, err errorx.CodeError) string {
 		tag = language.MustParse(constx.LangEnglish)
 	}
 	var p = message.NewPrinter(tag)
-	if len(err.Field) > 0 {
-		return p.Sprintf(strconv.FormatInt(err.Code, 10), err.Field...)
-	}
-	return p.Sprintf(strconv.FormatInt(err.Code, 10))
+	return p.Sprintf(strconv.FormatInt(err.Code, 10), err.Field...)
 }
 
 /**
@@ -60,13 +57,7 @@ func Trans(lang string, err errorx.CodeError) string {
  * @param           {...interface{}} fields 变量参数
  * @return          {*}
  */
-func NewCodeError(lang string, code int64, fields ...interface{}) (err errorx.CodeError) {
+func NewCodeError(code int64, fields ...interface{}) (err errorx.CodeError) {
 	err = errorx.CodeError{Code: code, Field: fields}
-	switch lang {
-	case constx.LangChinese, constx.LangEnglish:
-	default:
-		lang = constx.LangEnglish
-	}
-	err.Msg = Trans(lang, err)
 	return
 }

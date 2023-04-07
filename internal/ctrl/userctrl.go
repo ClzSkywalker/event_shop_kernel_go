@@ -13,7 +13,7 @@ import (
 )
 
 func RegisterByEmail(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
 	req := entity.RegisterByEmailReq{}
 	ctx, err := validateBind(c, &req)
@@ -30,7 +30,7 @@ func RegisterByEmail(c *gin.Context) {
 }
 
 func RegisterByPhone(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
 	req := entity.RegisterByPhoneReq{}
 	ctx, err := validateBind(c, &req)
@@ -47,7 +47,7 @@ func RegisterByPhone(c *gin.Context) {
 }
 
 func RegisterByUid(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
 	ctx, err := validateBind(c, nil)
 	if err != nil {
@@ -65,7 +65,7 @@ func RegisterByUid(c *gin.Context) {
 }
 
 func LoginByEmail(c *gin.Context) {
-	ret := httpx.NewResult()
+	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
 	req := entity.LoginByEmailReq{}
 	ctx, err := validateBind(c, &req)
@@ -83,7 +83,7 @@ func LoginByEmail(c *gin.Context) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
+		err = i18n.NewCodeError(module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}
@@ -109,7 +109,7 @@ func LoginByPhone(c *gin.Context) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
+		err = i18n.NewCodeError(module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}
@@ -135,7 +135,7 @@ func LoginByUid(c *gin.Context) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(ctx.Language, module.UserRegisterErr)
+		err = i18n.NewCodeError(module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}

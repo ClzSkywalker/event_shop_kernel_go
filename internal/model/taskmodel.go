@@ -86,7 +86,7 @@ func (m *defaultTaskModel) FindByModel(TaskModel) (result []TaskModel, err error
 func (m *defaultTaskModel) FindByClassifyId(classifyId string) (result []TaskModel, err error) {
 	err = m.conn.Raw(fmt.Sprintf(recursiveSql+`
 	  SELECT *
-	  FROM all_folders where team_id=%s and deleted_at=0;`, m.table, m.table, classifyId)).Scan(&result).Error
+	  FROM all_folders where team_id=%s and deleted_at=0;`, m.table, m.table, m.table, classifyId)).Scan(&result).Error
 	return
 }
 

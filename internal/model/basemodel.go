@@ -19,13 +19,13 @@ const (
 const (
 	// 父子文件夹递归查询
 	recursiveSql = `WITH RECURSIVE all_folders AS (
-		SELECT * 
-		FROM %s
-		WHERE parent_id IS NULL
+		SELECT t1.* 
+		FROM %s t1
+		WHERE t1.parent_id = ''
 		UNION ALL
-		SELECT *
-		FROM all_folders af
-		JOIN %s f ON f.parent_id = af.id
+		SELECT t3.*
+		FROM %s t2
+		JOIN %s t3 ON t3.parent_id = t2.oc
 	  )`
 )
 
