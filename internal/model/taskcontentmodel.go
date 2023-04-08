@@ -1,6 +1,9 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
+	"gorm.io/gorm"
+)
 
 type FileUpType int
 
@@ -27,11 +30,12 @@ type TaskFileModel struct {
 
 type ITaskContentModel interface {
 	IBaseModel
-	InitData() (err error)
+	InitData() (contentIds []string, err error)
 	FindByModel(TaskContentModel) ([]TaskContentModel, error)
 	FindByOC(oc string) (result TaskContentModel, err error)
 	FindByOcList(ocs string) (result []TaskContentModel, err error)
 	Insert(TaskContentModel) (int64, error)
+	InsertAll(p []*TaskContentModel) (err error)
 	Update(TaskContentModel) error
 	Delete(string) error
 }
@@ -66,7 +70,19 @@ func (m *defaultTaskContentModel) GetTx() (tx *gorm.DB) {
 	return m.conn
 }
 
-func (m *defaultTaskContentModel) InitData() (err error) {
+func (m *defaultTaskContentModel) InitData() (contentIds []string, err error) {
+	contentIds = append(contentIds, utils.NewUlid(), utils.NewUlid())
+	valueList := []*TaskContentModel{
+		{
+			OnlyCode: contentIds[0],
+			Content:  "t1t2",
+		},
+		{
+			OnlyCode: contentIds[1],
+			Content:  "t1t2",
+		},
+	}
+	err = m.InsertAll(valueList)
 	return
 }
 
@@ -86,6 +102,10 @@ func (m *defaultTaskContentModel) FindByOcList(ocs string) (result []TaskContent
 
 func (m *defaultTaskContentModel) Insert(p TaskContentModel) (id int64, err error) {
 	m.conn.Table(m.table).Create(p)
+	return
+}
+func (m *defaultTaskContentModel) InsertAll(p []*TaskContentModel) (err error) {
+	err = m.conn.Table(m.table).Create(p).Error
 	return
 }
 

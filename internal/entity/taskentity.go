@@ -5,7 +5,7 @@ type TaskFindByClassifyIdEntity struct {
 }
 
 type TaskEntity struct {
-	OnlyCode    string `json:"only_code"`
+	OnlyCode    string `json:"oc" gorm:"column:oc;"`
 	CreatedBy   string `json:"created_by"`
 	Title       string `json:"title"`
 	Content     string `json:"content"`
@@ -31,7 +31,7 @@ type TaskInsertReq struct {
 }
 
 type TaskUpdateReq struct {
-	OnlyCode    string `json:"only_code,omitempty" binding:"required" validate:"required"`
+	OnlyCode    string `json:"oc,omitempty" binding:"required" validate:"required"`
 	Title       string `json:"title,omitempty" validate:"required"`
 	Content     string `json:"content"`
 	TaskModeId  string `json:"task_mode_id,omitempty"`
@@ -43,5 +43,5 @@ type TaskUpdateReq struct {
 }
 
 type TaskDeleteReq struct {
-	OnlyCode string `json:"only_code,omitempty" binding:"required" validate:"required"`
+	OnlyCode string `json:"oc,omitempty" binding:"required" validate:"required"`
 }

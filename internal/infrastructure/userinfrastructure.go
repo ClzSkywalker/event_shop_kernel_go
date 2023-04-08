@@ -112,12 +112,12 @@ func register(ctx *contextx.Contextx, um *model.UserModel) (umresp model.UserMod
 		return
 	}
 
-	_, err = ctx.BaseTx.UserModel.Insert(um)
-	if err != nil {
-		loggerx.ZapLog.Error(err.Error(), zap.Any("model", um))
-		err = i18n.NewCodeError(module.UserRegisterErr)
-		return
-	}
+	// _, err = ctx.BaseTx.UserModel.Insert(um)
+	// if err != nil {
+	// 	loggerx.ZapLog.Error(err.Error(), zap.Any("model", um))
+	// 	err = i18n.NewCodeError(module.UserRegisterErr)
+	// 	return
+	// }
 
 	tx2 := ctx.BaseTx.Db
 	err = container.InitData(tx2, ctx.Language, um.CreatedBy, um.TeamIdPort)

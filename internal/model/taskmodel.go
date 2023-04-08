@@ -11,7 +11,7 @@ import (
 
 type TaskModel struct {
 	BaseModel
-	OnlyCode    string `gorm:"column:oc;type:VARCHAR(26);index:udx_task_oc,unique"`
+	OnlyCode    string `json:"oc" gorm:"column:oc;type:VARCHAR(26);index:udx_task_oc,unique"`
 	CreatedBy   string `gorm:"column:created_by;type:VARCHAR(26);index:idx_task_uid"`
 	Title       string `gorm:"column:title;type:VARCHAR(255)"`
 	ClassifyId  string `gorm:"column:classify_id;type:VARCHAR(26);index:idx_task_cid"`
@@ -26,7 +26,7 @@ type TaskModel struct {
 
 type ITaskModel interface {
 	IBaseModel
-	InitData(lang, uid, cid, tid string) (err error)
+	InitData(lang, uid, cid, tid string, contentId []string) (err error)
 	FindByClassifyId(classifyId string) (result []entity.TaskEntity, err error)
 	FindByModel(TaskModel) ([]TaskModel, error)
 	First(param TaskModel) (result TaskModel, err error)
@@ -66,9 +66,9 @@ func (m *defaultTaskModel) GetTx() (tx *gorm.DB) {
 	return m.conn
 }
 
-func (m *defaultTaskModel) InitData(lang, uid, cid, tid string) (err error) {
-	t1 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid}
-	t2 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid}
+func (m *defaultTaskModel) InitData(lang, uid, cid, tid string, contentId []string) (err error) {
+	t1 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid, ContentId: contentId[0]}
+	t2 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid, ContentId: contentId[1]}
 	switch lang {
 	case constx.LangChinese:
 		t1.Title = "第一步"
@@ -112,11 +112,11 @@ func (m *defaultTaskModel) InsertAll(tm []*TaskModel) (err error) {
 }
 
 func (m *defaultTaskModel) Update(tm *TaskModel) (err error) {
-	err = m.conn.Table(m.table).Updates(tm).Error
+	err = m.conn.Table(m.table).Where(TaskModel{OnlyCode: tm.OnlyCode}).Updates(tm).Error
 	return
 }
 
 func (m *defaultTaskModel) Delete(oc string) (err error) {
-	err = m.conn.Table(m.table).Delete(&TaskModel{OnlyCode: oc}).Error
+	err = m.conn.Table(m.table).Where(TaskModel{OnlyCode: oc}).Delete(&TaskModel{OnlyCode: oc}).Error
 	return
 }

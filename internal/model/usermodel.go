@@ -7,9 +7,9 @@ import (
 
 type UserModel struct {
 	BaseModel
-	CreatedBy    string              `gorm:"column:team_id;type:VARCHAR(26);index:udx_user_uid,unique"`
+	CreatedBy    string              `gorm:"column:created_by;type:VARCHAR(26);index:udx_user_uid,unique"`
 	TeamIdPort   string              `gorm:"column:team_id_port;type:VARCHAR(26);"` // 上次进入的入口
-	NickName     string              `gorm:"column:;type:VARCHAR"`
+	NickName     string              `gorm:"column:nick_name;type:VARCHAR"`
 	MemberType   constx.UserType     `gorm:"column:member_type;type:INTEGER"`   // 用户类型
 	RegisterType constx.RegisterTypt `gorm:"column:register_type;type:INTEGER"` // 注册方式
 	Picture      string              `gorm:"column:picture;type:VARCHAR"`
@@ -67,8 +67,8 @@ func (m *defaultUserModel) InitData(lang, uid string) (err error) {
 	default:
 		nickName = "sunshine"
 	}
-	um := UserModel{CreatedBy: uid, NickName: nickName, Version: constx.KernelVersion}
-	err = m.Update(um)
+	um := &UserModel{CreatedBy: uid, NickName: nickName, Version: constx.KernelVersion}
+	_, err = m.Insert(um)
 	return
 }
 

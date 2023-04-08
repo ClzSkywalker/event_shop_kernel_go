@@ -11,7 +11,7 @@ import (
 // 分类
 type ClassifyModel struct {
 	BaseModel
-	OnlyCode  string               `gorm:"column:oc;type:VARCHAR(26);index:udx_classify_oc,unique"`
+	OnlyCode  string               `json:"oc" gorm:"column:oc;type:VARCHAR(26);index:udx_classify_oc,unique"`
 	CreatedBy string               `gorm:"column:created_by;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:1"`
 	TeamId    string               `gorm:"column:team_id;type:VARCHAR(26);index:idx_cm_uid_tid_add,priority:2"`
 	Title     string               `gorm:"column:title;type:varchar"`
@@ -96,7 +96,7 @@ func (m *defaultClassifyModel) FindByTeamId(teamId string) (cms []ClassifyModel,
 	where := fmt.Sprintf("and t1.team_id='%s' and t1.deleted_at=0", teamId)
 	err = m.conn.Raw(fmt.Sprintf(recursive(m.table, where)+`
 	  SELECT *
-	  FROM all_folders where team_id='%s' and deleted_at=0;`, m.table, m.table, m.table, teamId)).Scan(&cms).Error
+	  FROM all_folders where team_id='%s' and deleted_at=0;`, teamId)).Scan(&cms).Error
 	return
 }
 

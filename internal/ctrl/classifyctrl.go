@@ -64,7 +64,7 @@ func ClassifyUpdate(c *gin.Context) {
 	defer func() {
 		c.JSON(http.StatusOK, ret)
 	}()
-	req := entity.ClassifyItem{}
+	req := entity.ClassifyUpdateReq{}
 	ctx, err := validateBind(c, &req)
 	if err != nil {
 		ret.SetCodeErr(err)

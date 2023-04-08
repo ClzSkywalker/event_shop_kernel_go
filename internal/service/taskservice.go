@@ -44,10 +44,11 @@ func TaskUpdate(ctx *contextx.Contextx, req entity.TaskUpdateReq) (err error) {
 		if err != nil {
 			return err
 		}
-		if tm.CreatedBy != m.CreatedBy {
+		if tm.CreatedBy != ctx.UID {
 			err = i18n.NewCodeError(module.OperateNoPermission)
 			return err
 		}
+		m.ContentId = tm.ContentId
 		err = infrastructure.TaskUpdate(ctx, m)
 		return err
 	})

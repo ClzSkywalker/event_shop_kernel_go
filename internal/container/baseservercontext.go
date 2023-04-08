@@ -180,12 +180,12 @@ func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 		return
 	}
 
-	err = model.NewDefaultTaskContentModel(tx).InitData()
+	contentId, err := model.NewDefaultTaskContentModel(tx).InitData()
 	if err != nil {
 		return
 	}
 
-	err = model.NewDefaultTaskModel(tx).InitData(lang, uid, cid, tid)
+	err = model.NewDefaultTaskModel(tx).InitData(lang, uid, cid, tid, contentId)
 	if err != nil {
 		return
 	}

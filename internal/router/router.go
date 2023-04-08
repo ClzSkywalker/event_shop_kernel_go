@@ -54,16 +54,16 @@ func RouterManager(c *gin.Engine) {
 	{
 		classify.Handle(http.MethodGet, "", ctrl.ClassifyQueryTeam)
 		classify.Handle(http.MethodPost, "", ctrl.ClassifyInsert)
-		classify.Handle(http.MethodPut, "", ctrl.ClassifyUpdate)
-		classify.Handle(http.MethodDelete, "/:only_code", ctrl.ClassifyDel)
+		classify.Handle(http.MethodPut, "/:oc", ctrl.ClassifyUpdate)
+		classify.Handle(http.MethodDelete, "/:oc", ctrl.ClassifyDel)
 	}
 
 	task := auth.Group("/task")
 	{
 		task.Handle(http.MethodGet, "/:classify_id", ctrl.TaskFindByClassifyId)
 		task.Handle(http.MethodPost, "", ctrl.TaskInsert)
-		task.Handle(http.MethodPut, "/:only_code", ctrl.TaskUpdate)
-		task.Handle(http.MethodDelete, "/:only_code", ctrl.TaskDelete)
+		task.Handle(http.MethodPut, "/:oc", ctrl.TaskUpdate)
+		task.Handle(http.MethodDelete, "/:oc", ctrl.TaskDelete)
 	}
 
 	taskMode := auth.Group("/task_mode")
