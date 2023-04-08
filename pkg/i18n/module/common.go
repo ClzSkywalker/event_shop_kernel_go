@@ -12,8 +12,9 @@ const (
 	userModeuleColde   = 100001
 	taskModeModuleCode = 110001
 	taskModuleCode     = 120001
-	classifyModuleCode = 130001
-	teamModuleCode     = 140001
+	taskContentCode    = 130001
+	classifyModuleCode = 140001
+	teamModuleCode     = 150001
 
 	SystemErrorCode = 10001 + iota
 	StructToStructErr
@@ -25,6 +26,7 @@ const (
 	GenerateUlidErr
 	TokenInvalid
 	TokenExpired
+	OperateNoPermission
 )
 
 func init() {
@@ -55,6 +57,9 @@ func init() {
 
 		{Tag: language.Chinese, Key: TokenExpired, Msg: "密钥过期"},
 		{Tag: language.English, Key: TokenExpired, Msg: "Key expiration"},
+
+		{Tag: language.Chinese, Key: OperateNoPermission, Msg: "没有操作权限"},
+		{Tag: language.English, Key: OperateNoPermission, Msg: "Have no operation permission"},
 	}
 	entry.SetEntries(entries...)
 }

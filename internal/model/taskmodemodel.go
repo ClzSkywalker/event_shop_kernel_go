@@ -23,6 +23,7 @@ type ITaskModeModel interface {
 	IBaseModel
 	InitData(tmid, tid string) (err error)
 	SelectByModel(TaskModeModel) ([]TaskModeModel, error)
+	First(p TaskModeModel) (result TaskModeModel, err error)
 	Insert(*TaskModeModel) (uint, error)
 	InsertAll(tmList []*TaskModeModel) (err error)
 	Update(*TaskModeModel) error
@@ -72,6 +73,11 @@ func (m *defaultTaskModeModel) InitData(tmid, tid string) (err error) {
 }
 
 func (m *defaultTaskModeModel) SelectByModel(TaskModeModel) (result []TaskModeModel, err error) {
+	return
+}
+
+func (m *defaultTaskModeModel) First(p TaskModeModel) (result TaskModeModel, err error) {
+	err = m.conn.Table(m.table).Where(p).First(&result).Error
 	return
 }
 

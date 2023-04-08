@@ -93,7 +93,8 @@ func (m *defaultClassifyModel) InitData(lang, uid, tid, cid string) (err error) 
 }
 
 func (m *defaultClassifyModel) FindByTeamId(teamId string) (cms []ClassifyModel, err error) {
-	err = m.conn.Raw(fmt.Sprintf(recursiveSql+`
+	where := fmt.Sprintf("and t1.team_id='%s' and t1.deleted_at=0", teamId)
+	err = m.conn.Raw(fmt.Sprintf(recursive(m.table, where)+`
 	  SELECT *
 	  FROM all_folders where team_id='%s' and deleted_at=0;`, m.table, m.table, m.table, teamId)).Scan(&cms).Error
 	return

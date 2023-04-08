@@ -23,6 +23,19 @@ func ClassifyFindByTeamId(ctx *contextx.Contextx) (cms []model.ClassifyModel, er
 	return
 }
 
+func ClassifyFirst(ctx *contextx.Contextx, cm model.ClassifyModel) (result model.ClassifyModel, err error) {
+	result, err = ctx.BaseTx.ClassifyModel.First(cm)
+	if err == nil {
+		return
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err = i18n.NewCodeError(module.ClassifyNotfoundErr)
+	}
+	err = i18n.NewCodeError(module.ClassifyQueryErr)
+	loggerx.ZapLog.Error(err.Error(), zap.Any("model", cm))
+	return
+}
+
 func ClassifyInsert(ctx *contextx.Contextx, cm *model.ClassifyModel) (cid string, err error) {
 	_, err = ctx.BaseTx.ClassifyModel.First(model.ClassifyModel{TeamId: cm.TeamId})
 	if !errors.Is(err, gorm.ErrRecordNotFound) {

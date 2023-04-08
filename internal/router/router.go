@@ -16,7 +16,7 @@ import (
  * @return          {*}
  */
 func RouterManager(c *gin.Engine) {
-	globalRoute := c.Group("api/v1", middleware.ResultMiddleware())
+	globalRoute := c.Group("api/v1")
 	kernel := globalRoute.Group("/kernel")
 	kernel.Handle(http.MethodGet, "/config", ctrl.KernelState)
 
@@ -60,10 +60,10 @@ func RouterManager(c *gin.Engine) {
 
 	task := auth.Group("/task")
 	{
-		task.Handle(http.MethodGet, "/:classify_id")
+		task.Handle(http.MethodGet, "/:classify_id", ctrl.TaskFindByClassifyId)
 		task.Handle(http.MethodPost, "", ctrl.TaskInsert)
-		task.Handle(http.MethodPut, "")
-		task.Handle(http.MethodDelete, "")
+		task.Handle(http.MethodPut, "/:only_code", ctrl.TaskUpdate)
+		task.Handle(http.MethodDelete, "/:only_code", ctrl.TaskDelete)
 	}
 
 	taskMode := auth.Group("/task_mode")

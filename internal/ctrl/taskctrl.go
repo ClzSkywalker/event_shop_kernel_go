@@ -6,11 +6,10 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
-func FindClassifyById(c *gin.Context) {
+func TaskFindByClassifyId(c *gin.Context) {
 	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
 	param := entity.TaskFindByClassifyIdEntity{}
@@ -24,28 +23,54 @@ func FindClassifyById(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	var data []entity.TaskEntity
-	err = utils.StructToStruct(taskList, &data)
-	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
-	ret.Data = data
+	ret.Data = taskList
 }
 
 func TaskInsert(c *gin.Context) {
 	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)
-	tm := entity.TaskEntity{}
-	ctx, err := validateBind(c, &tm)
+	param := entity.TaskInsertReq{}
+	ctx, err := validateBind(c, &param)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
-	id, err := service.TaskInsert(ctx, tm)
+	id, err := service.TaskInsert(ctx, param)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return
 	}
 	ret.Data = id
+}
+
+func TaskUpdate(c *gin.Context) {
+	ret := getResult(c)
+	defer c.JSON(http.StatusOK, ret)
+	param := entity.TaskUpdateReq{}
+	ctx, err := validateBind(c, &param)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	err = service.TaskUpdate(ctx, param)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+}
+
+func TaskDelete(c *gin.Context) {
+	ret := getResult(c)
+	defer c.JSON(http.StatusOK, ret)
+	param := entity.TaskDeleteReq{}
+	ctx, err := validateBind(c, &param)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	err = service.TaskDelete(ctx, param.OnlyCode)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
 }

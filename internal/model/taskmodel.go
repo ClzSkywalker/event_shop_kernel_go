@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 
+	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"gorm.io/gorm"
@@ -26,8 +27,9 @@ type TaskModel struct {
 type ITaskModel interface {
 	IBaseModel
 	InitData(lang, uid, cid, tid string) (err error)
-	FindByClassifyId(classifyId string) (result []TaskModel, err error)
+	FindByClassifyId(classifyId string) (result []entity.TaskEntity, err error)
 	FindByModel(TaskModel) ([]TaskModel, error)
+	First(param TaskModel) (result TaskModel, err error)
 	Insert(*TaskModel) (uint, error)
 	InsertAll(tm []*TaskModel) (err error)
 	Update(*TaskModel) error
@@ -83,10 +85,18 @@ func (m *defaultTaskModel) FindByModel(TaskModel) (result []TaskModel, err error
 	return
 }
 
-func (m *defaultTaskModel) FindByClassifyId(classifyId string) (result []TaskModel, err error) {
-	err = m.conn.Raw(fmt.Sprintf(recursiveSql+`
-	  SELECT *
-	  FROM all_folders where team_id=%s and deleted_at=0;`, m.table, m.table, m.table, classifyId)).Scan(&result).Error
+func (m *defaultTaskModel) FindByClassifyId(classifyId string) (result []entity.TaskEntity, err error) {
+	where := fmt.Sprintf("and t1.classify_id='%s' and t1.deleted_at=0", classifyId)
+	err = m.conn.Raw(fmt.Sprintf(recursive(m.table, where)+`
+	SELECT t1.*,tc.content 
+	FROM all_folders t1  left join 
+	%s tc on t1.content_id =tc.oc where t1.classify_id='%s' and t1.deleted_at=0 ;`, TaskContentModel{}.TableName(),
+		classifyId)).Scan(&result).Error
+	return
+}
+
+func (m *defaultTaskModel) First(param TaskModel) (result TaskModel, err error) {
+	err = m.conn.Table(m.table).Where(param).First(&result).Error
 	return
 }
 

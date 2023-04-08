@@ -28,7 +28,6 @@ type BaseServiceContext struct {
 	TeamModel        model.ITeamModel
 	UserToTeamModel  model.IUserToTeamModel
 	TaskModel        model.ITaskModel
-	TaskChildModel   model.ITaskChildModel
 	TaskContentModel model.ITaskContentModel
 	TaskModeModel    model.ITaskModeModel
 	ClassifyModel    model.IClassifyModel
@@ -104,7 +103,6 @@ func NewBaseServiceContext(base *BaseServiceContext, database *gorm.DB) *BaseSer
 	base.TeamModel = model.NewDefaultTeamModel(database)
 	base.UserToTeamModel = model.NewDefaultUserToTeamModel(database)
 	base.TaskModel = model.NewDefaultTaskModel(database)
-	base.TaskChildModel = model.NewDefaultTaskChildModel(database)
 	base.TaskContentModel = model.NewDefaultTaskContentModel(database)
 	base.TaskModeModel = model.NewDefaultTaskModeModel(database)
 	base.ClassifyModel = model.NewDefaultClassifyModel(database)
@@ -118,7 +116,6 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 		model.NewDefaultTeamModel(tx).DropTable,
 		model.NewDefaultUserToTeamModel(tx).DropTable,
 		model.NewDefaultTaskModel(tx).DropTable,
-		model.NewDefaultTaskChildModel(tx).DropTable,
 		model.NewDefaultTaskContentModel(tx).DropTable,
 		model.NewDefaultTaskModeModel(tx).DropTable,
 		model.NewDefaultClassifyModel(tx).DropTable)
@@ -127,7 +124,6 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 		model.NewDefaultTeamModel(tx).CreateTable,
 		model.NewDefaultUserToTeamModel(tx).CreateTable,
 		model.NewDefaultTaskModel(tx).CreateTable,
-		model.NewDefaultTaskChildModel(tx).CreateTable,
 		model.NewDefaultTaskContentModel(tx).CreateTable,
 		model.NewDefaultTaskModeModel(tx).CreateTable,
 		model.NewDefaultClassifyModel(tx).CreateTable)
@@ -194,9 +190,5 @@ func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 		return
 	}
 
-	err = model.NewDefaultTaskChildModel(tx).InitData()
-	if err != nil {
-		return
-	}
 	return
 }

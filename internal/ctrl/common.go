@@ -38,12 +38,16 @@ func validateBind(c *gin.Context, m interface{}) (ctx *contextx.Contextx, err er
 }
 
 func getResult(c *gin.Context) *httpx.Result {
-	value, exist := c.Get(constx.CtxRet)
-	var ret *httpx.Result
-	if !exist {
-		ret = httpx.NewResult()
-	} else {
-		ret = value.(*httpx.Result)
+	lang := c.GetHeader(constx.HeaderLang)
+	switch lang {
+	case constx.LangChinese, constx.LangEnglish:
+	default:
+		lang = constx.LangDefault
 	}
+	ret := httpx.NewResult()
+	if lang == "" {
+		lang = constx.LangDefault
+	}
+	ret.Lang = lang
 	return ret
 }

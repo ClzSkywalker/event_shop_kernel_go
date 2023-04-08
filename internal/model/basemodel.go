@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 	"gorm.io/plugin/soft_delete"
 )
@@ -21,11 +23,11 @@ const (
 	recursiveSql = `WITH RECURSIVE all_folders AS (
 		SELECT t1.* 
 		FROM %s t1
-		WHERE t1.parent_id = ''
+		WHERE t1.parent_id = '' %s
 		UNION ALL
-		SELECT t3.*
-		FROM %s t2
-		JOIN %s t3 ON t3.parent_id = t2.oc
+		SELECT t2.*
+		FROM %s t1
+		JOIN %s t2 ON t2.parent_id = t1.oc where 1=1 %s
 	  )`
 )
 
@@ -41,4 +43,8 @@ type IBaseModel interface {
 	CreateTable() (err error) // 创建表
 	DropTable() (err error)   // 删除表
 	GetTx() (tx *gorm.DB)
+}
+
+func recursive(table, where string) string {
+	return fmt.Sprintf(recursiveSql, table, where, table, table, where)
 }

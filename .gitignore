@@ -2,3 +2,4 @@ logs/*
 output/*
 assert/ectype/*
 .VSCodeCounter/*
+__debug_bin.exe
