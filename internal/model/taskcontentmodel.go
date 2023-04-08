@@ -14,7 +14,7 @@ const (
 
 type TaskContentModel struct {
 	BaseModel
-	OnlyCode string `gorm:"column:oc;type:VARCHAR(26);index:idx_task_content_oc,unique"`
+	OnlyCode string `json:"oc" gorm:"column:oc;type:VARCHAR(26);index:idx_task_content_oc,unique"`
 	Content  string `gorm:"column:content;type:varchar"`
 	// FileList []TaskFileModel `gorm:"column:file_list;type:varchar"`
 }

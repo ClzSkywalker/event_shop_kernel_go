@@ -106,7 +106,7 @@ func register(ctx *contextx.Contextx, um *model.UserModel) (umresp model.UserMod
 		return
 	}
 
-	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{TeamId: um.TeamIdPort})
+	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{OnlyCode: um.TeamIdPort})
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		err = i18n.NewCodeError(module.TeamRepeatErr)
 		return

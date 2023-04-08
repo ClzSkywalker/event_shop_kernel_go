@@ -58,7 +58,7 @@ func TeamCreate(ctx *contextx.Contextx, tm *model.TeamModel, sort int) (tid stri
 	}
 
 	tid = utils.NewUlid()
-	tm.TeamId = tid
+	tm.OnlyCode = tid
 	tm.CreatedBy = ctx.TID
 	_, err = ctx.BaseTx.TeamModel.Create(tm)
 	if err != nil {
@@ -76,7 +76,7 @@ func TeamCreate(ctx *contextx.Contextx, tm *model.TeamModel, sort int) (tid stri
 }
 
 func TeamUpdate(ctx *contextx.Contextx, m model.TeamModel) (err error) {
-	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{TeamId: m.TeamId})
+	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{OnlyCode: m.OnlyCode})
 	if err != nil {
 		err = i18n.NewCodeError(module.TeamNotFound)
 		return
@@ -90,7 +90,7 @@ func TeamUpdate(ctx *contextx.Contextx, m model.TeamModel) (err error) {
 }
 
 func TeamDelete(ctx *contextx.Contextx, teamId string) (err error) {
-	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{TeamId: teamId, CreatedBy: teamId})
+	_, err = ctx.BaseTx.TeamModel.First(model.TeamModel{OnlyCode: teamId, CreatedBy: teamId})
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error())
 		err = i18n.NewCodeError(module.TeamFindErr)

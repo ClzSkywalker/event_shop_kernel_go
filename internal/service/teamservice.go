@@ -29,7 +29,7 @@ func TeamUpdate(ctx *contextx.Contextx, req entity.TeamUpdateReq) (err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
 		err := infrastructure.TeamUpdate(ctx, model.TeamModel{Name: req.Name, Description: req.Description,
-			TeamId: req.TeamId})
+			OnlyCode: req.TeamId})
 		return err
 	})
 	return

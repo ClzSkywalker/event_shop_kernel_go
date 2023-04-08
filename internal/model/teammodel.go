@@ -9,7 +9,7 @@ import (
 
 type TeamModel struct {
 	BaseModel
-	TeamId      string `gorm:"column:team_id;type:VARCHAR(26);index:udx_team_tid,unique"`
+	OnlyCode    string `json:"oc" gorm:"column:oc;type:VARCHAR(26);index:udx_team_tid,unique"`
 	CreatedBy   string `gorm:"column:created_by;type:VARCHAR(26);index:idx_team_uid"`
 	Name        string `gorm:"column:name;type:VARCHAR"`
 	Description string `gorm:"column:description;type:VARCHAR"`
@@ -69,7 +69,7 @@ func (m *defaultTeamModel) InitData(lang, uid, tid string) (err error) {
 	default:
 		name = "new start"
 	}
-	tm := &TeamModel{TeamId: tid, CreatedBy: uid, Name: name}
+	tm := &TeamModel{OnlyCode: tid, CreatedBy: uid, Name: name}
 	_, err = m.Create(tm)
 	return
 }
@@ -117,11 +117,11 @@ func (m *defaultTeamModel) Create(tm *TeamModel) (id uint, err error) {
 }
 
 func (m *defaultTeamModel) Update(p TeamModel) (err error) {
-	err = m.conn.Table(m.table).Where(TeamModel{TeamId: p.TeamId}).Updates(p).Error
+	err = m.conn.Table(m.table).Where(TeamModel{OnlyCode: p.OnlyCode}).Updates(p).Error
 	return
 }
 
 func (m *defaultTeamModel) Delete(tid string) (err error) {
-	err = m.conn.Table(m.table).Where(TeamModel{TeamId: tid}).Delete(TeamModel{}).Error
+	err = m.conn.Table(m.table).Where(TeamModel{OnlyCode: tid}).Delete(TeamModel{}).Error
 	return
 }
