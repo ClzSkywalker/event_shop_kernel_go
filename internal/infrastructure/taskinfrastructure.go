@@ -15,7 +15,7 @@ import (
 )
 
 func TaskFindByClassifyId(ctx *contextx.Contextx, classifyId string) (result []entity.TaskEntity, err error) {
-	result, err = ctx.BaseTx.TaskModel.FindByClassifyId(classifyId)
+	result, err = ctx.BaseTx.TaskModel.FindByClassifyId(ctx.UID, classifyId)
 	return
 }
 
@@ -33,10 +33,10 @@ func TaskFirst(ctx *contextx.Contextx, p model.TaskModel) (result model.TaskMode
 }
 
 func TaskInsert(ctx *contextx.Contextx, tm *model.TaskModel) (oc string, err error) {
-	_, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: tm.ClassifyId})
-	if err != nil {
-		return
-	}
+	// _, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: tm.ClassifyId})
+	// if err != nil {
+	// 	return
+	// }
 
 	_, err = TaskModeFirst(ctx, model.TaskModeModel{OnlyCode: tm.TaskModeId})
 	if err != nil {
@@ -54,10 +54,10 @@ func TaskInsert(ctx *contextx.Contextx, tm *model.TaskModel) (oc string, err err
 }
 
 func TaskUpdate(ctx *contextx.Contextx, tm model.TaskModel) (err error) {
-	_, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: tm.ClassifyId})
-	if err != nil {
-		return
-	}
+	// _, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: tm.ClassifyId})
+	// if err != nil {
+	// 	return
+	// }
 
 	_, err = TaskModeFirst(ctx, model.TaskModeModel{OnlyCode: tm.TaskModeId})
 	if err != nil {

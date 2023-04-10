@@ -1,7 +1,14 @@
 package entity
 
+import "github.com/clz.skywalker/event.shop/kernal/pkg/constx"
+
 type TaskFindByClassifyIdEntity struct {
-	ClassifyId string `json:"classify_id" binding:"required"`
+	ClassifyId string                  `json:"classify_id,omitempty" binding:"required" validate:"required"`
+	TaskStatus constx.TaskCompleteType `json:"task_status,omitempty"`  // 任务完成
+	StartAt    int64                   `json:"start_at,omitempty"`     // 开始时间
+	EndAt      int64                   `json:"end_at,omitempty"`       // 结束时间
+	TaskModeId string                  `json:"task_mode_id,omitempty"` // 任务模式
+	TaskOrder  constx.TaskOrderType    `json:"task_order,omitempty"`   // 排序模式
 }
 
 type TaskEntity struct {

@@ -87,7 +87,7 @@ func ClassifyOrderUpdate(ctx *contextx.Contextx, cmList []model.ClassifyModel) (
 }
 
 func ClassifyDel(ctx *contextx.Contextx, classifyId string) (err error) {
-	result, err := ctx.BaseTx.TaskModel.FindByClassifyId(classifyId)
+	result, err := ctx.BaseTx.TaskModel.FindByClassifyId(ctx.UID, classifyId)
 	if err != nil {
 		return
 	}

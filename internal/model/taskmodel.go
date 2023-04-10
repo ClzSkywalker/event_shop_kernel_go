@@ -14,7 +14,7 @@ type TaskModel struct {
 	OnlyCode    string `json:"oc" gorm:"column:oc;type:VARCHAR(26);index:udx_task_oc,unique"`
 	CreatedBy   string `gorm:"column:created_by;type:VARCHAR(26);index:idx_task_uid"`
 	Title       string `gorm:"column:title;type:VARCHAR(255)"`
-	ClassifyId  string `gorm:"column:classify_id;type:VARCHAR(26);index:idx_task_cid"`
+	DevideId    string `gorm:"column:devide_id;type:VARCHAR(26);index:idx_task_did"`
 	ContentId   string `gorm:"column:content_id;type:VARCHAR(26)"`
 	TaskModeId  string `gorm:"column:task_mode_id;type:VARCHAR(26)"`
 	CompletedAt int64  `gorm:"column:completed_at;type:INTEGER"`
@@ -26,8 +26,8 @@ type TaskModel struct {
 
 type ITaskModel interface {
 	IBaseModel
-	InitData(lang, uid, cid, tid string, contentId []string) (err error)
-	FindByClassifyId(classifyId string) (result []entity.TaskEntity, err error)
+	InitData(lang, uid, did, tid string, contentId []string) (err error)
+	FindByClassifyId(uid, classifyId string) (result []entity.TaskEntity, err error)
 	FindByModel(TaskModel) ([]TaskModel, error)
 	First(param TaskModel) (result TaskModel, err error)
 	Insert(*TaskModel) (uint, error)
@@ -66,9 +66,11 @@ func (m *defaultTaskModel) GetTx() (tx *gorm.DB) {
 	return m.conn
 }
 
-func (m *defaultTaskModel) InitData(lang, uid, cid, tid string, contentId []string) (err error) {
-	t1 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid, ContentId: contentId[0]}
-	t2 := &TaskModel{OnlyCode: utils.NewUlid(), CreatedBy: uid, ClassifyId: cid, TaskModeId: tid, ContentId: contentId[1]}
+func (m *defaultTaskModel) InitData(lang, uid, did, tid string, contentId []string) (err error) {
+	t1 := &TaskModel{OnlyCode: utils.NewUlid(),
+		CreatedBy: uid, DevideId: did, TaskModeId: tid, ContentId: contentId[0]}
+	t2 := &TaskModel{OnlyCode: utils.NewUlid(),
+		CreatedBy: uid, DevideId: did, TaskModeId: tid, ContentId: contentId[1]}
 	switch lang {
 	case constx.LangChinese:
 		t1.Title = "第一步"
@@ -85,13 +87,22 @@ func (m *defaultTaskModel) FindByModel(TaskModel) (result []TaskModel, err error
 	return
 }
 
-func (m *defaultTaskModel) FindByClassifyId(classifyId string) (result []entity.TaskEntity, err error) {
-	where := fmt.Sprintf("and t1.classify_id='%s' and t1.deleted_at=0", classifyId)
+func (m *defaultTaskModel) FindByClassifyId(uid, classifyId string) (result []entity.TaskEntity, err error) {
+	where := fmt.Sprintf(`and t1.devide_id = '%s'
+	 and t1.deleted_at=0 and 
+	 and and t1.devide_id in (
+		select
+			d.oc
+		from
+			%s d
+		left join %s c on
+			d.classify_id = c.oc)`,
+		classifyId, DevideTableName, ClassifyTableName)
 	err = m.conn.Raw(fmt.Sprintf(recursive(m.table, where)+`
 	SELECT t1.*,tc.content 
 	FROM all_folders t1  left join 
-	%s tc on t1.content_id =tc.oc where t1.classify_id='%s' and t1.deleted_at=0 ;`, TaskContentModel{}.TableName(),
-		classifyId)).Scan(&result).Error
+	%s tc on t1.content_id =tc.oc where 1=1 %s;`,
+		TaskContentTableName, classifyId, where)).Scan(&result).Error
 	return
 }
 

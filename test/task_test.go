@@ -16,7 +16,7 @@ import (
 func TestTask(t *testing.T) {
 	ctx1 := initGormAndVar()
 
-	Convey("tesk test", t, func() {
+	Convey("task test", t, func() {
 		classifyList, err := infrastructure.ClassifyFindByTeamId(ctx1)
 		So(err, ShouldBeNil)
 		So(len(classifyList), ShouldBeGreaterThan, 0)
@@ -44,5 +44,25 @@ func TestTask(t *testing.T) {
 		taskM, err = infrastructure.TaskFirst(ctx1, model.TaskModel{OnlyCode: req1.OnlyCode})
 		So(err.(errorx.CodeError).Code, ShouldEqual, module.TaskNotfoundErr)
 		So(taskM.OnlyCode, ShouldBeBlank)
+	})
+}
+
+func TestTaskFilter(t *testing.T) {
+	ctx1 := initGormAndVar()
+
+	Convey("task filter test", t, func() {
+		classifyList, err := infrastructure.ClassifyFindByTeamId(ctx1)
+		So(err, ShouldBeNil)
+		So(len(classifyList), ShouldBeGreaterThan, 0)
+
+		taskList, err := infrastructure.TaskFilter(ctx1, entity.TaskFilterParam{})
+		So(err, ShouldBeNil)
+		So(len(taskList), ShouldBeGreaterThan, 0)
+
+		taskList, err = infrastructure.TaskFilter(ctx1, entity.TaskFilterParam{
+			Keyword: "The",
+		})
+		So(err, ShouldBeNil)
+		So(len(taskList), ShouldBeGreaterThan, 0)
 	})
 }

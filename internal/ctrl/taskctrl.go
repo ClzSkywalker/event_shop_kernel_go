@@ -9,6 +9,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func TaskFilter(c *gin.Context) {
+	ret := getResult(c)
+	defer c.JSON(http.StatusOK, ret)
+	param := entity.TaskFilterParam{}
+	ctx, err := validateBind(c, &param)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	result, err := infrastructure.TaskFilter(ctx, param)
+	if err != nil {
+		ret.SetCodeErr(err)
+		return
+	}
+	ret.Data = result
+}
+
 func TaskFindByClassifyId(c *gin.Context) {
 	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)

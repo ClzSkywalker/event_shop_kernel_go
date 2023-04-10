@@ -12,9 +12,9 @@ const (
 	TeamTableName        = "team"
 	UserToTeamTableName  = "user_to_team"
 	ClassifyTableName    = "classify"
+	DevideTableName      = "devide"
 	TaskTableName        = "task"
 	TaskModeTableName    = "task_mode"
-	TaskChildTableName   = "task_child"
 	TaskContentTableName = "task_content"
 )
 
@@ -33,7 +33,7 @@ const (
 
 type BaseModel struct {
 	Id        uint                  `gorm:"primarykey"`
-	CreatedAt int64                 `json:"created_at" gorm:"autoUpdateTime"`
+	CreatedAt int64                 `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt int64                 `json:"updated_at" gorm:"autoUpdateTime"`
 	DeletedAt soft_delete.DeletedAt `json:"deleted_at" gorm:"softDelete"`
 }

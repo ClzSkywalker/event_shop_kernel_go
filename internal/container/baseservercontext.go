@@ -27,10 +27,11 @@ type BaseServiceContext struct {
 	UserModel        model.IUserModel
 	TeamModel        model.ITeamModel
 	UserToTeamModel  model.IUserToTeamModel
+	ClassifyModel    model.IClassifyModel
+	DevideModel      model.IDevideModel
 	TaskModel        model.ITaskModel
 	TaskContentModel model.ITaskContentModel
 	TaskModeModel    model.ITaskModeModel
-	ClassifyModel    model.IClassifyModel
 }
 
 /**
@@ -60,15 +61,9 @@ func InitServiceContext(ch chan<- constx.DbInitStateType) {
 
 			// test mode 初始化一个用户
 			if GlobalServerContext.Config.Mode == gin.TestMode {
-				um := &model.UserModel{
-					CreatedBy: utils.NewUlid(),
-				}
-				_, err = model.NewDefaultUserModel(tx).Insert(um)
-				if err != nil {
-					return
-				}
+				uid := utils.NewUlid()
 				tid := utils.NewUlid()
-				err = InitData(tx, constx.LangChinese, um.CreatedBy, tid)
+				err = InitData(tx, constx.LangChinese, uid, tid)
 			}
 			return
 		})
@@ -102,10 +97,11 @@ func NewBaseServiceContext(base *BaseServiceContext, database *gorm.DB) *BaseSer
 	base.UserModel = model.NewDefaultUserModel(database)
 	base.TeamModel = model.NewDefaultTeamModel(database)
 	base.UserToTeamModel = model.NewDefaultUserToTeamModel(database)
+	base.ClassifyModel = model.NewDefaultClassifyModel(database)
+	base.DevideModel = model.NewDefaultDevideModel(database)
 	base.TaskModel = model.NewDefaultTaskModel(database)
 	base.TaskContentModel = model.NewDefaultTaskContentModel(database)
 	base.TaskModeModel = model.NewDefaultTaskModeModel(database)
-	base.ClassifyModel = model.NewDefaultClassifyModel(database)
 	return base
 }
 
@@ -115,18 +111,22 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 		model.NewDefaultUserModel(tx).DropTable,
 		model.NewDefaultTeamModel(tx).DropTable,
 		model.NewDefaultUserToTeamModel(tx).DropTable,
+		model.NewDefaultClassifyModel(tx).DropTable,
+		model.NewDefaultDevideModel(tx).DropTable,
 		model.NewDefaultTaskModel(tx).DropTable,
 		model.NewDefaultTaskContentModel(tx).DropTable,
 		model.NewDefaultTaskModeModel(tx).DropTable,
-		model.NewDefaultClassifyModel(tx).DropTable)
+	)
 	idb.SetCreateFunc(
 		model.NewDefaultUserModel(tx).CreateTable,
 		model.NewDefaultTeamModel(tx).CreateTable,
 		model.NewDefaultUserToTeamModel(tx).CreateTable,
+		model.NewDefaultClassifyModel(tx).CreateTable,
+		model.NewDefaultDevideModel(tx).CreateTable,
 		model.NewDefaultTaskModel(tx).CreateTable,
 		model.NewDefaultTaskContentModel(tx).CreateTable,
 		model.NewDefaultTaskModeModel(tx).CreateTable,
-		model.NewDefaultClassifyModel(tx).CreateTable)
+	)
 	return idb
 }
 
@@ -143,50 +143,64 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 	defer func() {
 		if err != nil {
-			loggerx.ZapLog.Error(err.Error())
 			err = i18n.NewCodeError(module.UserDataInit)
 		}
 	}()
 	err = model.NewDefaultUserModel(tx).InitData(lang, uid)
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
 	err = model.NewDefaultTeamModel(tx).InitData(lang, uid, tid)
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
 	// 绑定用户入口
 	err = model.NewDefaultUserModel(tx).Update(model.UserModel{CreatedBy: uid, TeamIdPort: tid})
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
 	err = model.NewDefaultUserToTeamModel(tx).InitData(uid, tid)
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
 	cid := utils.NewUlid()
 	err = model.NewDefaultClassifyModel(tx).InitData(lang, uid, tid, cid)
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
 	tmid := utils.NewUlid()
 	err = model.NewDefaultTaskModeModel(tx).InitData(tmid, tid)
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
 	contentId, err := model.NewDefaultTaskContentModel(tx).InitData()
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
-	err = model.NewDefaultTaskModel(tx).InitData(lang, uid, cid, tid, contentId)
+	did := utils.NewUlid()
+	err = model.NewDefaultDevideModel(tx).InitData(lang, uid, cid, did)
 	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
+		return
+	}
+
+	err = model.NewDefaultTaskModel(tx).InitData(lang, uid, did, tid, contentId)
+	if err != nil {
+		loggerx.ZapLog.Error(err.Error())
 		return
 	}
 
