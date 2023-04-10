@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
-	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
@@ -13,11 +12,6 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
-
-func TaskFindByClassifyId(ctx *contextx.Contextx, classifyId string) (result []entity.TaskEntity, err error) {
-	result, err = ctx.BaseTx.TaskModel.FindByClassifyId(ctx.UID, classifyId)
-	return
-}
 
 func TaskFirst(ctx *contextx.Contextx, p model.TaskModel) (result model.TaskModel, err error) {
 	result, err = ctx.BaseTx.TaskModel.First(p)

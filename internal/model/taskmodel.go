@@ -1,9 +1,6 @@
 package model
 
 import (
-	"fmt"
-
-	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
 	"gorm.io/gorm"
@@ -27,7 +24,6 @@ type TaskModel struct {
 type ITaskModel interface {
 	IBaseModel
 	InitData(lang, uid, did, tid string, contentId []string) (err error)
-	FindByClassifyId(uid, classifyId string) (result []entity.TaskEntity, err error)
 	FindByModel(TaskModel) ([]TaskModel, error)
 	First(param TaskModel) (result TaskModel, err error)
 	Insert(*TaskModel) (uint, error)
@@ -84,25 +80,6 @@ func (m *defaultTaskModel) InitData(lang, uid, did, tid string, contentId []stri
 }
 
 func (m *defaultTaskModel) FindByModel(TaskModel) (result []TaskModel, err error) {
-	return
-}
-
-func (m *defaultTaskModel) FindByClassifyId(uid, classifyId string) (result []entity.TaskEntity, err error) {
-	where := fmt.Sprintf(`and t1.devide_id = '%s'
-	 and t1.deleted_at=0 and 
-	 and and t1.devide_id in (
-		select
-			d.oc
-		from
-			%s d
-		left join %s c on
-			d.classify_id = c.oc)`,
-		classifyId, DevideTableName, ClassifyTableName)
-	err = m.conn.Raw(fmt.Sprintf(recursive(m.table, where)+`
-	SELECT t1.*,tc.content 
-	FROM all_folders t1  left join 
-	%s tc on t1.content_id =tc.oc where 1=1 %s;`,
-		TaskContentTableName, classifyId, where)).Scan(&result).Error
 	return
 }
 

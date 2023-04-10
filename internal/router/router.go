@@ -61,7 +61,6 @@ func RouterManager(c *gin.Engine) {
 	task := auth.Group("/task")
 	{
 		task.Handle(http.MethodPost, "/filter", ctrl.TaskFilter)
-		task.Handle(http.MethodGet, "/:classify_id", ctrl.TaskFindByClassifyId)
 		task.Handle(http.MethodPost, "", ctrl.TaskInsert)
 		task.Handle(http.MethodPut, "/:oc", ctrl.TaskUpdate)
 		task.Handle(http.MethodDelete, "/:oc", ctrl.TaskDelete)

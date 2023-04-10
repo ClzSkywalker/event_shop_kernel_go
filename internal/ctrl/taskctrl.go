@@ -26,23 +26,6 @@ func TaskFilter(c *gin.Context) {
 	ret.Data = result
 }
 
-func TaskFindByClassifyId(c *gin.Context) {
-	ret := getResult(c)
-	defer c.JSON(http.StatusOK, ret)
-	param := entity.TaskFindByClassifyIdEntity{}
-	ctx, err := validateBind(c, &param)
-	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
-	taskList, err := infrastructure.TaskFindByClassifyId(ctx, param.ClassifyId)
-	if err != nil {
-		ret.SetCodeErr(err)
-		return
-	}
-	ret.Data = taskList
-}
-
 func TaskInsert(c *gin.Context) {
 	ret := getResult(c)
 	defer c.JSON(http.StatusOK, ret)

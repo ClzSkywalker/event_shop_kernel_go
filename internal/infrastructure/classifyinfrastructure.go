@@ -87,14 +87,11 @@ func ClassifyOrderUpdate(ctx *contextx.Contextx, cmList []model.ClassifyModel) (
 }
 
 func ClassifyDel(ctx *contextx.Contextx, classifyId string) (err error) {
-	result, err := ctx.BaseTx.TaskModel.FindByClassifyId(ctx.UID, classifyId)
+	_, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: classifyId})
 	if err != nil {
 		return
 	}
-	if len(result) > 0 {
-		err = i18n.NewCodeError(module.ClassifyDelExistTask)
-		return
-	}
+
 	err = ctx.BaseTx.ClassifyModel.Delete(ctx.TID, classifyId)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.String("oc", classifyId), zap.String("tid", ctx.TID))
