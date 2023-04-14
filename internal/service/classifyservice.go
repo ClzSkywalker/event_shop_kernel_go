@@ -68,10 +68,10 @@ func ClassifyOrderUpdate(ctx *contextx.Contextx, req entity.ClassifyOrderReq) (e
 	return
 }
 
-func ClassifyDel(ctx *contextx.Contextx, req entity.ClassifyDelReq) (err error) {
+func ClassifyDel(ctx *contextx.Contextx, oc string) (err error) {
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
-		err = infrastructure.ClassifyDel(ctx, req.OnlyCode)
+		err = infrastructure.ClassifyDel(ctx, oc)
 		return err
 	})
 	return

@@ -117,11 +117,13 @@ func (m *defaultClassifyModel) InsertAll(cm []*ClassifyModel) (err error) {
 }
 
 func (m *defaultClassifyModel) Update(cm ClassifyModel) (err error) {
-	err = m.conn.Table(m.table).Updates(cm).Error
+	err = m.conn.Table(m.table).Where(ClassifyModel{OnlyCode: cm.OnlyCode}).Updates(cm).Error
 	return
 }
 
 func (m *defaultClassifyModel) Delete(tid, oc string) (err error) {
-	err = m.conn.Table(m.table).Delete(ClassifyModel{OnlyCode: oc, TeamId: tid}).Error
+	err = m.conn.Table(m.table).
+		Where(ClassifyModel{OnlyCode: oc}).
+		Delete(&ClassifyModel{OnlyCode: oc, TeamId: tid}).Error
 	return
 }

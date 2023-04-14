@@ -108,7 +108,7 @@ func ClassifyDel(c *gin.Context) {
 		ret.SetCodeErr(err)
 		return
 	}
-	err = service.ClassifyDel(ctx, req)
+	err = service.ClassifyDel(ctx, req.OnlyCode)
 	if err != nil {
 		ret.SetCodeErr(err)
 		return

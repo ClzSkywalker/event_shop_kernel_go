@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
@@ -15,7 +14,6 @@ import (
 
 func TestDevide(t *testing.T) {
 	ctx1 := initGormAndVar()
-	fmt.Println("testaaaaaa")
 	Convey("devide success", t, func() {
 		// 查
 		devide, err := infrastructure.DevideFirst(ctx1, model.DevideModel{CreatedBy: ctx1.UID})

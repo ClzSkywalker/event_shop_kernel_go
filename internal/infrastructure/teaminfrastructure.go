@@ -32,17 +32,17 @@ func TeamFindMyTeam(ctx *contextx.Contextx) (tmList []model.TeamModel, err error
 	return
 }
 
-func TeamQueryFirst(ctx *contextx.Contextx, p model.TeamModel) (result model.TeamModel, err error) {
+func TeamFirst(ctx *contextx.Contextx, p model.TeamModel) (result model.TeamModel, err error) {
 	result, err = ctx.BaseTx.TeamModel.First(p)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		loggerx.ZapLog.Error(err.Error())
-		err = errorx.NewCodeError(module.TeamFindErr)
+	if err == nil {
 		return
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = errorx.NewCodeError(module.TeamFindErr)
+		loggerx.ZapLog.Error(err.Error())
+		err = errorx.NewCodeError(module.TeamNotFound)
 		return
 	}
+	err = errorx.NewCodeError(module.TeamFindErr)
 	return
 }
 
