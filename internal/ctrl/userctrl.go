@@ -7,7 +7,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/service"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/gin-gonic/gin"
 )
@@ -83,7 +83,7 @@ func LoginByEmail(c *gin.Context) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		err = errorx.NewCodeError(module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}
@@ -109,7 +109,7 @@ func LoginByPhone(c *gin.Context) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		err = errorx.NewCodeError(module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}
@@ -135,7 +135,7 @@ func LoginByUid(c *gin.Context) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		err = errorx.NewCodeError(module.UserRegisterErr)
 		ret.SetCodeErr(err)
 		return
 	}

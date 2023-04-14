@@ -5,7 +5,7 @@ import (
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"go.uber.org/zap"
@@ -18,10 +18,10 @@ func TaskModeFirst(ctx *contextx.Contextx, tm model.TaskModeModel) (result model
 		return
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = i18n.NewCodeError(module.TaskModeNotFoundErr)
+		err = errorx.NewCodeError(module.TaskModeNotFoundErr)
 		return
 	}
-	err = i18n.NewCodeError(module.TaskModeQueryErr)
+	err = errorx.NewCodeError(module.TaskModeQueryErr)
 	loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
 	return
 }

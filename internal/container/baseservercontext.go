@@ -7,6 +7,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/db"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
@@ -143,7 +144,7 @@ func InitIDB(idb db.IOriginDb, tx *gorm.DB) db.IOriginDb {
 func InitData(tx *gorm.DB, lang, uid, tid string) (err error) {
 	defer func() {
 		if err != nil {
-			err = i18n.NewCodeError(module.UserDataInit)
+			err = errorx.NewCodeError(module.UserDataInit)
 		}
 	}()
 	err = model.NewDefaultUserModel(tx).InitData(lang, uid)

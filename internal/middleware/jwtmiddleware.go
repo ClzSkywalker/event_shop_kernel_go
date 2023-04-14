@@ -6,7 +6,7 @@ import (
 
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
@@ -28,7 +28,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		ret := value.(*httpx.Result)
 
 		if token == "" {
-			err := i18n.NewCodeError(module.TokenInvalid)
+			err := errorx.NewCodeError(module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -50,7 +50,7 @@ func JwtMiddleware() gin.HandlerFunc {
 			return
 		}
 		if epTime.Time.Before(time.Now()) {
-			err := i18n.NewCodeError(module.TokenExpired)
+			err := errorx.NewCodeError(module.TokenExpired)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -59,7 +59,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		uid, ok := t.Claims.(jwt.MapClaims)[constx.TokenUID]
 		if !ok || uid.(string) == "" {
 			loggerx.ReqLog.Error("claim err", zap.Any("claims", t.Claims.(jwt.MapClaims)))
-			err := i18n.NewCodeError(module.TokenInvalid)
+			err := errorx.NewCodeError(module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()
@@ -68,7 +68,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		tid, ok := t.Claims.(jwt.MapClaims)[constx.TokenTID]
 		if !ok || tid.(string) == "" {
 			loggerx.ReqLog.Error("claim err", zap.Any("claims", t.Claims.(jwt.MapClaims)))
-			err := i18n.NewCodeError(module.TokenInvalid)
+			err := errorx.NewCodeError(module.TokenInvalid)
 			ret.SetCodeErr(err)
 			c.JSON(http.StatusOK, ret)
 			c.Abort()

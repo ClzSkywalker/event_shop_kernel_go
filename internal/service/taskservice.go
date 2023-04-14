@@ -6,16 +6,19 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"gorm.io/gorm"
 )
 
 func TaskInsert(ctx *contextx.Contextx, req entity.TaskInsertReq) (oc string, err error) {
-	m := model.TaskModel{}
-	err = StructToStruct(ctx, req, &m)
-	if err != nil {
-		return
+	m := model.TaskModel{
+		Title:      req.Title,
+		DevideId:   req.DevideId,
+		TaskModeId: req.TaskModeId,
+		StartAt:    req.StartAt,
+		EndAt:      req.EndAt,
+		ParentId:   req.ParentId,
 	}
 
 	err = ctx.BaseTx.Db.Transaction(func(tx *gorm.DB) error {
@@ -32,7 +35,17 @@ func TaskInsert(ctx *contextx.Contextx, req entity.TaskInsertReq) (oc string, er
 }
 
 func TaskUpdate(ctx *contextx.Contextx, req entity.TaskUpdateReq) (err error) {
-	m := model.TaskModel{}
+	m := model.TaskModel{
+		OnlyCode:    req.OnlyCode,
+		Title:       req.Title,
+		DevideId:    req.DevideId,
+		TaskModeId:  req.TaskModeId,
+		CompletedAt: req.CompletedAt,
+		GiveUpAt:    req.CompletedAt,
+		StartAt:     req.StartAt,
+		EndAt:       req.EndAt,
+		ParentId:    req.ParentId,
+	}
 	err = StructToStruct(ctx, req, &m)
 	if err != nil {
 		return
@@ -45,7 +58,7 @@ func TaskUpdate(ctx *contextx.Contextx, req entity.TaskUpdateReq) (err error) {
 			return err
 		}
 		if tm.CreatedBy != ctx.UID {
-			err = i18n.NewCodeError(module.OperateNoPermission)
+			err = errorx.NewCodeError(module.OperateNoPermission)
 			return err
 		}
 		m.ContentId = tm.ContentId

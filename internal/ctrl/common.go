@@ -5,7 +5,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/constx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/httpx"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/gin-gonic/gin"
@@ -17,13 +17,13 @@ func validateBind(c *gin.Context, m interface{}) (ctx *contextx.Contextx, err er
 	if m != nil {
 		err = c.ShouldBind(&m)
 		if err != nil && m != nil {
-			err = i18n.NewCodeError(module.RequestParamBindErr, err.Error())
+			err = errorx.NewCodeError(module.RequestParamBindErr, err.Error())
 			loggerx.ZapLog.Error(err.Error())
 			return
 		}
 		err = container.GlobalServerContext.Validator.ValidateParam(lang, m)
 		if err != nil && m != nil {
-			err = i18n.NewCodeError(module.TranslatorNotFoundErr, err.Error())
+			err = errorx.NewCodeError(module.TranslatorNotFoundErr, err.Error())
 			loggerx.ZapLog.Error(err.Error())
 			return
 		}

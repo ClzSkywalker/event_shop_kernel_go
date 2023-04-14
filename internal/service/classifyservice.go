@@ -6,19 +6,20 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"gorm.io/gorm"
 )
 
 func ClassifyCreate(ctx *contextx.Contextx, req entity.ClassifyInsertReq) (cid string, err error) {
-	m := model.ClassifyModel{}
-	err = StructToStruct(ctx, req, &m)
-	if err != nil {
-		return
+	m := model.ClassifyModel{
+		Title:     req.Title,
+		ShowType:  req.ShowType,
+		OrderType: req.OrderType,
+		Color:     req.Color,
+		Sort:      req.Sort,
+		ParentId:  req.ParentId,
 	}
-	m.CreatedBy = ctx.UID
-	m.TeamId = ctx.TID
 
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
 		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
@@ -29,10 +30,14 @@ func ClassifyCreate(ctx *contextx.Contextx, req entity.ClassifyInsertReq) (cid s
 }
 
 func ClassifyUpdate(ctx *contextx.Contextx, req entity.ClassifyUpdateReq) (err error) {
-	m := model.ClassifyModel{}
-	err = StructToStruct(ctx, req, &m)
-	if err != nil {
-		return
+	m := model.ClassifyModel{
+		OnlyCode:  req.OnlyCode,
+		Title:     req.Title,
+		ShowType:  req.ShowType,
+		OrderType: req.OrderType,
+		Color:     req.Color,
+		Sort:      req.Sort,
+		ParentId:  req.ParentId,
 	}
 
 	err = container.GlobalServerContext.Db.Transaction(func(tx *gorm.DB) error {
@@ -47,7 +52,7 @@ func ClassifyOrderUpdate(ctx *contextx.Contextx, req entity.ClassifyOrderReq) (e
 	cmList := make([]model.ClassifyModel, 0, len(req.Data))
 	for _, item := range req.Data {
 		if item.OnlyCode == "" {
-			err = i18n.NewCodeError(module.ReqMissErr)
+			err = errorx.NewCodeError(module.ReqMissErr)
 			return
 		}
 		cmList = append(cmList, model.ClassifyModel{

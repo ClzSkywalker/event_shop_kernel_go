@@ -26,15 +26,13 @@ type TaskEntity struct {
 }
 
 type TaskInsertReq struct {
-	Title       string `json:"title,omitempty" validate:"required"`
-	Content     string `json:"content"`
-	ClassifyId  string `json:"classify_id,omitempty" validate:"required"`
-	TaskModeId  string `json:"task_mode_id,omitempty"`
-	CompletedAt int64  `json:"completed_at,omitempty"`
-	GiveUpAt    int64  `json:"give_up_at,omitempty"`
-	StartAt     int64  `json:"start_at,omitempty"`
-	EndAt       int64  `json:"end_at,omitempty"`
-	ParentId    string `json:"parent_id,omitempty"`
+	Title      string `json:"title,omitempty" validate:"required"`
+	Content    string `json:"content"`
+	DevideId   string `json:"devide_id,omitempty" validate:"required"`
+	TaskModeId string `json:"task_mode_id,omitempty"`
+	StartAt    int64  `json:"start_at,omitempty"`
+	EndAt      int64  `json:"end_at,omitempty"`
+	ParentId   string `json:"parent_id,omitempty"`
 }
 
 type TaskUpdateReq struct {
@@ -42,6 +40,7 @@ type TaskUpdateReq struct {
 	Title       string `json:"title,omitempty" validate:"required"`
 	Content     string `json:"content"`
 	TaskModeId  string `json:"task_mode_id,omitempty"`
+	DevideId    string `json:"devide_id,omitempty" validate:"required"`
 	CompletedAt int64  `json:"completed_at,omitempty"`
 	GiveUpAt    int64  `json:"give_up_at,omitempty"`
 	StartAt     int64  `json:"start_at,omitempty"`

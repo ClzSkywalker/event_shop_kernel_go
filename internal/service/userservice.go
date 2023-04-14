@@ -6,7 +6,7 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"gorm.io/gorm"
 )
@@ -26,7 +26,7 @@ func UserRegisterByEmail(ctx *contextx.Contextx, req entity.RegisterByEmailReq) 
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		err = errorx.NewCodeError(module.UserRegisterErr)
 		return
 	}
 	return
@@ -48,7 +48,7 @@ func UserRegisterByPhone(ctx *contextx.Contextx, req entity.RegisterByPhoneReq) 
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		err = errorx.NewCodeError(module.UserRegisterErr)
 		return
 	}
 	return
@@ -69,7 +69,7 @@ func UserRegisterByUid(ctx *contextx.Contextx) (token string, err error) {
 		TID: um.TeamIdPort,
 	})
 	if err != nil {
-		err = i18n.NewCodeError(module.UserRegisterErr)
+		err = errorx.NewCodeError(module.UserRegisterErr)
 		return
 	}
 	return

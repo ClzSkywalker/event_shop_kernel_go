@@ -15,6 +15,7 @@ const (
 	taskContentCode    = 130001
 	classifyModuleCode = 140001
 	teamModuleCode     = 150001
+	devideModuleCode   = 160001
 
 	SystemErrorCode = 10001 + iota
 	StructToStructErr

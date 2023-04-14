@@ -28,7 +28,7 @@ func (r *Result) SetCodeErr(errx error) {
 		r.Code = e.Code
 		r.Msg = e.Error()
 	default:
-		e1 := i18n.NewCodeError(module.SystemErrorCode)
+		e1 := errorx.NewCodeError(module.SystemErrorCode)
 		e1.Msg = i18n.Trans(r.Lang, e1)
 		r.Code = e1.Code
 		r.Msg = errx.Error()

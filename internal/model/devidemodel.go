@@ -27,8 +27,12 @@ func (r DevideModel) TableName() string {
 type IDevideModel interface {
 	IBaseModel
 	InitData(lang, uid, cid, did string) (err error)
+	First(where DevideModel) (result DevideModel, err error)
+	Find(where DevideModel) (result []DevideModel, err error)
 	Insert(tm *DevideModel) (id uint, err error)
 	InsertAll(tm []*DevideModel) (err error)
+	Update(m DevideModel) (err error)
+	Delete(oc string) (err error)
 }
 
 type defaultDevideModel struct {
@@ -76,6 +80,14 @@ func (r *defaultDevideModel) InitData(lang, uid, cid, did string) (err error) {
 	_, err = r.Insert(m)
 	return
 }
+func (r *defaultDevideModel) First(where DevideModel) (result DevideModel, err error) {
+	err = r.conn.Table(r.table).Where(where).First(&result).Error
+	return
+}
+func (r *defaultDevideModel) Find(where DevideModel) (result []DevideModel, err error) {
+	err = r.conn.Table(r.table).Where(where).Find(&result).Error
+	return
+}
 
 func (r *defaultDevideModel) Insert(tm *DevideModel) (id uint, err error) {
 	err = r.conn.Table(r.table).Create(tm).Error
@@ -85,5 +97,14 @@ func (r *defaultDevideModel) Insert(tm *DevideModel) (id uint, err error) {
 
 func (r *defaultDevideModel) InsertAll(tm []*DevideModel) (err error) {
 	err = r.conn.Table(r.table).Create(tm).Error
+	return
+}
+
+func (r *defaultDevideModel) Update(m DevideModel) (err error) {
+	err = r.conn.Table(r.table).Where(DevideModel{OnlyCode: m.OnlyCode}).Updates(m).Error
+	return
+}
+func (r *defaultDevideModel) Delete(oc string) (err error) {
+	err = r.conn.Table(r.table).Where(DevideModel{OnlyCode: oc}).Delete(DevideModel{}).Error
 	return
 }

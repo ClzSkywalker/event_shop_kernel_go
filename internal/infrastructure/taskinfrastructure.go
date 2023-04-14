@@ -5,7 +5,7 @@ import (
 
 	"github.com/clz.skywalker/event.shop/kernal/internal/contextx"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n"
+	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/loggerx"
 	"github.com/clz.skywalker/event.shop/kernal/pkg/utils"
@@ -19,18 +19,18 @@ func TaskFirst(ctx *contextx.Contextx, p model.TaskModel) (result model.TaskMode
 		return
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err = i18n.NewCodeError(module.TaskNotfoundErr)
+		err = errorx.NewCodeError(module.TaskNotfoundErr)
 		return
 	}
-	err = i18n.NewCodeError(module.TaskQueryErr)
+	err = errorx.NewCodeError(module.TaskQueryErr)
 	return
 }
 
 func TaskInsert(ctx *contextx.Contextx, tm *model.TaskModel) (oc string, err error) {
-	// _, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: tm.ClassifyId})
-	// if err != nil {
-	// 	return
-	// }
+	_, err = DevideFirst(ctx, model.DevideModel{OnlyCode: tm.DevideId})
+	if err != nil {
+		return
+	}
 
 	_, err = TaskModeFirst(ctx, model.TaskModeModel{OnlyCode: tm.TaskModeId})
 	if err != nil {
@@ -42,16 +42,16 @@ func TaskInsert(ctx *contextx.Contextx, tm *model.TaskModel) (oc string, err err
 	_, err = ctx.BaseTx.TaskModel.Insert(tm)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
-		err = i18n.NewCodeError(module.TaskInsertErr)
+		err = errorx.NewCodeError(module.TaskInsertErr)
 	}
 	return
 }
 
 func TaskUpdate(ctx *contextx.Contextx, tm model.TaskModel) (err error) {
-	// _, err = ClassifyFirst(ctx, model.ClassifyModel{OnlyCode: tm.ClassifyId})
-	// if err != nil {
-	// 	return
-	// }
+	_, err = DevideFirst(ctx, model.DevideModel{OnlyCode: tm.DevideId})
+	if err != nil {
+		return
+	}
 
 	_, err = TaskModeFirst(ctx, model.TaskModeModel{OnlyCode: tm.TaskModeId})
 	if err != nil {
@@ -61,7 +61,7 @@ func TaskUpdate(ctx *contextx.Contextx, tm model.TaskModel) (err error) {
 	err = ctx.BaseTx.TaskModel.Update(&tm)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("model", tm))
-		err = i18n.NewCodeError(module.TaskUpdateErr)
+		err = errorx.NewCodeError(module.TaskUpdateErr)
 	}
 	return
 }
@@ -70,7 +70,7 @@ func TaskDelete(ctx *contextx.Contextx, id string) (err error) {
 	err = ctx.BaseTx.TaskModel.Delete(id)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error(), zap.Any("oc", id))
-		err = i18n.NewCodeError(module.TaskDeleteErr)
+		err = errorx.NewCodeError(module.TaskDeleteErr)
 	}
 	return
 }
