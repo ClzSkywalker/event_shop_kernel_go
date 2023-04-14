@@ -105,6 +105,6 @@ func (r *defaultDevideModel) Update(m DevideModel) (err error) {
 	return
 }
 func (r *defaultDevideModel) Delete(oc string) (err error) {
-	err = r.conn.Table(r.table).Where(DevideModel{OnlyCode: oc}).Delete(DevideModel{}).Error
+	err = r.conn.Table(r.table).Where(DevideModel{OnlyCode: oc}).Delete(&DevideModel{}).Error
 	return
 }

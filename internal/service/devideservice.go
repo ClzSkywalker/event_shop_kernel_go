@@ -6,8 +6,6 @@ import (
 	"github.com/clz.skywalker/event.shop/kernal/internal/entity"
 	"github.com/clz.skywalker/event.shop/kernal/internal/infrastructure"
 	"github.com/clz.skywalker/event.shop/kernal/internal/model"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/errorx"
-	"github.com/clz.skywalker/event.shop/kernal/pkg/i18n/module"
 	"gorm.io/gorm"
 )
 
@@ -43,11 +41,6 @@ func DevideUpdate(ctx *contextx.Contextx, req entity.DevideUpdateReqEntity) (err
 func DevideDelete(ctx *contextx.Contextx, oc string) (err error) {
 	err = ctx.BaseTx.Db.Transaction(func(tx *gorm.DB) error {
 		ctx.BaseTx = *container.NewBaseServiceContext(&ctx.BaseTx, tx)
-		_, err := infrastructure.TaskFirst(ctx, model.TaskModel{DevideId: oc})
-		if err != nil && !errorx.Is(err, module.TaskNotfoundErr) {
-			err = errorx.NewCodeError(module.DevideDelExistTaskErr)
-			return err
-		}
 		err = infrastructure.DevideDelete(ctx, oc)
 		return err
 	})

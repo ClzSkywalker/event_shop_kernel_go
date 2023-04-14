@@ -15,7 +15,7 @@ func TaskContentInsert(ctx *contextx.Contextx, content string) (oc string, err e
 		OnlyCode: oc,
 		Content:  content,
 	}
-	_, err = ctx.BaseTx.TaskContentModel.Insert(m)
+	_, err = ctx.BaseTx.TaskContentModel.Insert(&m)
 	if err != nil {
 		loggerx.ZapLog.Error(err.Error())
 		err = errorx.NewCodeError(module.TaskContentInsertErr)

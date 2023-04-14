@@ -11,6 +11,7 @@ const (
 	DevideNotfoundErr
 	DevideUpdateErr
 	DevideDeleteErr
+	DevideTitleRepeatErr
 	DevideDelExistTaskErr
 )
 
@@ -31,8 +32,11 @@ func init() {
 		{Tag: language.Chinese, Key: DevideDeleteErr, Msg: "删除分组失败"},
 		{Tag: language.English, Key: DevideDeleteErr, Msg: "Delete devide failed"},
 
-		{Tag: language.Chinese, Key: DevideDelExistTaskErr, Msg: "删除分组失败，改分组存在任务"},
-		{Tag: language.English, Key: DevideDelExistTaskErr, Msg: "Delete group failure, to group tasks"},
+		{Tag: language.Chinese, Key: DevideTitleRepeatErr, Msg: "在同一分类下，存在相同分组名字"},
+		{Tag: language.English, Key: DevideTitleRepeatErr, Msg: "Under the same classification, there are the same group name"},
+
+		{Tag: language.Chinese, Key: DevideDelExistTaskErr, Msg: "删除分组失败，该分组存在任务"},
+		{Tag: language.English, Key: DevideDelExistTaskErr, Msg: "Delete group fail, the task group exists"},
 	}
 	entry.SetEntries(entries...)
 }

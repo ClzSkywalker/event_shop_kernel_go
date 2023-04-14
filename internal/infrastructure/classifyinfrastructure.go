@@ -30,6 +30,7 @@ func ClassifyFirst(ctx *contextx.Contextx, cm model.ClassifyModel) (result model
 	}
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errorx.NewCodeError(module.ClassifyNotfoundErr)
+		return
 	}
 	err = errorx.NewCodeError(module.ClassifyQueryErr)
 	loggerx.ZapLog.Error(err.Error(), zap.Any("model", cm))

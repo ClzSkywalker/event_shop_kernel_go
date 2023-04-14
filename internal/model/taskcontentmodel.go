@@ -15,7 +15,7 @@ const (
 type TaskContentModel struct {
 	BaseModel
 	OnlyCode string `json:"oc" gorm:"column:oc;type:VARCHAR(26);index:idx_task_content_oc,unique"`
-	Content  string `gorm:"column:content;type:varchar"`
+	Content  string `gorm:"column:content;type:VARCHAR(26)"`
 	// FileList []TaskFileModel `gorm:"column:file_list;type:varchar"`
 }
 
@@ -34,7 +34,7 @@ type ITaskContentModel interface {
 	FindByModel(TaskContentModel) ([]TaskContentModel, error)
 	FindByOC(oc string) (result TaskContentModel, err error)
 	FindByOcList(ocs string) (result []TaskContentModel, err error)
-	Insert(TaskContentModel) (int64, error)
+	Insert(*TaskContentModel) (int64, error)
 	InsertAll(p []*TaskContentModel) (err error)
 	Update(TaskContentModel) error
 	Delete(string) error
@@ -100,8 +100,8 @@ func (m *defaultTaskContentModel) FindByOcList(ocs string) (result []TaskContent
 	return
 }
 
-func (m *defaultTaskContentModel) Insert(p TaskContentModel) (id int64, err error) {
-	m.conn.Table(m.table).Create(p)
+func (m *defaultTaskContentModel) Insert(p *TaskContentModel) (id int64, err error) {
+	m.conn.Table(m.table).Create(&p)
 	return
 }
 func (m *defaultTaskContentModel) InsertAll(p []*TaskContentModel) (err error) {
